@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-28T23:23:56+02:00</updated>
+    <updated>2020-10-28T23:27:49+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-28T23:12:01+02:00</updated>
+        <updated>2020-10-28T23:25:34+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -79,7 +79,7 @@
 <p>We assign the result into <strong>b</strong>, all the numbers in b just moved one step left. The while loop is now ready for another round until there are no more <code>1</code> bits left in <strong>b</strong>.</p>
 <p>When b is zero we're ready to exit the while-loop and return <strong>a</strong> where we have shifted, combined, and shuffled all of our bits iteration by iteration. We're moving and fitting everything together in a nice and orderly line of bits.</p>
 <p>Logic! There's nothing better.</p>
-<p>If you don't understand binary addition straight away by simply reading this article, don't fret. There's hope for you yet. It's like driving a bicycle. You don't learn how to drive by simply reading a manual. Once you understand the basic principles of binary bitwise operations you have play with them, and experiment with them.</p>
+<p>If you don't understand binary addition straight away by simply reading this article, don't fret. There's hope for you yet. It's like driving a bicycle. You don't learn how to drive by simply reading a manual. Once you understand the basic principles of binary bitwise operations you have to play with them, and experiment with them.</p>
 <p>That's how you learn.</p>
             ]]>
         </content>
