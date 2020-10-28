@@ -3,7 +3,7 @@
     <title>Learning Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-28T16:45:01+02:00</updated>
+    <updated>2020-10-28T16:52:18+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,7 +20,7 @@
             <category term="C#"/>
             <category term="Arrays"/>
 
-        <updated>2020-10-28T16:42:04+02:00</updated>
+        <updated>2020-10-28T16:48:17+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
@@ -30,7 +30,7 @@
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
-                <p><img class="post__image post__image--full" src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="" width="1281" height="720"></p>
+                <p><img class="post__image" src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" width="1281" height="720"></p>
 <p>One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned to contiguous memory blocks.</p>
 <p>The above picture shows how indexing works when we turn our multi-dimensional array into a flat array.</p>
 <p>We take the width of our rows and multiply it with the row we want to access. So if we're on row 1 we would want to multiply <code>1 * rowWidth</code>. This gives us the length of the previous rows of data, the rows we've already passed by, ie. row 0 in this case which has 4 entries, ie. <code>1 * 4 = 4</code>.</p>

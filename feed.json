@@ -5,6 +5,7 @@
     "home_page_url": "https://Pilvinen.github.io",
     "feed_url": "https://Pilvinen.github.io/feed.json",
     "user_comment": "",
+    "icon": "https://Pilvinen.github.io/media/website/Skull-1493x1920.jpg",
     "author": {
         "name": "Pilvinen"
     },
@@ -14,7 +15,7 @@
             "url": "https://Pilvinen.github.io/array-flattening.html",
             "title": "Array flattening",
             "summary": " One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned to contiguous memory blocks. The above picture shows how indexing works when we turn our multi-dimensional array into a flat&hellip;",
-            "content_html": "<p><img class=\"post__image post__image--full\" src=\"https://Pilvinen.github.io/media/posts/1/Array_flattening.png\" alt=\"\" width=\"1281\" height=\"720\"></p>\n<p>One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned to contiguous memory blocks.</p>\n<p>The above picture shows how indexing works when we turn our multi-dimensional array into a flat array.</p>\n<p>We take the width of our rows and multiply it with the row we want to access. So if we're on row 1 we would want to multiply <code>1 * rowWidth</code>. This gives us the length of the previous rows of data, the rows we've already passed by, ie. row 0 in this case which has 4 entries, ie. <code>1 * 4 = 4</code>.</p>\n<p>Next we want to add our location on the column with the entries we've already passed. This gives us the final index. Our location on the column is 2 in the above example, therefore we add <code>4 + 2 = 6</code>, giving us the final index of 6.</p>",
+            "content_html": "<p><img class=\"post__image\" src=\"https://Pilvinen.github.io/media/posts/1/Array_flattening.png\" width=\"1281\" height=\"720\"></p>\n<p>One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned to contiguous memory blocks.</p>\n<p>The above picture shows how indexing works when we turn our multi-dimensional array into a flat array.</p>\n<p>We take the width of our rows and multiply it with the row we want to access. So if we're on row 1 we would want to multiply <code>1 * rowWidth</code>. This gives us the length of the previous rows of data, the rows we've already passed by, ie. row 0 in this case which has 4 entries, ie. <code>1 * 4 = 4</code>.</p>\n<p>Next we want to add our location on the column with the entries we've already passed. This gives us the final index. Our location on the column is 2 in the above example, therefore we add <code>4 + 2 = 6</code>, giving us the final index of 6.</p>",
             "image": "https://Pilvinen.github.io/media/posts/1/Array_flattening.png",
             "author": {
                 "name": "Pilvinen"
@@ -25,7 +26,7 @@
                    "Arrays"
             ],
             "date_published": "2020-10-28T16:42:04+02:00",
-            "date_modified": "2020-10-28T16:42:04+02:00"
+            "date_modified": "2020-10-28T16:48:17+02:00"
         }
     ]
 }
