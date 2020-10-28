@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-28T23:27:49+02:00</updated>
+    <updated>2020-10-28T23:35:56+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-28T23:25:34+02:00</updated>
+        <updated>2020-10-28T23:35:33+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -45,7 +45,7 @@
 <p>Don't get distracted by the casting.</p>
 <p>So, we're carrying bits. But what is carrying? Let's take a quick refresher on carrying in math. Carrying is just like in normal everyday addition:</p>
 <pre><code>   122</code><br><code>+  921</code><br><code>= 1043</code></pre>
-<p>Where you add the numbers together which are on top of each other and you combine them at the bottom for the final result. You have the ones, you have the tens, you have the hundreds, and you have the thousands. In the same way in binary you have the ones, you have the twos, you have the fours, you have the eights, and so on. It's just base-2 (0, and 1) instead of base-10 (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9).</p>
+<p>Where you add the numbers together which are on top of each other and you combine them at the bottom for the final result. You have the ones, you have the tens, you have the hundreds, and you have the thousands. In the same way in binary you have the ones, you have the twos, you have the fours, you have the eights, and so on. It's just base-2 (0, and 1) instead of base-10 (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9) before the numbers flip over to the next scale.</p>
 <p>In the above example carrying happens when you add the one hundred and nine hundred together, you carry the one to the thousands and in hundreds you then have a zero because <code>100 + 900</code> doesn't leave a remainder in the hundreds. If you had <code>100 + 1100</code> instead you  would add the thousands: <code>0 * 1000 + 1 * 1000 = 1000</code>, and then you would add the hundreds: <code>1 * 100 + 1 * 100 = 200</code>. And finally you would add all the different values together (no more carrying to process) and you'd end up with a total of 1200.</p>
 <p>So carrying happens when you add two numbers together (for example <code>9 + 9</code>) and they don't fit in the scale (in this case the ones) and you have to move, ie. you'd have to carry, the overflow to the tens. You'd end up with 18.</p>
 <p>In binary it works in exactly the same way. When you get overflow from addition you move it up, you carry it over.</p>
