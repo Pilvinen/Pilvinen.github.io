@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T00:14:45+02:00</updated>
+    <updated>2020-10-29T00:21:39+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -95,7 +95,7 @@
             <category term="C#"/>
             <category term="Arrays"/>
 
-        <updated>2020-10-29T00:14:40+02:00</updated>
+        <updated>2020-10-29T00:21:32+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
@@ -113,7 +113,7 @@
 <p>In the example above we have a multi-dimensional <code>3 x 4</code> array. 3 rows (0-2) and 4 columns (0-3) and, and we want to find the index for <code>1,2</code>in other words, we want the index for <strong>row position 1</strong>, <strong>column position 2</strong>, and we want to find that index position in our <em>one dimensional flat array</em> which is essentially emulating a multi-dimensional 3 x 4 array.</p>
 <p>We take the <strong>width</strong> of our <strong>rows</strong>, ie. their actual size (<strong>4</strong> columns wide) and we <strong>multiply</strong> it with the <em>index</em> of the <strong>row</strong> that we want to access (<strong>1</strong>). In other words <code>rowWidth * row</code> ie. <code>4 * 1</code> in our example. This gives us the combined length of all the <em>previous</em> rows of data (because the index starts from 0, we essentially always skip the current one), ie. <strong>row 0</strong> is the previous row in this case. <code>4 * 1 = 4</code>We have 4 entries in all the previous rows.</p>
 <p>Next we want to add our index location on the <strong>column</strong> to this number. This gives us the final index value. In our example our location on the column is 2, therefore we add <code>4 + 2 = 6</code>, giving us the final index of <strong>6</strong>.</p>
-<p>The explanation is probably harder to follow than the code itself, but there you have it.</p>
+<p>The explanation is probably harder to follow than the code and picture, but there you have it.</p>
             ]]>
         </content>
     </entry>
