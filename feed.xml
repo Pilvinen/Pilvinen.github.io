@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>Learning Csharp</title>
+    <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-28T18:15:49+02:00</updated>
+    <updated>2020-10-28T18:19:09+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
