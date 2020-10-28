@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-28T20:11:21+02:00</updated>
+    <updated>2020-10-28T20:34:26+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,21 +20,21 @@
             <category term="C#"/>
             <category term="Arrays"/>
 
-        <updated>2020-10-28T16:48:17+02:00</updated>
+        <updated>2020-10-28T20:34:20+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
-                     One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned&hellip;
+                     One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
                 <p><img class="post__image" src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" width="1281" height="720"></p>
-<p>One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and iterate through. They can easily be assigned to contiguous memory blocks.</p>
-<p>The above picture shows how indexing works when we turn our multi-dimensional array into a flat array.</p>
-<p>We take the width of our rows and multiply it with the row we want to access. So if we're on row 1 we would want to multiply <code>1 * rowWidth</code>. This gives us the length of the previous rows of data, the rows we've already passed by, ie. row 0 in this case which has 4 entries, ie. <code>1 * 4 = 4</code>.</p>
-<p>Next we want to add our location on the column with the entries we've already passed. This gives us the final index. Our location on the column is 2 in the above example, therefore we add <code>4 + 2 = 6</code>, giving us the final index of 6.</p>
+<p><strong>One dimensional arrays</strong>, or <strong>flat arrays</strong> as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned to contiguous memory blocks.</p>
+<p>The above picture shows how <strong>indexing</strong> works when we turn our multi-dimensional array into a flat array.</p>
+<p>We take the <strong>width</strong> of our <strong>rows</strong>, ie. their actual amount (4) and <strong>multiply</strong> it with the <em>index</em> of the <strong>row</strong> we want to access (1). In other words <code>rowWidth * row</code> ie. <code>4 * 1</code> in our example. This gives us the combined length of all the <em>previous</em> rows of data (because the index starts from 0), ie. <strong>row 0</strong> in this case - which has 4 entries (indices 0-3), ie. <code>1 * 4 = 4</code>.</p>
+<p>Next we want to add our index location on the <strong>column</strong> to this number. This gives us the final index. In our example our location on the column is 2, therefore we add <code>4 + 2 = 6</code>, giving us the final index of <strong>6</strong>.</p>
             ]]>
         </content>
     </entry>
