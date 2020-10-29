@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:10:12+02:00</updated>
+    <updated>2020-10-29T02:39:11+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:10:12+02:00</updated>
+        <updated>2020-10-29T02:39:11+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -31,8 +31,7 @@
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                <figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/2/Binary_addition.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-xs.jpg 300w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-sm.jpg 480w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-md.jpg 768w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-lg.jpg 1024w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-xl.jpg 1360w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-2xl.jpg 1600w"  alt="" width="513" height="228"></figure>
-<pre><code class="language-cs">
+                <pre><code class="language-cs">
 public byte AddBytes(byte a, byte b) {
     while (b != 0) {
         var carryBits = (byte) (a &amp; b);
