@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:46:42+02:00</updated>
+    <updated>2020-10-29T02:50:37+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:46:42+02:00</updated>
+        <updated>2020-10-29T02:50:37+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -76,10 +76,13 @@ var carryBits = (byte) (a &amp; b);</code></pre>
 <p>The bitwise AND operation returns 1 only when the two overlapping binary numbers are both 1. For all other binary values it returns 0.</p>
 <p>So why are we doing this and storing the result in <code>carryBits</code>? Because it's exactly the same as when you add <code>100 + 900</code>, you know you need to carry the hundreds into thousands, except now you need to carry the overflowing bits. Now we know that there are overlapping values, and when we add them together we will need to carry this bit position to the next one.</p>
 <p>It should be starting to make sense now. Let's move on.</p>
-<pre>a = (byte) (a ^ b);</pre>
+<pre><code>a = (byte) (a ^ b);</code></pre>
 <p>Here we are storing the result of an <strong>XOR</strong> (<strong>^</strong>) operation between a and b in the <strong>a</strong>. We are basically <em>simulating addition</em> with XOR.</p>
 <p>What XOR does is:</p>
-<pre>  0101<br>^ 0110<br>= 0011</pre>
+<pre><code class="language-cs">
+  0101
+^ 0110
+= 0011</code></pre>
 <p> It returns 1 only when the two bits that are being compared are different from each other.</p>
 <p>We have already safely stored the overflowing bits in the temporary <code>carryBits</code>and now we have copied the rest of the bits which are <em>not</em> overflowing (no need to carry anything) to <strong>a</strong>.</p>
 <p>We can now perform the final bitwise operation which is the <strong>left bitshift</strong>. What left bitshift does is that it simply moves all the bits left by whatever number you want to move them. For example:</p>
@@ -96,10 +99,11 @@ var a = (byte) 0b_0001; // a is 0001
 a = a &lt;&lt; 2;             // a is 0100</code></pre>
 <p> The bits are simply shifted left by two positions.</p>
 <p>By now you might be starting to realize "Wait... but what if I have an overflow, carry bit, at position like:</p>
-<pre>  1000</pre>
+<pre><code class="language-cs">1000</code></pre>
 <p>Where there is nowhere to go?" </p>
 <p>That's right. In that kind of situations you would get an incorrect answer from bitwise binary addition. For simplicity's sake this article doesn't show you how to handle situations like that where you actually run out of space from your value type. It can be handled, but the code gets much more complex and is therefore not a very good place to show the basic principles of binary bitwise addition and is therefore out of the scope of this article.</p>
-<pre>b = (byte) (carryBits &lt;&lt; 1);</pre>
+<pre><code class="language-cs">
+b = (byte) (carryBits &lt;&lt; 1);</code></pre>
 <p>Now that you understand what a left bitshift does, it's not hard to see what's going on here. We're simply <em>moving the carry bits</em>, the overflowing bits, one step further in the scale of numbers. One becomes two, two becomes four, and so on.</p>
 <p>We assign the result into <strong>b</strong>, all the numbers in b just moved one step left. The while loop is now ready for another round until there are no more <code>1</code> bits left in <strong>b</strong>.</p>
 <p>When b is zero we're ready to exit the while-loop and return <strong>a</strong> where we have shifted, combined, and shuffled all of our bits iteration by iteration. We're moving and fitting everything together in a nice and orderly line of bits.</p>
