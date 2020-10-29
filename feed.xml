@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:53:49+02:00</updated>
+    <updated>2020-10-29T02:57:35+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -124,7 +124,7 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
             <category term="C#"/>
             <category term="Arrays"/>
 
-        <updated>2020-10-29T00:21:32+02:00</updated>
+        <updated>2020-10-29T02:57:35+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
@@ -137,7 +137,7 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
                 <figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-xs.png 300w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-sm.png 480w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-md.png 768w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-lg.png 1024w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-xl.png 1360w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-2xl.png 1600w"  width="1281" height="720"></figure>
 <p><strong>One dimensional arrays</strong>, or <strong>flat arrays</strong> as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned to contiguous memory blocks.</p>
 <p>The above picture shows how <strong>indexing</strong> works when we turn our multi-dimensional array into a flat array.</p>
-<pre>int index = rowWidth * row + col;</pre>
+<pre><code class="language-cs">int index = rowWidth * row + col;</code></pre>
 <p>The above code pretty much explains it all. But in case you're like me, and you sometimes have difficulties understanding things until you've studied them thoroughly, I will walk you through the gist of it.</p>
 <p>In the example above we have a multi-dimensional <code>3 x 4</code> array. 3 rows (0-2) and 4 columns (0-3) and, and we want to find the index for <code>1,2</code>in other words, we want the index for <strong>row position 1</strong>, <strong>column position 2</strong>, and we want to find that index position in our <em>one dimensional flat array</em> which is essentially emulating a multi-dimensional 3 x 4 array.</p>
 <p>We take the <strong>width</strong> of our <strong>rows</strong>, ie. their actual size (<strong>4</strong> columns wide) and we <strong>multiply</strong> it with the <em>index</em> of the <strong>row</strong> that we want to access (<strong>1</strong>). In other words <code>rowWidth * row</code> ie. <code>4 * 1</code> in our example. This gives us the combined length of all the <em>previous</em> rows of data (because the index starts from 0, we essentially always skip the current one), ie. <strong>row 0</strong> is the previous row in this case. <code>4 * 1 = 4</code>We have 4 entries in all the previous rows.</p>
