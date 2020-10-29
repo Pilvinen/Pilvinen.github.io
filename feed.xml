@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:06:44+02:00</updated>
+    <updated>2020-10-29T02:10:12+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:06:44+02:00</updated>
+        <updated>2020-10-29T02:10:12+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -32,7 +32,16 @@
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
                 <figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/2/Binary_addition.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-xs.jpg 300w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-sm.jpg 480w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-md.jpg 768w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-lg.jpg 1024w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-xl.jpg 1360w ,https://Pilvinen.github.io/media/posts/2/responsive/Binary_addition-2xl.jpg 1600w"  alt="" width="513" height="228"></figure>
-<pre><code class="language-cs">public byte AddBytes(byte a, byte b) {<br>    while (b != 0) {<br>        var carryBits = (byte) (a &amp; b);<br>        a = (byte) (a ^ b);<br>        b = (byte) (carryBits &lt;&lt; 1);<br>    }<br>    return a;<br>}</code></pre>
+<pre><code class="language-cs">
+public byte AddBytes(byte a, byte b) {
+    while (b != 0) {
+        var carryBits = (byte) (a &amp; b);
+        a = (byte) (a ^ b);
+        b = (byte) (carryBits &lt;&lt; 1);
+    }
+    return a;
+}
+</code></pre>
 <p>Let's take an overview of what just happened.</p>
 <p>Essentially we <strong>add</strong> two bytes together. You get that much from the name of the method.</p>
 <p>The signature of the <strong>AddBytes</strong> method also tells us that it takes in two <strong>bytes</strong>, <strong>a</strong> and <strong>b</strong> as parameters, and returns a <strong>byte</strong> which contains the result of the addition.</p>
