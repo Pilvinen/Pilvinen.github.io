@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:39:11+02:00</updated>
+    <updated>2020-10-29T02:46:42+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:39:11+02:00</updated>
+        <updated>2020-10-29T02:46:42+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -48,22 +48,31 @@ public byte AddBytes(byte a, byte b) {
 <p>And, apparently, as a result we get two binary numbers added together nicely, just like in our everyday base-10, where we could calculate something like <code>2 + 2 = 4</code> </p>
 <p>So why does the above piece of code work and do what it does? Let's break it down and make it simple.</p>
 <p>The first operation inside the while loop is storing temporarily in <strong>carryBits</strong> variable the result of the bitwise <strong>AND</strong> (<strong>&amp;</strong>) operation between a and b, ie:</p>
-<pre><code>var carryBits = (byte) (a &amp; b);</code></pre>
+<pre><code class="language-cs">var carryBits = (byte) (a &amp; b);</code></pre>
 <p>There's a little bit of casting going on here through and through because C# doesn't support performing bitwise operations directly on the actual <code>byte</code> type, it converts them for the bitwise operations. You could also perform these operations on the <code>int</code> type, for example, in which case you would have:</p>
-<pre><code>var carryBits = a &amp; b;</code></pre>
+<pre><code class="language-cs">var carryBits = a &amp; b;</code></pre>
 <p>Don't get distracted by the casting.</p>
 <p>So, we're carrying bits. But what is carrying? Let's take a quick refresher on carrying in math. Carrying is just like in normal everyday addition:</p>
-<pre><code>   122</code><br><code>+  921</code><br><code>= 1043</code></pre>
+<pre><code class="language-cs">
+   122
++  921
+= 1043</code></pre>
 <p>Where you add the numbers together which are on top of each other and you combine them at the bottom for the final result. You have the ones, you have the tens, you have the hundreds, and you have the thousands. In the same way in binary you have the ones, you have the twos, you have the fours, you have the eights, and so on. It's just base-2 (0, and 1) instead of base-10 (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9) before the numbers flip over to the next scale.</p>
 <p>In the above example carrying happens when you add the one hundred and nine hundred together, you carry the one to the thousands and in hundreds you then have a zero because <code>100 + 900</code> doesn't leave a remainder in the hundreds. If you had <code>100 + 1100</code> instead you  would add the thousands: <code>0 * 1000 + 1 * 1000 = 1000</code>, and then you would add the hundreds: <code>1 * 100 + 1 * 100 = 200</code>. And finally you would add all the different values together (no more carrying to process) and you'd end up with a total of 1200.</p>
 <p>So carrying happens when you add two numbers together (for example <code>9 + 9</code>) and they don't fit in the scale (in this case the ones) and you have to move, ie. you'd have to carry, the overflow to the tens. You'd end up with 18.</p>
 <p>In binary it works in exactly the same way. When you get overflow from addition you move it up, you carry it over.</p>
 <p>The only differences are that in binary you, usually, go from right to left, and 0 means that the value isn't set, and 1 means the value is set. Therefore:</p>
-<pre><code>1101</code></pre>
+<pre><code class="language-cs">1101</code></pre>
 <p>Simply means, from right to left:t 1 * 1 + 0 * 2 + 1 * 4 + 1 * 8. From right to left -&gt; ones (set), twos (not set), fours (set), eights (set). Giving us the total of 13 in our every day base-10.</p>
-<pre><code>var a = (byte) 0b_0101; // (This is a "binary literal" in C#)</code><br><code>var b = (byte) 0b_0110;</code><br><code>var carryBits = (byte) (a &amp; b);</code></pre>
+<pre><code class="language-cs">
+var a = (byte) 0b_0101; // (This is a "binary literal" in C#)
+var b = (byte) 0b_0110;
+var carryBits = (byte) (a &amp; b);</code></pre>
 <p>So, when we do a bitwise AND operation, like <code>0101 &amp; 0110</code>(as shown in the above example) simply imagine in your head that you place the numbers on top of each other like in regular base-10 calculus:</p>
-<pre><code>  0101</code><br><code>&amp; 0110</code><br><code>= 0100</code></pre>
+<pre><code class="language-cs">
+  0101
+&amp; 0110
+= 0100</code></pre>
 <p>The bitwise AND operation returns 1 only when the two overlapping binary numbers are both 1. For all other binary values it returns 0.</p>
 <p>So why are we doing this and storing the result in <code>carryBits</code>? Because it's exactly the same as when you add <code>100 + 900</code>, you know you need to carry the hundreds into thousands, except now you need to carry the overflowing bits. Now we know that there are overlapping values, and when we add them together we will need to carry this bit position to the next one.</p>
 <p>It should be starting to make sense now. Let's move on.</p>
@@ -74,10 +83,17 @@ public byte AddBytes(byte a, byte b) {
 <p> It returns 1 only when the two bits that are being compared are different from each other.</p>
 <p>We have already safely stored the overflowing bits in the temporary <code>carryBits</code>and now we have copied the rest of the bits which are <em>not</em> overflowing (no need to carry anything) to <strong>a</strong>.</p>
 <p>We can now perform the final bitwise operation which is the <strong>left bitshift</strong>. What left bitshift does is that it simply moves all the bits left by whatever number you want to move them. For example:</p>
-<pre>var a = (byte) 0b_0001; // a is 0001<br>a = a &lt;&lt; 1;             // a is 0010<br>a = a &lt;&lt; 1;             // a is 0100<br>a = a &lt;&lt; 1;             // a is 1000<br>a = a &lt;&lt; 1;             // a is 0000</pre>
+<pre><code class="language-cs">
+  var a = (byte) 0b_0001; // a is 0001
+  a = a &lt;&lt; 1;             // a is 0010
+  a = a &lt;&lt; 1;             // a is 0100
+  a = a &lt;&lt; 1;             // a is 1000
+  a = a &lt;&lt; 1;             // a is 0000</code></pre>
 <p>In the final left bitshift operation we lose our data. By default we get behavior which simply drops overflowing bits - you lose them, they are gone.</p>
 <p>And if you move it by two:</p>
-<pre>var a = (byte) 0b_0001; // a is 0001<br>a = a &lt;&lt; 2;             // a is 0100</pre>
+<pre><code class="language-cs">
+var a = (byte) 0b_0001; // a is 0001
+a = a &lt;&lt; 2;             // a is 0100</code></pre>
 <p> The bits are simply shifted left by two positions.</p>
 <p>By now you might be starting to realize "Wait... but what if I have an overflow, carry bit, at position like:</p>
 <pre>  1000</pre>
