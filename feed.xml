@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:50:37+02:00</updated>
+    <updated>2020-10-29T02:53:49+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:50:37+02:00</updated>
+        <updated>2020-10-29T02:53:49+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
@@ -76,7 +76,7 @@ var carryBits = (byte) (a &amp; b);</code></pre>
 <p>The bitwise AND operation returns 1 only when the two overlapping binary numbers are both 1. For all other binary values it returns 0.</p>
 <p>So why are we doing this and storing the result in <code>carryBits</code>? Because it's exactly the same as when you add <code>100 + 900</code>, you know you need to carry the hundreds into thousands, except now you need to carry the overflowing bits. Now we know that there are overlapping values, and when we add them together we will need to carry this bit position to the next one.</p>
 <p>It should be starting to make sense now. Let's move on.</p>
-<pre><code>a = (byte) (a ^ b);</code></pre>
+<pre><code class="language-cs">a = (byte) (a ^ b);</code></pre>
 <p>Here we are storing the result of an <strong>XOR</strong> (<strong>^</strong>) operation between a and b in the <strong>a</strong>. We are basically <em>simulating addition</em> with XOR.</p>
 <p>What XOR does is:</p>
 <pre><code class="language-cs">
