@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T02:57:35+02:00</updated>
+    <updated>2020-10-29T14:04:12+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,17 +21,18 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T02:53:49+02:00</updated>
+        <updated>2020-10-29T14:04:12+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                    public byte AddBytes(byte a, byte b) { while (b != 0) { var carryBits = (byte) (a &amp; b); a = (byte) (a ^ b); b = (byte) (carryBits &lt;&lt;&hellip;
+                    Let's take a look at how binary addition can be done by using bitwise operations. Why? Because we can. public byte AddBytes(byte a, byte b) { while (b != 0)&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                <pre><code class="language-cs">
+                <p>Let's take a look at how binary addition can be done by using bitwise operations. Why? Because we  can.</p>
+<pre><code class="language-cs">
 public byte AddBytes(byte a, byte b) {
     while (b != 0) {
         var carryBits = (byte) (a &amp; b);
