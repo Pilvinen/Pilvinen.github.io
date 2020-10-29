@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2020-10-29T14:04:12+02:00</updated>
+    <updated>2020-10-29T14:08:34+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,17 +21,17 @@
             <category term="Bitwise"/>
             <category term="Binary"/>
 
-        <updated>2020-10-29T14:04:12+02:00</updated>
+        <updated>2020-10-29T14:08:34+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                    Let's take a look at how binary addition can be done by using bitwise operations. Why? Because we can. public byte AddBytes(byte a, byte b) { while (b != 0)&hellip;
+                    Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we can. And also because it's&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                <p>Let's take a look at how binary addition can be done by using bitwise operations. Why? Because we  can.</p>
+                <p>Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we  can. And also because it's fun and will help us understand how bitwise operations work and can be used together.</p>
 <pre><code class="language-cs">
 public byte AddBytes(byte a, byte b) {
     while (b != 0) {
