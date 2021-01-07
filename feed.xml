@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-01-07T20:33:13+02:00</updated>
+    <updated>2021-01-07T20:42:09+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Radians"/>
             <category term="Math"/>
 
-        <updated>2021-01-07T20:33:13+02:00</updated>
+        <updated>2021-01-07T20:42:09+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/3/Radians.png" alt="Radians and other units" />
@@ -40,7 +40,7 @@
 <p>Don't worry. There's an easier way to visualize radians.</p>
 <p>Take a look at this:</p>
 <pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>
-<p>When we always divide by two we get a really nice uniform and intuitive progression of numbers.</p>
+<p>When we always divide two by parts-of-a-circle we get a really nice uniform and intuitive progression of numbers.</p>
 <p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>
 <p>2/2 is of course equal to 1, ie. 180°.</p>
 <p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
