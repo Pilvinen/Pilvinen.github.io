@@ -11,6 +11,23 @@
     },
     "items": [
         {
+            "id": "https://Pilvinen.github.io/radians-to-degrees-made-simple.html",
+            "url": "https://Pilvinen.github.io/radians-to-degrees-made-simple.html",
+            "title": "Radians to degrees made simple",
+            "summary": "I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;",
+            "content_html": "<p>I was thinking about radians today and  how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at radians in a certain way, there's an emerging pattern which makes radians intuitive, fun, and easy.</p>\n<p>You know how we're taught about radians that:</p>\n<pre>2π radians = 360°<br>π radians = 180°</pre>\n<p>And so on. And you can do your degree conversions like so:</p>\n<pre> π radians<br>-----------  = 1°<br>    180</pre>\n<p>And it's all right and well, but... radians are kind of hard to keep in your head when you do conversions  like:</p>\n<pre>-π radians<br>-----------<br>     3</pre>\n<p>If you're like me, it's easy to lose track of what you're doing and what the numbers actually mean. You end up going back and forth and becoming confused.</p>\n<p>Don't worry. There's an easier way to visualize radians.</p>\n<p>Take a look at this:</p>\n<pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>\n<p>When we always divide by two we get a really nice uniform and intuitive progression of numbers.</p>\n<p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>\n<p>2/2 is of course equal to 1, ie. 180°.</p>\n<p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>\n<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think the divisor as \"parts of the circle\". Two times π is a full circle, 360°. When your dividend is always two like in the above example the divisor then always directly represent into how many parts the circle has been divided into.</p>\n<pre>1 = full circle, 360°.<br>2 = divided in two parts, 180°.<br>3 = divided in three parts, 120°.<br>4 = divided in four parts, 90°.<br>...</pre>\n<p>And so on. So how many radians is one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>\n<pre>2 / 360 * π radians = 1°</pre>\n<p>In my opinion it is much easier to visualize than using π radians =  180° as the starting point of your degrees to radians conversions.</p>\n<p> </p>",
+            "image": "https://Pilvinen.github.io/media/posts/3/Radians.png",
+            "author": {
+                "name": "Pilvinen"
+            },
+            "tags": [
+                   "Radians",
+                   "Math"
+            ],
+            "date_published": "2021-01-07T20:33:13+02:00",
+            "date_modified": "2021-01-07T20:33:13+02:00"
+        },
+        {
             "id": "https://Pilvinen.github.io/binary-addition.html",
             "url": "https://Pilvinen.github.io/binary-addition.html",
             "title": "Binary addition",
