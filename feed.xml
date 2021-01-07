@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-01-07T20:42:09+02:00</updated>
+    <updated>2021-01-07T20:47:01+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Radians"/>
             <category term="Math"/>
 
-        <updated>2021-01-07T20:42:09+02:00</updated>
+        <updated>2021-01-07T20:47:01+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/3/Radians.png" alt="Radians and other units" />
@@ -44,11 +44,12 @@
 <p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>
 <p>2/2 is of course equal to 1, ie. 180°.</p>
 <p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
-<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two like in the above example the divisor then always directly represent into how many parts the circle has been divided into.</p>
+<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>
 <pre>1 = full circle, 360°.<br>2 = divided in two parts, 180°.<br>3 = divided in three parts, 120°.<br>4 = divided in four parts, 90°.<br>...</pre>
+<figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/3/Radians-2.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xs.png 300w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-sm.png 480w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-md.png 768w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
 <p>And so on. So how many radians is one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
 <pre>2 / 360 * π radians = 1°</pre>
-<p>In my opinion it is much easier to visualize than using π radians =  180° as the starting point of your degrees to radians conversions.</p>
+<p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using "π radians =  180°" as the starting point.</p>
 <p> </p>
             ]]>
         </content>
