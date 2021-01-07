@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-01-07T20:47:01+02:00</updated>
+    <updated>2021-01-07T21:06:38+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Radians"/>
             <category term="Math"/>
 
-        <updated>2021-01-07T20:47:01+02:00</updated>
+        <updated>2021-01-07T21:06:38+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/3/Radians.png" alt="Radians and other units" />
@@ -34,10 +34,9 @@
 <pre>2π radians = 360°<br>π radians = 180°</pre>
 <p>And so on. And you can do your degree conversions like so:</p>
 <pre> π radians<br>-----------  = 1°<br>    180</pre>
-<p>And it's all right and well, but... radians are kind of hard to keep in your head when you do conversions  like:</p>
-<pre>-π radians<br>-----------<br>     3</pre>
-<p>If you're like me, it's easy to lose track of what you're doing and what the numbers actually mean. You end up going back and forth and becoming confused.</p>
-<p>Don't worry. There's an easier way to visualize radians.</p>
+<p>And it's all right and well, but... radians can sometimes be kind of hard to keep in your head when you do more complex conversions.</p>
+<p>And if you're like me, it's easy to lose track of what you're doing and what the numbers actually represent. You end up going back and forth and becoming confused.</p>
+<p>Don't worry. There's an easier way to visualize radian conversions.</p>
 <p>Take a look at this:</p>
 <pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>
 <p>When we always divide two by parts-of-a-circle we get a really nice uniform and intuitive progression of numbers.</p>
@@ -45,12 +44,13 @@
 <p>2/2 is of course equal to 1, ie. 180°.</p>
 <p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
 <p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>
-<pre>1 = full circle, 360°.<br>2 = divided in two parts, 180°.<br>3 = divided in three parts, 120°.<br>4 = divided in four parts, 90°.<br>...</pre>
+<pre>1 = full circle, 360°.<br>2 = divided into two parts, 180°.<br>3 = divided into three parts, 120°.<br>4 = divided into four parts, 90°.<br>...</pre>
 <figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/3/Radians-2.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xs.png 300w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-sm.png 480w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-md.png 768w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
-<p>And so on. So how many radians is one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
+<p>And so on. So, how many radians are in one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
 <pre>2 / 360 * π radians = 1°</pre>
+<p>Why does it work you ask?</p>
+<p>Since there are <em><strong>two</strong></em> π radians in a full circle, dividing two by how many degrees we want we get a multiplier for the conversion and everything stays nice and uniform.</p>
 <p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using "π radians =  180°" as the starting point.</p>
-<p> </p>
             ]]>
         </content>
     </entry>
