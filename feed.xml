@@ -3,7 +3,7 @@
     <title>Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-05-23T16:05:58+03:00</updated>
+    <updated>2021-05-23T16:06:34+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,7 +20,7 @@
             <category term="OOP"/>
             <category term="Functional Programming"/>
 
-        <updated>2021-05-23T16:05:58+03:00</updated>
+        <updated>2021-05-23T16:06:34+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/4/work-731198_1920.jpg" alt="" />
@@ -35,7 +35,7 @@
 <p>The solution Brian Will suggests on the video is a combination of procedural and functional programming.</p>
 <p>From where I'm standing his solution seems ideal to many of my problems. Separation of data from logic clicks hard with me and I absolutely love certain concepts in functional programming (such a purity of functions) while I would not necessarily want to program fully functionally or abandon the notion of classes and objects altogether.</p>
 <p>If you are interested in functional programming in C# in particular I recommend Enrico Buonanno's book "<strong>Functional Programming in C#</strong>", which I own both as a paperback edition and as a digital book.</p>
-<p>However functional programming doesn't come without it's set of problems (to which I won't go at a depth here) and the combination of procedural and functional Brian Will suggest in the video below is a perfect match in my opinion.</p>
+<p>However functional programming doesn't come without it's set of problems (to which I won't go in a depth here) and the combination of procedural and functional Brian Will suggest in the video below is a perfect match in my opinion.</p>
 <figure class="post__video"><iframe loading="lazy" width="560" height="314" src="https://www.youtube.com/embed/QM1iUe6IofM" allowfullscreen="allowfullscreen" data-mce-fragment="1"></iframe></figure>
 <p>My study notes on the video start here:</p>
 <p><strong>Problems with OOP:</strong><br><br><strong>NOT the problem:</strong><br>- Classes<br>- Performance<br>- Abstraction<br>- Aesthetics<br><br><strong>Code Aesthetics DO matter:</strong><br>- Elegance<br>- Simplicity<br>- Flexibility<br>- Readability<br>- Maintenance<br>- Structure<br><br><strong>Competing paradigms:</strong></p>
