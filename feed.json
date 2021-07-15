@@ -11,6 +11,23 @@
     },
     "items": [
         {
+            "id": "https://Pilvinen.github.io/data-oriented-design.html",
+            "url": "https://Pilvinen.github.io/data-oriented-design.html",
+            "title": "Data Oriented Design",
+            "summary": "A few notes on Data Oriented Design. - Study the data access patterns to determine where performance bottlenecks are. - Group things together that are used together. - Avoid creating&hellip;",
+            "content_html": "<p>A few notes on Data Oriented Design.</p>\n<p>- Study the data access patterns to determine where performance bottlenecks are.<br>- Group things together that are used together.<br>- Avoid creating dependencies between properties.<br>- Split infrequently accessed data as it's own thing.</p>\n<p>Traditional Object Oriented Approach:</p>\n<p><code>// Single object, everything grouped together.<br>class Circle {<br>    Point Position;<br>    Color Color;<br>    float Radius;<br><br>    void Draw() {}<br>}</code></p>\n<p>And you would store the Circle instances in a collection.</p>\n<p>Data Oriented Design:</p>\n<p><code>// Data that is used frequently together is grouped together.<br>class Body {<br>    Point Position;<br>    float Radius;<br>}<br><br>// Contains all the implied, non-explicit, circles.<br>class Circles {<br>    List&lt;Body&gt; Bodies;<br>    List&lt;Color&gt; Color;<br><br>    void Draw() {}<br>}</code></p>\n<p>In this design there's no single Circle, just a bunch of implied circles. Operations can be run on the the circles at the same time. There's a separation of functionality. When you want to process an OO Circle you get all it's properties all at once even if you don't need them. In DO design the data that is used together is grouped together.</p>\n<p>Results:</p>\n<p>- Less cache misses.<br>- Improved performance in many cases.</p>",
+            "image": "https://Pilvinen.github.io/media/posts/5/circles-1428521_1920.jpg",
+            "author": {
+                "name": "Pilvinen"
+            },
+            "tags": [
+                   "Data Oriented Design",
+                   "DOD"
+            ],
+            "date_published": "2021-07-16T01:20:06+03:00",
+            "date_modified": "2021-07-16T01:20:06+03:00"
+        },
+        {
             "id": "https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it.html",
             "url": "https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it.html",
             "title": "Notes on why OOP is bad (and how to solve it)",
