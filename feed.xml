@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-08-27T19:47:34+03:00</updated>
+    <updated>2021-08-27T19:49:35+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,16 +19,16 @@
             <category term="Vectors"/>
             <category term="Math"/>
 
-        <updated>2021-08-27T19:47:34+03:00</updated>
+        <updated>2021-08-27T19:49:35+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="https://Pilvinen.github.io/media/posts/6/Degrees.png" alt="360 degrees in a circle" />
+                        <img src="https://Pilvinen.github.io/media/posts/6/DegreesSmall.png" alt="360 degrees in a circle" />
                     I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://Pilvinen.github.io/media/posts/6/Degrees.png" alt="360 degrees in a circle" />
+                    <img src="https://Pilvinen.github.io/media/posts/6/DegreesSmall.png" alt="360 degrees in a circle" />
                 <p>I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or how they can be used.</p>
 <p>I understand vectors as a bunch of floating point numbers (eg. decimal numbers like 1.123, 1.0, 100.01, etc.) that are grouped together. That's it. Nothing special or particularly difficult about it.</p>
 <p><code>var myVector = new Vec2(2, 3);</code></p>
