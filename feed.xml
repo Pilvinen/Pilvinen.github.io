@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-08-27T19:51:29+03:00</updated>
+    <updated>2021-08-27T20:07:52+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Vectors"/>
             <category term="Math"/>
 
-        <updated>2021-08-27T19:51:29+03:00</updated>
+        <updated>2021-08-27T20:07:52+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
@@ -61,10 +61,10 @@
 <p><code>9 + 16 = DistanceToTarget^2</code></p>
 <p>Therefore:</p>
 <p><code>25 = DistanceToTarget^2</code></p>
-<p>Now we're very close to the solution, but we're still left with a pesky power of two hanging above our DistanceToTarget. We can't calculate because it's the very number we are trying to figure out, but we do need to get rid of it. How are we going to do that?</p>
-<p>In similar fashion as the opposite of the multiplication is division the opposite of a power of two happens to be the <strong>square root</strong>. So if we apply a square root on both sides of our equation we should be able to get rid of that extra power of two.</p>
+<p>Now we're very close to the solution, but we're still left with a pesky power of two hanging above our DistanceToTarget. We can't calculate DistanceToTarget away because it's the very number we are trying to figure out. But we do need to get rid of it. How are we going to do that?</p>
+<p>The opposite of multiplication is division and in similar fashion the opposite of a power of two happens to be the <strong>square root</strong>. So if we apply a square root on both sides of our equation we should be able to get rid of that extra power of two.</p>
 <p><code>sqrt(25) = sqrt(DistanceToTarget^2)</code></p>
-<p>Pardon my non-mathematical notation. But you get the  point. This turns into:</p>
+<p>Pardon my non-mathematical notation. But you get the  point. The square root cancels out the power of two and we get:</p>
 <p><code>5 = DistanceToTarget</code></p>
 <p>Which is our final answer.</p>
 <p>As we don't want to be distracted by the numbers when explaining a concept, in this example I purposefully picked numbers which are easy to calculate and which result into integers.</p>
