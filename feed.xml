@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2021-08-27T19:28:16+03:00</updated>
+    <updated>2021-08-27T19:47:34+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Vectors"/>
             <category term="Math"/>
 
-        <updated>2021-08-27T19:28:16+03:00</updated>
+        <updated>2021-08-27T19:47:34+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/6/Degrees.png" alt="360 degrees in a circle" />
@@ -56,7 +56,7 @@
 <p>Let's do an exercise and assume we have <code>var myVector = new Vec2(3, 4);</code> as our transformation and our origin is at (0,0). In other words we want to move x:3 and y:4 steps from our current location.</p>
 <p>To get a proper vector arrow from A to B instead of the chess-knight like pattern we'll plug-in our numbers to the Pythagorean Theorem:</p>
 <p><code>3^2 + 4^2 = DistanceToTarget^2</code></p>
-<p>Above you see that I plugged in my x:3 and my y:4 to the left side of the equation and I'm the values to the power of two like Pythagorean Theorem tells us to do. On the right  side of the equation I renamed our C to DistanceToTarget to make it clearer what we're trying to do here. DistanceToTarget also needs to be raised to the power of two.</p>
+<p>Above you see that I plugged in the <code>x:3</code> and <code>y:4</code> to the left side of the equation and raised the both values to the power of two like Pythagorean Theorem tells us to do. On the right  side of the equation I renamed the <code>C</code> to <code>DistanceToTarget</code> to make it clearer what's going on. DistanceToTarget also needs to be raised to the power of two.</p>
 <p>Raising to the power of two is also called "squaring a number". When we take the number 3, for example, we create a square shape where each side of the square is 3 units long and thus we have a 3 times 3 square composed of 9 units. Essentially you are multiplying a number by itself as many times as the exponent tells you. In this case we multiply 3 by itself two times, ie. <code>3 * 3 = 9</code> and 4 by itself two times, ie. <code>4 *  4 = 16</code> which changes our equation to:</p>
 <p><code>9 + 16 = DistanceToTarget^2</code></p>
 <p>Therefore:</p>
