@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2022-07-13T16:37:45+03:00</updated>
+    <updated>2022-07-13T16:43:02+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,7 +20,7 @@
             <category term="Godot Game Engine"/>
             <category term="C#"/>
 
-        <updated>2022-07-13T16:37:45+03:00</updated>
+        <updated>2022-07-13T16:43:02+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
@@ -44,7 +44,7 @@
 </ul>
 <p>Transform data is mandatory, but the color data and custom data are optional.</p>
 <h3 id="transform-data">Transform data</h3>
-<p>What the transform data does is it tells <code>MultiMeshInstance</code> where your objects instances should be located, what their scale should be, and and their shears should be.</p>
+<p>What the transform data does is it tells <code>MultiMeshInstance</code> where your objects instances should be located, what their scale should be, and what their shears should be.</p>
 <p>The transform data is a matrix of 12 <code>float</code> values:</p>
 <pre><code class="language-cs">// Transform data for a single mesh instance.  
 float scaleX = 1f, shearXalongY = 0f, shearXalongZ = 0f, translateX = xOffset, // 3 Basis and Origin X.  
