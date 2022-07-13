@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2022-07-13T16:46:53+03:00</updated>
+    <updated>2022-07-13T20:06:35+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -259,17 +259,17 @@ float red = random.Next(0, 256);
             <category term="Constructors"/>
             <category term="C#"/>
 
-        <updated>2022-07-11T14:45:47+03:00</updated>
+        <updated>2022-07-13T20:06:35+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
-                    INHERITANCE WITH CONSTRUCTORS Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By&hellip;
+                    Inheritance with Constructors Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
-                <h1 id="inheritance-with-constructors">INHERITANCE WITH CONSTRUCTORS</h1>
+                <h1 id="inheritance-with-constructors">Inheritance with Constructors</h1>
 <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
 <p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
 <pre><code class="language-cs">internal class A {
