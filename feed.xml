@@ -14,8 +14,8 @@
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method.html"/>
-        <id>https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method.html</id>
+        <link href="https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method/"/>
+        <id>https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method/</id>
             <category term="MultiMeshInstance"/>
             <category term="Godot Game Engine"/>
             <category term="C#"/>
@@ -253,8 +253,8 @@ float red = random.Next(0, 256);
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/inheritance-with-constructors.html"/>
-        <id>https://Pilvinen.github.io/inheritance-with-constructors.html</id>
+        <link href="https://Pilvinen.github.io/inheritance-with-constructors/"/>
+        <id>https://Pilvinen.github.io/inheritance-with-constructors/</id>
             <category term="Inheritance"/>
             <category term="Constructors"/>
             <category term="C#"/>
@@ -317,8 +317,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/vectors.html"/>
-        <id>https://Pilvinen.github.io/vectors.html</id>
+        <link href="https://Pilvinen.github.io/vectors/"/>
+        <id>https://Pilvinen.github.io/vectors/</id>
             <category term="Vectors"/>
             <category term="Math"/>
 
@@ -438,8 +438,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/data-oriented-design.html"/>
-        <id>https://Pilvinen.github.io/data-oriented-design.html</id>
+        <link href="https://Pilvinen.github.io/data-oriented-design/"/>
+        <id>https://Pilvinen.github.io/data-oriented-design/</id>
             <category term="Data Oriented Design"/>
             <category term="DOD"/>
 
@@ -471,8 +471,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it.html"/>
-        <id>https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it.html</id>
+        <link href="https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it/"/>
+        <id>https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it/</id>
             <category term="Procedural Programming"/>
             <category term="OOP"/>
             <category term="Functional Programming"/>
@@ -506,8 +506,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/radians-to-degrees-made-simple.html"/>
-        <id>https://Pilvinen.github.io/radians-to-degrees-made-simple.html</id>
+        <link href="https://Pilvinen.github.io/radians-to-degrees-made-simple/"/>
+        <id>https://Pilvinen.github.io/radians-to-degrees-made-simple/</id>
             <category term="Radians"/>
             <category term="Math"/>
 
@@ -551,8 +551,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/binary-addition.html"/>
-        <id>https://Pilvinen.github.io/binary-addition.html</id>
+        <link href="https://Pilvinen.github.io/binary-addition/"/>
+        <id>https://Pilvinen.github.io/binary-addition/</id>
             <category term="Csharp"/>
             <category term="C#"/>
             <category term="Bitwise"/>
@@ -656,8 +656,8 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="https://Pilvinen.github.io/array-flattening.html"/>
-        <id>https://Pilvinen.github.io/array-flattening.html</id>
+        <link href="https://Pilvinen.github.io/array-flattening/"/>
+        <id>https://Pilvinen.github.io/array-flattening/</id>
             <category term="Csharp"/>
             <category term="C#"/>
             <category term="Arrays"/>
