@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2022-07-13T16:43:02+03:00</updated>
+    <updated>2022-07-13T16:46:53+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,7 +20,7 @@
             <category term="Godot Game Engine"/>
             <category term="C#"/>
 
-        <updated>2022-07-13T16:43:02+03:00</updated>
+        <updated>2022-07-13T16:46:53+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
@@ -54,8 +54,8 @@ float scaleX = 1f, shearXalongY = 0f, shearXalongZ = 0f, translateX = xOffset, /
 <p>It is noteworthy that the offsets <code>translateX</code>, <code>translateY</code>, and <code>translateZ</code> are placed always right after the 3 basis values (eg. <code>scaleX</code>, <code>shearXalongY</code>, <code>shearXalongZ</code> in the above example) interleaved in the data instead of having them sitting at the end grouped together like you might expect.</p>
 <p>The scale values change the scale of the mesh like you would expect. The shear values deform the mesh in different ways. And the translate values move the mesh around along the <code>x</code>, <code>y</code>, and <code>z</code> axis.</p>
 <h3 id="color-data">Color data</h3>
-<p>Color data can be passed to <code>SetAsBulkArray()</code> in two formats.</p>
-<p>You can pass it either as four <code>float</code>s (more accurate) representing the color data as rgba (red, green, blue, alpha) or as a single <code>float</code> (faster, smaller) which has four <code>byte</code>s crammed into it forcibly as Color8 representing those same <code>rgba</code> values.</p>
+<p>Vertex color data can be passed to <code>SetAsBulkArray()</code> in two formats.</p>
+<p>You can pass it either as four <code>float</code>s (more accurate colors) representing the color data as rgba (red, green, blue, alpha) or as a single <code>float</code> (faster, smaller) which has four <code>byte</code>s crammed into it forcibly as Color8. These four bytes represent the <code>rgba</code> values but with less data and less accuracy (you’re never going to notice).</p>
 <p>You can also disable the color information if you don’t need it.</p>
 <p>When we create the <code>MultiMesh</code> we need to declare which format were are going to use.</p>
 <p>NOTE: Which ever <code>ColorFormat</code> you choose the data you generate yourself will always has to match the selected <code>ColorFormat</code> or you will get errors and nothing will work.</p>
