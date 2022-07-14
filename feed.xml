@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Csharp and Game Development Notes</title>
+    <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
+    <link href="https://Pilvinen.github.io" />
+    <updated>2022-07-14T21:11:01+03:00</updated>
+    <author>
+        <name>Pilvinen</name>
+    </author>
+    <id>https://Pilvinen.github.io</id>
+
+    <entry>
+        <title>Seeded Random Numbers</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/seeded-random-numbers/"/>
+        <id>https://Pilvinen.github.io/seeded-random-numbers/</id>
+            <category term="World Generation"/>
+            <category term="Random Numbers"/>
+            <category term="C#"/>
+
+        <updated>2022-07-14T21:10:44+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/9/Dice.jpg" alt="" />
+                    Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/9/Dice.jpg" alt="" />
+                <p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
+<p>This can be achieved by giving the <code>Random</code> generator instance a seed value.</p>
+<pre><code class="language-cs">Random random = new Random(1273456);
+</code></pre>
+<p>This is very useful in situations where you, for example, need to generate identical terrain each time your game runs.</p>
+<p>The seed value could be shared between client and server or between friends to generate the same world on different machines provided that the generation code remains identical between versions of the application.</p>
+<h2 id="several-random-number-generators-sharing-a-seed">Several Random Number Generators Sharing a Seed</h2>
+<p>Csharp’s random number generator is not thread safe.  This means if you need random number generation and you have several threads which need those numbers they can’t share the same instance, it’s not safe to do so.</p>
+<p>In such cases you might need to have several random number generators which are based on the same seed to keep the behavior consistent.</p>
+<p>A common way to do this is to use a master random number generator and have that generate the seed values for any subsequent random number generators. But this approach has problems even though it’s common. If you do this you will get bi-modal peaks for your range where it’s more likely to get numbers from those peaks - making the random generation less random.</p>
+<p>A simple working solution to this problem is to increment your seed by +1 for each new subsequent random number generator like shown in the example below.</p>
+<pre><code class="language-cs">using System;  
+  
+internal class SeededRandomExample {  
+    public Random TerrainRandom;  
+    public Random BiomeRandom;  
+    public Random VegetationRandom;  
+    public int Seed { get; set; } = 481203849;  
+    public SeededRandomExample() {  
+        int terrainSeed = Seed;  
+        TerrainRandom = new Random(terrainSeed);  
+        int biomeSeed = Seed + 1;  
+        BiomeRandom = new Random(biomeSeed);  
+        int vegetationSeed = Seed + 2;  
+        VegetationRandom = new Random(vegetationSeed);  
+    }  
+}
+</code></pre>
+<p>This solution will give you better and more consistently (pseudo-) random numbers while keeping the random number generators tied to the same seed value.</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Godot MultiMesh SetAsBulkArray Method</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method/"/>
+        <id>https://Pilvinen.github.io/godot-multimesh-setasbulkarray-method/</id>
+            <category term="MultiMeshInstance"/>
+            <category term="Godot Game Engine"/>
+            <category term="C#"/>
+
+        <updated>2022-07-14T21:10:52+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
+                    This article tries to bridge the gaps and ambiguities in the official Godot documentation for SetAsBulkArray(). We don’t go over everything. But armed with this information you should be able&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
+                <p>This article tries to bridge the gaps and ambiguities in the official Godot documentation for <code>SetAsBulkArray()</code>. We don’t go over <em><strong>everything</strong></em>. But armed with this information you should be able to figure it out.</p>
+<p><code>MultiMeshInstance</code>‘s <code>MultiMesh</code> resource has a <code>SetAsBulkArray()</code> method which allows you to set all the data for your <code>MultiMesh</code> directly from a <code>float[]</code> array in one swift operation.</p>
+<p>The great thing about this is that it’s as efficient as it can get. And you get to generate the data yourself in any way you want.</p>
+<h2 id="but-how-to-generate-the-data">But how to generate the data?</h2>
+<p>The documentation for <code>SetAsBulkArray()</code> at the time of writing this is pretty terrible, so let’s go over the essentials.</p>
+<p>The  data for the array can be composed of three different parts:</p>
+<ul>
+<li>Transform data</li>
+<li>Color data</li>
+<li>Custom data</li>
+</ul>
+<p>Transform data is mandatory, but the color data and custom data are optional.</p>
+<h3 id="transform-data">Transform data</h3>
+<p>What the transform data does is it tells <code>MultiMeshInstance</code> where your objects instances should be located, what their scale should be, and what their shears should be.</p>
+<p>The transform data is a matrix of 12 <code>float</code> values:</p>
+<pre><code class="language-cs">// Transform data for a single mesh instance.  
+float scaleX = 1f, shearXalongY = 0f, shearXalongZ = 0f, translateX = xOffset, // 3 Basis and Origin X.  
+      shearYalongX = 0f, scaleY = 1f, shearYalongZ = 0f, translateY = yOffset, // 3 Basis and Origin Y.  
+      shearZalongX = 0f, shearZalongY = 0f, scaleZ = 1f, translateZ = zOffset; // 3 Basis and Origin Z.
+</code></pre>
+<p>It is noteworthy that the offsets <code>translateX</code>, <code>translateY</code>, and <code>translateZ</code> are placed always right after the 3 basis values (eg. <code>scaleX</code>, <code>shearXalongY</code>, <code>shearXalongZ</code> in the above example) interleaved in the data instead of having them sitting at the end grouped together like you might expect.</p>
+<p>The scale values change the scale of the mesh like you would expect. The shear values deform the mesh in different ways. And the translate values move the mesh around along the <code>x</code>, <code>y</code>, and <code>z</code> axis.</p>
+<h3 id="color-data">Color data</h3>
+<p>Vertex color data can be passed to <code>SetAsBulkArray()</code> in two formats.</p>
+<p>You can pass it either as four <code>float</code>s (more accurate colors) representing the color data as rgba (red, green, blue, alpha) or as a single <code>float</code> (faster, smaller) which has four <code>byte</code>s crammed into it forcibly as Color8. These four bytes represent the <code>rgba</code> values but with less data and less accuracy (you’re never going to notice).</p>
+<p>You can also disable the color information if you don’t need it.</p>
+<p>When we create the <code>MultiMesh</code> we need to declare which format were are going to use.</p>
+<p>NOTE: Which ever <code>ColorFormat</code> you choose the data you generate yourself will always has to match the selected <code>ColorFormat</code> or you will get errors and nothing will work.</p>
+<p>Let’s look at practical examples where we declare the format when we create a new <code>MultiMesh</code>. I have removed all other values so we can focus on the color format:</p>
+<h4 id="example-1-declaring-we-use-the-binary-format">Example 1: Declaring we use the binary format</h4>
+<pre><code class="language-cs">MultiMesh multiMesh = new () {  
+    ColorFormat = MultiMesh.ColorFormatEnum.Color8bit;  
+};
+</code></pre>
+<p>Above we declare we are going to use the Color8 byte format where we pass a single float.</p>
+<h4 id="example-2-declaring-we-use-the-float-format">Example 2: Declaring we use the float format</h4>
+<pre><code class="language-cs">MultiMesh multiMesh = new () {  
+    ColorFormat = MultiMesh.ColorFormatEnum.Float;  
+};
+</code></pre>
+<p>Above we declare we are going to use the format with four float values representing the rgba values.</p>
+<h4 id="example-3-declaring-we-have-no-color-information">Example 3: Declaring we have no color information</h4>
+<pre><code class="language-cs">MultiMesh multiMesh = new () {  
+    ColorFormat = MultiMesh.ColorFormatEnum.None;  
+};
+</code></pre>
+<h3 id="creating-the-color8bit-color-data">Creating the Color8bit color data</h3>
+<p>Let’s start right off by diving into some code.</p>
+<pre><code class="language-cs">// Our colors as raw values (between 0 and 1).
+float red = 0.1f;
+float green = 0.2f;
+float blue = 0.3f;
+float alpha = 1f;
+
+// Convert to RGBA from 0 to 255.
+red = red * 255;
+green = green * 255;
+blue = blue * 255;
+alpha = alpha * 255;
+
+// We need to pass an array, so we create one.
+byte[] myColors = new byte[4];
+
+// Assign colors to the array we need to input.
+myColors[0] = (byte) red;
+myColors[1] = (byte) green;
+myColors[2] = (byte) blue;
+myColors[3] = (byte) alpha;
+
+// This is how we cram 4 bytes into a float.
+float color = BitConverter.ToSingle(myColors, 0);
+</code></pre>
+<p>Keep in mind that this is a <em><strong>contrived</strong></em> example and you will have to think for yourself how to solve your particular loops, functions, and such for constructing the <em><strong>practical</strong></em> color data for your meshes.</p>
+<p>The example above shows you how to get a <code>float</code> which some of you might find to be a rather strange <code>float</code>. It has 4 bytes crammed into it and it might be a negative number or otherwise rather curious in it’s value range.</p>
+<p>The example above is all you really need. But for a deeper understanding, let’s go over the code in detail.</p>
+<pre><code class="language-cs">float red = 0.1f;
+float green = 0.2f;
+float blue = 0.3f;
+float alpha = 1f;
+</code></pre>
+<p>First, we need to have some <strong>color values</strong> to work with. So we create some in the <strong>raw format</strong> which ranges from <code>0</code> to <code>1</code> so we can better understand how to convert raw values to the format we actually need. Feel free to skip this stage if you’re not using raw values and your color data is already in the <code>0</code> to <code>255</code> range.</p>
+<p>Just note that you will get trouble if you try to use the wrong color format.</p>
+<p>You would most likely have a function which gives you the colors you want. But for the sake of this example it doesn’t really matter where your colors come from, or in what format, as long as you have your colors ready at hand and in the correct format by the time you’re ready to pass them on.</p>
+<pre><code class="language-cs">red = red * 255;
+green = green * 255;
+blue = blue * 255;
+alpha = alpha * 255;
+</code></pre>
+<p>By multiplying the raw colors that are in the scale of <code>0</code> to <code>1</code> with <code>255</code> we transform them from the scale of <code>0</code> to <code>255</code>. It is required for the Color8bit binary format.</p>
+<pre><code class="language-cs">byte[] myColors = new byte[4];
+</code></pre>
+<p><code>BitConverter</code> uses <code>byte[]</code> as input, so we need to have a byte array in which to pass our data. The size of the array has to be to be <code>4</code> as we have <code>4</code> colors: red, green, blue, and alpha.</p>
+<p>NOTE: You most likely do not want to declare this array <em><strong>inside</strong></em> of your color processing loop. You might be generating a lot of mesh instance data and creating a lot of new arrays which become useless right after might not be a good idea. So I recommend declaring the array outside of your loop and reusing the array.</p>
+<pre><code class="language-cs">myColors[0] = (byte) red;
+myColors[1] = (byte) green;
+myColors[2] = (byte) blue;
+myColors[3] = (byte) alpha;
+</code></pre>
+<p>Next we simply assign the color values to the array and cast them as bytes since a <code>byte</code> array is required and our color values are still floats.</p>
+<pre><code class="language-cs">float color = BitConverter.ToSingle(myColors, 0);
+</code></pre>
+<p>Finally we use <code>BitConverter.ToSingle()</code> to get our weird-ass <code>float</code> which has 4 colors packed as a single <code>float</code>.</p>
+<p>What <code>BitConverter</code> does is it basically uses <code>unsafe</code> methods to copy the data as-is really fast and efficiently from <code>myColors</code> array directly to the <code>4</code> bytes in the target <code>float</code>.</p>
+<p>That’s it. You can now use the single <code>float</code> in your <code>MultiMesh</code> data array.</p>
+<p>If you feel the urge to understand on a deeper level why this weird dance is necessary you have to look into how <code>float</code> values work.</p>
+<p>Floating point values quite complex and clever under the hood and that’s why you need special considerations when putting them together from bytes. But we won’t get deeper into that here as it’s a whole subject unto itself.</p>
+<p>NOTE: There might be a simpler way of doing this. But I’m not aware if it at the time of writing this.</p>
+<h3 id="creating-the-float-color-data">Creating the float color data</h3>
+<pre><code class="language-cs">float red = 0.5f
+float green = 0.5f
+float blue = 0.5f
+float alpha = 1f
+</code></pre>
+<p>And you’re done. Just replace the values with the color values you want using the raw color format with values between <code>0</code> and <code>1</code>.</p>
+<h4 id="accessing-the-data-from-a-shader">Accessing the data from a shader</h4>
+<p>The color information can be accessed via <code>COLOR</code> in the shader automatically.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-cs">void fragment() {
+    ALBEDO = COLOR.rgb;
+}
+</code></pre>
+<h3 id="custom-data">Custom data</h3>
+<p>The process for custom data is <em><strong>largely identical</strong></em> to the color data (except for the color specific parts). Read the color data section above for the details.</p>
+<p><code>MultiMesh</code> custom data can be accessed automatically in the shader via <code>INSTANCE_CUSTOM</code> and the id number with <code>INSTANCE_ID</code>.</p>
+<h3 id="putting-it-all-together">Putting it all together</h3>
+<p>You have your transforms, you have your color data, and you have your custom data. Now we need to put it into an array that represents all the data for all the meshes in your <code>MultiMesh</code>.</p>
+<h4 id="create-and-pass-your-multimesh-to-your-multimeshinstance">Create and pass your MultiMesh to your MultiMeshInstance</h4>
+<pre><code class="language-cs">MultiMesh multiMesh = new () {  
+    TransformFormat = MultiMesh.TransformFormatEnum.Transform3d,  
+    ColorFormat = MultiMesh.ColorFormatEnum.Color8bit,  
+    CustomDataFormat = MultiMesh.CustomDataFormatEnum.Float,  
+    InstanceCount = totalCount,  
+    VisibleInstanceCount = -1,  
+    Mesh = mesh,  
+};  
+  
+Multimesh = multiMesh;
+</code></pre>
+<p>You would do this inside of your <code>MultiMeshInstance</code> Make sure all the data is set correctly and to correct values for your use case.</p>
+<h4 id="generate-multimeshdata-full-example">Generate MultiMeshData full example</h4>
+<pre><code class="language-cs">internal float[] GenerateMultiMeshData() {  
+      
+    int transformDataSize = 12;  
+    int colorDataSize = 1;  
+    int customDataSize = 4;  
+    int dataSize = transformDataSize + colorDataSize + customDataSize;  
+    int maxIterations = 10;  
+    int maxDataSize = maxIterations * dataSize;  
+    int rgbaDataSize = 4;  
+    byte[] randomColorsArray = new byte[rgbaDataSize];  
+    float[] multiMeshData = new float[maxDataSize];  
+    Random random = new Random();  
+  
+    int dataIteration = 0;  
+    for (; dataIteration &lt; maxDataSize; dataIteration += dataSize) {  
+  
+        int xOffset = dataIteration / dataSize;  
+        int yOffset = 0;  
+        int zOffset = 0;  
+  
+        // Generate transforms data.      
+float scaleX = 1f, shearXalongY = 0f, shearXalongZ = 0f, translateX = xOffset,  
+              shearYalongX = 0f, scaleY = 1f, shearYalongZ = 0f, translateY = yOffset,  
+              shearZalongX = 0f, shearZalongY = 0f, scaleZ = 1f, translateZ = zOffset;  
+  
+        // Generate random color data.      
+float red = random.Next(0, 256);  
+        float green = random.Next(0, 256);  
+        float blue = random.Next(0, 256);  
+        float alpha = 255f;  
+        randomColorsArray[0] = (byte) red;  
+        randomColorsArray[1] = (byte) green;  
+        randomColorsArray[2] = (byte) blue;  
+        randomColorsArray[3] = (byte) alpha;  
+        float color = BitConverter.ToSingle(randomColorsArray, 0);  
+  
+        // Generate custom data.  
+        float dataA = 0f, dataB = 0f, dataC = 0f, dataD = 0f;  
+  
+        // Assign the data of a single mesh to the array one mesh at a time per loop iteration.  
+        multiMeshData[dataIteration] = scaleX;  
+        multiMeshData[dataIteration + 1] = shearXalongY;  
+        multiMeshData[dataIteration + 2] = shearXalongZ;  
+        multiMeshData[dataIteration + 3] = translateX;  
+        multiMeshData[dataIteration + 4] = shearYalongX;  
+        multiMeshData[dataIteration + 5] = scaleY;  
+        multiMeshData[dataIteration + 6] = shearYalongZ;  
+        multiMeshData[dataIteration + 7] = translateY;  
+        multiMeshData[dataIteration + 8] = shearZalongX;  
+        multiMeshData[dataIteration + 9] = shearZalongY;  
+        multiMeshData[dataIteration + 10] = scaleZ;  
+        multiMeshData[dataIteration + 11] = translateZ;  
+        multiMeshData[dataIteration + 12] = color;  
+        multiMeshData[dataIteration + 13] = dataA;  
+        multiMeshData[dataIteration + 14] = dataB;  
+        multiMeshData[dataIteration + 15] = dataC;  
+        multiMeshData[dataIteration + 16] = dataD;  
+    }  
+    return multiMeshData;  
+}
+</code></pre>
+<h4 id="error-condition-dsize--p_arraysize-is-true">ERROR: Condition “dsize != p_array.size()” is true.</h4>
+<p>This error is caused by your data not having the length you told <code>MultiMesh</code> it would have.</p>
+<ol>
+<li><p>Make sure your <code>ColorFormat</code>, <code>CustomDataFormat</code>, and <code>InstanceCount</code> are set to the correct values reflecting what your data has.</p>
+</li>
+<li><p>Make sure your generated data is of correct length. Make sure you are not accidentally missing data fields.</p>
+</li>
+<li><p>Make sure you are iterating through the data correctly in your loops. Check your index values and how they are used and incremented in code.</p>
+</li>
+<li><p>It didn’t fix the issue? Go through the checklist again, carefully.</p>
+</li>
+</ol>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Inheritance with Constructors</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/inheritance-with-constructors/"/>
+        <id>https://Pilvinen.github.io/inheritance-with-constructors/</id>
+            <category term="Inheritance"/>
+            <category term="Constructors"/>
+            <category term="C#"/>
+
+        <updated>2022-07-14T21:11:01+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
+                    Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By doing this way&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
+                <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
+<p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
+<pre><code class="language-cs">internal class A {
+    string _id;    
+    internal A(string id) =&gt; _id = id;
+}
+
+internal class B : A {
+    string _name;
+    internal B(string name) : base(id) =&gt; _name = name;
+}
+</code></pre>
+<p>Here we call another constructor inside the same class and create a new <code>Author</code> object from the data provided to the first constructor. This is useful in cases where you already have an object constructed which you want to reuse.</p>
+<pre><code class="language-cs">internal class C {
+    Author _author;    
+    string _message;
+    
+    internal C(Author author, string message) {
+        _author = author;
+        _message = message;
+    }
+
+    internal C(string id, string name, string message) : this(new Author(id, name), message) {}
+}
+</code></pre>
+<p>Passing in <strong>default values</strong> when default values cannot be used.</p>
+<p>This example will not compile, but this is what we’d like to do.</p>
+<pre><code class="language-cs">public class D {
+    public D(string[] myArray = new string[] {&quot;Entry1&quot;, &quot;Entry2&quot;}) {}
+}
+</code></pre>
+<p>We can make it work by passing a faked default value.</p>
+<pre><code class="language-cs">public class E {
+    public E(string[] myArray) {}
+
+    public E() : this(new string[] {&quot;Entry1&quot;, &quot;Entry2&quot;}) {}
+}
+</code></pre>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Introduction to vectors</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/vectors/"/>
+        <id>https://Pilvinen.github.io/vectors/</id>
+            <category term="Vectors"/>
+            <category term="Math"/>
+
+        <updated>2021-08-27T20:07:52+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
+                    I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
+                <p>I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or how they can be used.</p>
+<p>I understand vectors as a bunch of floating point numbers (eg. decimal numbers like 1.123, 1.0, 100.01, etc.) that are grouped together. That's it. Nothing special or particularly difficult about it.</p>
+<p><code>var myVector = new Vec2(2, 3);</code></p>
+<p>Here I've declared a new vector of type Vec2 and assigned it to a variable named "myVector". The vector contains the values 2 and 3. Vec2 just means that it takes in exactly two floating point numbers.</p>
+<p><code>var myVector = new Vec3(2, 3, 4.5);</code></p>
+<p>And here I've declared a Vec3 vector. As you can see it takes three values instead of two. Nothing special about it. But you can probably already start to see a repeating pattern here. Bigger number -&gt; holds more values. That's it.</p>
+<p>Computers like vectors. Computers think vectors are really yummy. CPUs are really good at processing vectors. So, we like to use vectors to do computer stuff. That's really all you need to know about it at this level.</p>
+<p>Most of the utility of vectors comes <em>simply from how you decide to use them</em>. I can't stress this enough.</p>
+<p>Different kinds of vectors are called by different names depending on what kind of values they hold and what those values are supposed to represent (yet the vectors still look exactly the same as any other vectors). At the end of the day all vectors - no matter what they are called - are just a bunch of floating point numbers stuffed together.</p>
+<p>Vectors can be used in computer graphics, they can be used to do all kinds of math, or to copy data from memory really fast, etc.</p>
+<p>But we're going to be focusing on vectors being used to represent various aspects of the 2D spaces and any entities therein. In other words let's move and rotate something. We'll stick to 2D in the examples for simplicity. Therefore we'll be using vectors which hold only two values like in the <code>Vec2(2, 3)</code> example we saw earlier.</p>
+<h3>What are vectors good for in game dev?</h3>
+<p>Two dimensional vectors can be used to represent basically <em>anything</em> that has some kind of <strong>magnitude</strong> and <strong>direction</strong>. They are really good at that.</p>
+<p>One way to think of vectors is to see them as arrows (of varying lengths or "magnitude") that are pointing towards something. The direction of the arrow can represent movement direction, rotation, or basically pretty much anything. The magnitude (or length) of the vector can represent things like force, velocity, etc.</p>
+<p>You might already be confused and be thinking something along the lines of "How can something that has only two values (defining a point in space) represent <strong>both</strong> magnitude and direction at the same time? It makes no sense. Is there a hidden value somewhere?"</p>
+<p>The answer is, kind of.</p>
+<p>Magnitude is calculated based on the <strong>origin</strong> point (which is not stored explicitly inside the vector itself) and the coordinates of the vector itself. It's <strong>important</strong> to note that the vector is a <strong>translation</strong> or an "<strong>offset</strong>" <em>from</em> it's origin -&gt; to the point defined inside the vector.</p>
+<p>Let's look into a distance to target and some other things to understand our magnitude and direction better.</p>
+<h3>Pythagoras</h3>
+<p>In game engines you are most commonly using your direction/position vectors to represent a <strong><em>change</em></strong> from a point of <strong>origin</strong>. We're saying something like "You are at location 1,2 (your origin) and now you want to transform your position by 1,3". That is <em>not</em> "Move <strong>to</strong> location 1,3",  that is: "Move 1 step on the X-axis horizontally, and 3 steps on the Y-axis vertically <strong>from your current location, ie. origin</strong>. Therefore you would end up at location 2,5, not at location 1,3. Got that? Great.</p>
+<p>But how can we find out what the <strong>distance to the target</strong> is on a straight line? It's unlikely we're going to want to move like the knight on chess board.</p>
+<p>When you move like that the A amount of steps you take on the X-axis and B amount of steps you take on the Y-axis are always creating a right angle of 90°. Finally, if you draw a straight line from A to B (in addition to the straight angle) what you have is a proper right angled triangle! Are you starting to see where this is going?</p>
+<p>That's when Pythagoras comes in to play.</p>
+<p>Pythagorean Theorem tells us that with every right angled triangle you can calculate the length of the longest line on the triangle with the famous formula <code>A^2 + B^2 = C^2</code> which in essence means that you can figure out the length of that straight line you drew from A to B (also known as hypotenuse) by using this equation.</p>
+<p>Let's do an exercise and assume we have <code>var myVector = new Vec2(3, 4);</code> as our transformation and our origin is at (0,0). In other words we want to move x:3 and y:4 steps from our current location.</p>
+<p>To get a proper vector arrow from A to B instead of the chess-knight like pattern we'll plug-in our numbers to the Pythagorean Theorem:</p>
+<p><code>3^2 + 4^2 = DistanceToTarget^2</code></p>
+<p>Above you see that I plugged in the <code>x:3</code> and <code>y:4</code> to the left side of the equation and raised the both values to the power of two like Pythagorean Theorem tells us to do. On the right  side of the equation I renamed the <code>C</code> to <code>DistanceToTarget</code> to make it clearer what's going on. DistanceToTarget also needs to be raised to the power of two.</p>
+<p>Raising to the power of two is also called "squaring a number". When we take the number 3, for example, we create a square shape where each side of the square is 3 units long and thus we have a 3 times 3 square composed of 9 units. Essentially you are multiplying a number by itself as many times as the exponent tells you. In this case we multiply 3 by itself two times, ie. <code>3 * 3 = 9</code> and 4 by itself two times, ie. <code>4 *  4 = 16</code> which changes our equation to:</p>
+<p><code>9 + 16 = DistanceToTarget^2</code></p>
+<p>Therefore:</p>
+<p><code>25 = DistanceToTarget^2</code></p>
+<p>Now we're very close to the solution, but we're still left with a pesky power of two hanging above our DistanceToTarget. We can't calculate DistanceToTarget away because it's the very number we are trying to figure out. But we do need to get rid of it. How are we going to do that?</p>
+<p>The opposite of multiplication is division and in similar fashion the opposite of a power of two happens to be the <strong>square root</strong>. So if we apply a square root on both sides of our equation we should be able to get rid of that extra power of two.</p>
+<p><code>sqrt(25) = sqrt(DistanceToTarget^2)</code></p>
+<p>Pardon my non-mathematical notation. But you get the  point. The square root cancels out the power of two and we get:</p>
+<p><code>5 = DistanceToTarget</code></p>
+<p>Which is our final answer.</p>
+<p>As we don't want to be distracted by the numbers when explaining a concept, in this example I purposefully picked numbers which are easy to calculate and which result into integers.</p>
+<p>As a reminder the <strong>square root</strong> of a number gives you as an answer the number which you need to <em>multiply by itself</em> to get that original value. You should be able to easily see why square root and power of two are the polar opposites of each other. Essentially in our case we are taking 25 units and arranging them into a square where each side is equally long, ie. 5 units long. 5 times 5 is 25, therefore the square root of 25 must be 5. The math proof for doing this by hand and not in reverse is complex. Usually you just use a calculator to figure out square or cubic roots (it's the same, but it's a cube!).</p>
+<p>The most important thing to understand about square roots is simply to be able to visualize geometrically what is going on with those numbers. When you take a square root of something - it's a number of things arranged into a square. That's all there is to it!</p>
+<p>In most game engines you usually have a function to figure out things like "Distance from vector A to vector B" or "Distance to target". But you should still understand what is going on under the hood so you can effectively reason about your code and debug it.</p>
+<h3>Unit vectors aka normalized vectors</h3>
+<p><strong>Unit vectors</strong> are also called <strong>direction vectors</strong> and <strong>normals</strong>. They are vectors which have been "normalized", ie. their <strong>magnitude</strong> has been reduced to <strong>1</strong> while <strong>preserving</strong> their <strong>direction </strong>by dividing all the values inside a vector by the calculated length of the vector.</p>
+<p>Imagine that you take a car sized arrow that is pointing towards your home and you shrink it until it's the length of your arm - a much more reasonable size for an arrow. And imagine that you take a tiny matchbox sized arrow and stretch it until it also is the length of your arm. And let's call that arm length the length of one. Now you only resized your arrows, they are still pointing towards your home. Congratulations, you understand the most relevant part of normalization.</p>
+<p>So, why normalize?</p>
+<p>The short answer is: to turn vectors into comparable scale.</p>
+<p>To take a contrived example, imagine that you have a treasure chest full of cents, dimes, quarters, and dollars. You also have a scale and you would very much want to figure out how much money you have by weighing your coins. An arduous process when all of your coins have different value and weight and they are all mixed together! So to make the problem simpler you wave your magic wand of normalization and turn all of your coins into the appropriate and comparable amount of pennies. Now that all of your coins have the same weigh and value it's trivial to figure out by weighing them how many you need to pay for a loaf of bread (in case you were wondering, one freshly minted US penny weighs 2.5 grams).</p>
+<p>When we normalize vectors we retain their most important quality - their direction - while making them of a standard magnitude (or size/length/etc). Having the same scale makes it trivially easy to run operations on various different vectors.</p>
+<p>Let's normalize something for fun. Let's take the example from before with <code>Vec2(3,4)</code>:</p>
+<pre>3^2 + 4^2 = DistanceToTarget^2 <br>9 + 16 = DistanceToTarget^2<br>sqrt(25) = sqrt(DistanceToTarget^2)<br>5 = DistanceToTarget</pre>
+<p>Now that we have our calculated magnitude, ie. the length of our vector arrow, which is <code>5</code>, we divide all our vector's values with the magnitude of the vector (5) to get, in effect, a normalized magnitude of 1:</p>
+<p><code>3 / 5 = 0.6</code><br><code>4 / 5 = 0.8</code></p>
+<p>Here's our new normalized vector:</p>
+<p><code>var myNormalizedVector = new Vec2(0.6, 0.8);</code></p>
+<p>Your vector is still pointing to the same direction, but it is of "standard length" or "magnitude" now. Nice.</p>
+<p>Again, most game engines can do this for you via their pre-implemented functions. But you should still understand how they work to avoid getting confused with your own code.</p>
+<h3>Scalars</h3>
+<p><strong>Scalar</strong>, like its name tells us, is a value which can be used to scale vectors. In other words it only has a magnitude. It cannot represent a direction.</p>
+<p><strong>Vector multiplication and division</strong> by a scalar works by multiplying or dividing each of the vector's values one by one, eg:</p>
+<pre>var myVector = new Vec2(3, 4);<br>var multipliedVector = myVector * 2;  // (3, 4) * 2 = (6, 8)<br>var dividedVector = myVector / 2;     // (3, 4) / 2 = (1.5, 2)</pre>
+<p>This allows you to make vectors bigger or smaller, ie. you can scale them without changing their direction.</p>
+<h3>Dot product</h3>
+<p>Dot product is a method for comparing the relationship between two vectors by returning a <strong>scalar</strong>. Dot product is especially useful when used with normalized vectors.</p>
+<p>Dot product can be used in game development to answer questions like (for example) "Am I looking directly at you?" or "How far away from you am I looking at?" or "Am I looking in the same direction as you?" or "Can I see you if I look at this direction given a field of view of X?", etc.</p>
+<p>The scale of the returned values from dot product for normalized vectors ranges from -1 to +1 which represent different rotation degrees where -1 generally means 180° and +1 means 0°.</p>
+<h5>Coordinates and other math</h5>
+<p>When dealing with coordinates dot product is the <strong>sum</strong> of the <strong>products</strong> of the <strong>corresponding</strong> entries of the <strong>two sequences of numbers</strong>. In other words if you have two vectors <code>(x:3, y:4)</code> and <code>(x:7, y:24)</code> you multiply the numbers of each vector which correspond with each other (x's with x's, and y's with y's, etc) and finally you add the results together.</p>
+<p>Let's try it with our vectors:</p>
+<p><code>3 * 7 + 4 * 24 = 21 + 96 = 117</code>.</p>
+<p>If we normalize the vectors first into <code>(x:0.6, y:0.8)</code> and <code>(x:0.28, y:0.96)</code> that gives us:</p>
+<p><code>0.6 * 0.28 + 0.8 * 0.96 = 0.168 + 0.768 = 0.936</code></p>
+<h5>Geometry</h5>
+<p>When looked at from the perspective of <strong>geometry</strong> dot product is the <strong>product</strong> of the <strong>magnitudes</strong> (ie. length) of the <strong>two vectors</strong> and the <strong>cosine</strong> of the <strong>angle between them</strong>. Or - if you <em>normalize the vectors first</em> - then you can just calculate the <strong>cosine</strong> of the <strong>angle between the two vectors</strong>!</p>
+<p>(Of course you first need to get the angle somehow. I won't get into it here because it is a bit math intensive).</p>
+<p>Without normalizing first the formula is:<br><code>a · b = |a| * |b| * cos(θ)</code></p>
+<p>And with normalizing the formula is simply:<br><code>cos(θ)</code></p>
+<pre><code>a · b</code> signifies the dot product of the vectors a and b.<br>|a| signifies the magnitude (ie. length) of the vector a.<br>|b| signifies the magnitude (ie. length) of the vector b.<br>cos() signifies cosine.<br>θ (theta) is the angle between the vectors a and b.</pre>
+<p><strong>Cosine</strong> is the ratio between length of the hypotenuse of a triangle and length of the adjacent side of a triangle.</p>
+<p>We're not going to be calculating cosine by hand because it's generally something you want to use a calculator or math functions of a programming language to solve - unless you're really into math, in which case you can get an approximation by hand, but it's non-trivial to calculate for most people.</p>
+<p>Again, game engines come with functions to solve the dot product.</p>
+<h3>Math and vectors</h3>
+<p>Unlike with regular numbers math with vectors is all about conventions. In other words basically a bunch of people agreed to a set of arbitrary rules defining how math with vectors works and that's what we're using.</p>
+<p>- Two vectors can be added.<br>- Two vectors can be subtracted.<br>- A single vector can be multiplied and divided by a scalar.<br>- Two vectors can be "multiplied", aka cross product (which we won't deal with here).<br>- Vectors <em><strong>cannot</strong></em> be divided by vectors.</p>
+<h5>Adding and subtracting vectors</h5>
+<p>When you add two vectors <code>(x:1, y:2)</code> with <code>(x:4, y:5)</code> what you do is you add all of their matching components together. X goes with X, Y goes with Y, and so on.</p>
+<pre>var a = new Vec2(1, 2);<br>var b = new Vec2(4, 5);<br>var result = a + b; // (1, 2) + (4, 5) = (5, 7)</pre>
+<p>Order of addition <em>does not matter</em>. The same result is gained both ways, ie. by adding a to b and adding b to a.</p>
+<p>Adding a velocity vector to a position vector will result in movement to a new position. Simple as that.</p>
+<pre>var velocity = new Vec2(5, 2);<br>var newPosition = currentPosition + velocity;</pre>
+<p>Subtraction works in the same way but in reverse.</p>
+<pre>var a = new Vec2(1, 2);<br>var b = new Vec2(4, 5);<br>var result = a - b; // (1, 2) - (4, 5) = (-3, -3)</pre>
+<p>To get a <strong>direction towards target</strong> vector B from vector A you can subtract <code>B - A = DirectionTo</code>. To understand why this works it's best to try it our yourself a few times on a grid paper.</p>
+<h5>Scalar multiplication and division</h5>
+<p>We already covered scalar multiplication above briefly. As a refresher multiplying a vector by a scalar changes the scale, not direction:</p>
+<pre>var myVector = new Vec2(3, 4);<br>var multipliedVector = myVector * 2;  // (3, 4) * 2 = (6, 8)<br>var dividedVector = myVector / 2;     // (3, 4) / 2 = (1.5, 2)</pre>
+<p>However, multiplying a vector by a <strong>negative scalar</strong> changes not only the scale but also <strong>reverses the direction</strong> of the vector.</p>
+<p>Dividing a vector by a scalar only affects the scale.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Data Oriented Design</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/data-oriented-design/"/>
+        <id>https://Pilvinen.github.io/data-oriented-design/</id>
+            <category term="Data Oriented Design"/>
+            <category term="DOD"/>
+
+        <updated>2021-07-16T01:20:06+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/5/circles-1428521_1920.jpg" alt="" />
+                    A few notes on Data Oriented Design. - Study the data access patterns to determine where performance bottlenecks are. - Group things together that are used together. - Avoid creating&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/5/circles-1428521_1920.jpg" alt="" />
+                <p>A few notes on Data Oriented Design.</p>
+<p>- Study the data access patterns to determine where performance bottlenecks are.<br>- Group things together that are used together.<br>- Avoid creating dependencies between properties.<br>- Split infrequently accessed data as it's own thing.</p>
+<p>Traditional Object Oriented Approach:</p>
+<p><code>// Single object, everything grouped together.<br>class Circle {<br>    Point Position;<br>    Color Color;<br>    float Radius;<br><br>    void Draw() {}<br>}</code></p>
+<p>And you would store the Circle instances in a collection.</p>
+<p>Data Oriented Design:</p>
+<p><code>// Data that is used frequently together is grouped together.<br>class Body {<br>    Point Position;<br>    float Radius;<br>}<br><br>// Contains all the implied, non-explicit, circles.<br>class Circles {<br>    List&lt;Body&gt; Bodies;<br>    List&lt;Color&gt; Color;<br><br>    void Draw() {}<br>}</code></p>
+<p>In this design there's no single Circle, just a bunch of implied circles. Operations can be run on the the circles at the same time. There's a separation of functionality. When you want to process an OO Circle you get all it's properties all at once even if you don't need them. In DO design the data that is used together is grouped together.</p>
+<p>Results:</p>
+<p>- Less cache misses.<br>- Improved performance in many cases.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Notes on why OOP is bad (and how to solve it)</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it/"/>
+        <id>https://Pilvinen.github.io/notes-on-why-oop-is-bad-and-how-to-solve-it/</id>
+            <category term="Procedural Programming"/>
+            <category term="OOP"/>
+            <category term="Functional Programming"/>
+
+        <updated>2021-05-23T16:06:34+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/4/work-731198_1920.jpg" alt="" />
+                    These are my study notes on a controversial video published on YouTube in 2016 by Brian Will called "Object-Oriented Programming is Bad". The video addresses many of the concerns I've&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/4/work-731198_1920.jpg" alt="" />
+                <p>These are my study notes on a controversial video published on YouTube in 2016 by <a href="https://www.youtube.com/channel/UCseUQK4kC3x2x543nHtGpzw" target="_blank" rel="noopener noreferrer">Brian Will</a> called "<strong>Object-Oriented Programming is Bad</strong>".</p>
+<p>The video addresses many of the concerns I've had ever since I first started learning Java and OOP years ago. Since then I have switched to C#, but the concerns have remained mostly unchanged.</p>
+<p>The solution Brian Will suggests on the video is a combination of procedural and functional programming.</p>
+<p>From where I'm standing his solution seems ideal to many of my problems. Separation of data from logic clicks hard with me and I absolutely love certain concepts in functional programming (such a purity of functions) while I would not necessarily want to program fully functionally or abandon the notion of classes and objects altogether.</p>
+<p>If you are interested in functional programming in C# in particular I recommend Enrico Buonanno's book "<strong>Functional Programming in C#</strong>", which I own both as a paperback edition and as a digital book.</p>
+<p>However functional programming doesn't come without it's set of problems (to which I won't go in a depth here) and the combination of procedural and functional Brian Will suggest in the video below is a perfect match in my opinion.</p>
+<figure class="post__video"><iframe loading="lazy" width="560" height="314" src="https://www.youtube.com/embed/QM1iUe6IofM" allowfullscreen="allowfullscreen" data-mce-fragment="1"></iframe></figure>
+<p>My study notes on the video start here:</p>
+<p><strong>Problems with OOP:</strong><br><br><strong>NOT the problem:</strong><br>- Classes<br>- Performance<br>- Abstraction<br>- Aesthetics<br><br><strong>Code Aesthetics DO matter:</strong><br>- Elegance<br>- Simplicity<br>- Flexibility<br>- Readability<br>- Maintenance<br>- Structure<br><br><strong>Competing paradigms:</strong></p>
+<p><strong>Procedural and imperative (the default)</strong><br>- Procedural: "No explicit association with data types and functions and behaviors."<br>- Imperative: "Mutate state whenever you feel like it. No special handling for shared state. Cope with the problems as they arise."<br><br><strong>Procedural and functional (minimize state)</strong><br>- Get rid of state as much as possible.<br>- All or most of the functions should be pure, they should not deal with state.<br><br><strong>Object oriented and imperative (segregate state)</strong><br>- Segregate state. Divide and conquer the problem. Separate everything into objects.<br>- Segregation is a viable strategy up to a point of complexity.<br><br><strong>Claims:</strong><br>- Procedural code is better (even when not functional)<br>- Inheritance is irrelevant.<br>- Polymorphism is not exclusively OOP.<br>- Encapsulation does not work at fine-grained levels of code. This is the biggest problem with OOP.<br>- Fractioning code artificially to follow OOP rules leads to unnecessary complexity which is hard to follow.<br><br><strong>What is an object?</strong><br><br>An object is a bundle of encapsulated state. We don't interact with the state of that object directly. All interactions with that state from the outside world come in through from messages. The object has a defined set of messages called it's interface. We have private information hidden behind the public interface. When an object receives a message it may in turn send messages to other object. We may conceive of an object-oriented program being as a graph of object all communicating with each other by sending messages.<br><br>For object A to send a message to object B, A must hold a private reference to B.<br>Messages may indirectly read and modify state.<br>The moment objects are shared encapsulation flies out of the window.<br><br><strong>Solution, procedural programming:</strong><br><br>- Prefer <strong>functions</strong> over methods. Write <strong>methods</strong> only when the exclusive association with the data type is not in doubt, e.g. ADT's (abstract data types like queues, lists, etc.)<br><br>- When in doubt -&gt; parameterize. Do not encapsulate the state of the program at fine-grained level. However, shared state is a problem. It cannot be fully solved without pure functional programming. This means that rather then passing data through global variables you should instead make that data explicit parameter of the function so it has to be explicitly passed in. Any time you get the temptation to pass in data through a global because it's convenient you should seriously reconsider.<br><br>- When you DO end up with globals - Bundle the globals into structs/records/classes, ie. bundle them logically into data types. Even if this effectively means you have a data type with one instance in your whole program this little trick can often make your code seem just a little bit more organized. In a sense you are just using data types in this way to create tiny little sub namespaces. But if you do a good job logically grouping your globals this way as a side benefit this supports parameterization - you can more conveniently pass this global state to functions.<br><br>- Favor pure functions. If you see an opportunity to make a function pure it's a good policy to take that opportunity. Pure functions are easier to understand and to make correct. This is easier when efficiency is not a priority.<br><br>- You should try to encapsulate (loosely) at the level of namespaces/packages/modules. Think of each package as having it's own private state and public interface.<br><br>- Don't be afraid of long functions! Most programs have key sections. The problem of extracting everything into separate functions breaks up the natural sequence of code and is spread out of order throughout the code base. Prefer commenting each section of the function when needed over extracting the sections. Keep in mind general code readability for long functions:  Prefer extracting to nested functions. Don't stray from left margin too far or for too long. Watch out for too much complexity and split up and extract to other functions as needed. Constrain scope of local variables. When in doubt enclose variables into curly braces to limit their scope - even better, enclose them into their own anonymous functions.</p>
+<p>Good luck!</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Radians to degrees made simple</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/radians-to-degrees-made-simple/"/>
+        <id>https://Pilvinen.github.io/radians-to-degrees-made-simple/</id>
+            <category term="Radians"/>
+            <category term="Math"/>
+
+        <updated>2021-01-07T21:06:38+02:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/3/Radians.png" alt="Radians and other units" />
+                    I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/3/Radians.png" alt="Radians and other units" />
+                <p>I was thinking about radians today and  how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at radians in a certain way, there's an emerging pattern which makes radians intuitive, fun, and easy.</p>
+<p>You know how we're taught about radians that:</p>
+<pre>2π radians = 360°<br>π radians = 180°</pre>
+<p>And so on. And you can do your degree conversions like so:</p>
+<pre> π radians<br>-----------  = 1°<br>    180</pre>
+<p>And it's all right and well, but... radians can sometimes be kind of hard to keep in your head when you do more complex conversions.</p>
+<p>And if you're like me, it's easy to lose track of what you're doing and what the numbers actually represent. You end up going back and forth and becoming confused.</p>
+<p>Don't worry. There's an easier way to visualize radian conversions.</p>
+<p>Take a look at this:</p>
+<pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>
+<p>When we always divide two by parts-of-a-circle we get a really nice uniform and intuitive progression of numbers.</p>
+<p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>
+<p>2/2 is of course equal to 1, ie. 180°.</p>
+<p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
+<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>
+<pre>1 = full circle, 360°.<br>2 = divided into two parts, 180°.<br>3 = divided into three parts, 120°.<br>4 = divided into four parts, 90°.<br>...</pre>
+<figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/3/Radians-2.png" sizes="100vw" srcset="https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xs.png 300w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-sm.png 480w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-md.png 768w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://Pilvinen.github.io/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
+<p>And so on. So, how many radians are in one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
+<pre>2 / 360 * π radians = 1°</pre>
+<p>Why does it work you ask?</p>
+<p>Since there are <em><strong>two</strong></em> π radians in a full circle, dividing two by how many degrees we want we get a multiplier for the conversion and everything stays nice and uniform.</p>
+<p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using "π radians =  180°" as the starting point.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Binary addition</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/binary-addition/"/>
+        <id>https://Pilvinen.github.io/binary-addition/</id>
+            <category term="Csharp"/>
+            <category term="C#"/>
+            <category term="Bitwise"/>
+            <category term="Binary"/>
+
+        <updated>2020-10-29T14:08:34+02:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
+                    Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we can. And also because it's&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
+                <p>Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we  can. And also because it's fun and will help us understand how bitwise operations work and can be used together.</p>
+<pre><code class="language-cs">
+public byte AddBytes(byte a, byte b) {
+    while (b != 0) {
+        var carryBits = (byte) (a &amp; b);
+        a = (byte) (a ^ b);
+        b = (byte) (carryBits &lt;&lt; 1);
+    }
+    return a;
+}
+</code></pre>
+<p>Let's take an overview of what just happened.</p>
+<p>Essentially we <strong>add</strong> two bytes together. You get that much from the name of the method.</p>
+<p>The signature of the <strong>AddBytes</strong> method also tells us that it takes in two <strong>bytes</strong>, <strong>a</strong> and <strong>b</strong> as parameters, and returns a <strong>byte</strong> which contains the result of the addition.</p>
+<p>Inside the method we loop until <strong>b</strong> is zero. Inside the while loop we <strong>AND</strong> (<strong>&amp;</strong>), then we <strong>XOR</strong> (<strong>^</strong>), and finally we <strong>left shift</strong> (<strong>&lt;&lt;</strong>) by one.</p>
+<p>And, apparently, as a result we get two binary numbers added together nicely, just like in our everyday base-10, where we could calculate something like <code>2 + 2 = 4</code> </p>
+<p>So why does the above piece of code work and do what it does? Let's break it down and make it simple.</p>
+<p>The first operation inside the while loop is storing temporarily in <strong>carryBits</strong> variable the result of the bitwise <strong>AND</strong> (<strong>&amp;</strong>) operation between a and b, ie:</p>
+<pre><code class="language-cs">var carryBits = (byte) (a &amp; b);</code></pre>
+<p>There's a little bit of casting going on here through and through because C# doesn't support performing bitwise operations directly on the actual <code>byte</code> type, it converts them for the bitwise operations. You could also perform these operations on the <code>int</code> type, for example, in which case you would have:</p>
+<pre><code class="language-cs">var carryBits = a &amp; b;</code></pre>
+<p>Don't get distracted by the casting.</p>
+<p>So, we're carrying bits. But what is carrying? Let's take a quick refresher on carrying in math. Carrying is just like in normal everyday addition:</p>
+<pre><code class="language-cs">
+   122
++  921
+= 1043</code></pre>
+<p>Where you add the numbers together which are on top of each other and you combine them at the bottom for the final result. You have the ones, you have the tens, you have the hundreds, and you have the thousands. In the same way in binary you have the ones, you have the twos, you have the fours, you have the eights, and so on. It's just base-2 (0, and 1) instead of base-10 (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9) before the numbers flip over to the next scale.</p>
+<p>In the above example carrying happens when you add the one hundred and nine hundred together, you carry the one to the thousands and in hundreds you then have a zero because <code>100 + 900</code> doesn't leave a remainder in the hundreds. If you had <code>100 + 1100</code> instead you  would add the thousands: <code>0 * 1000 + 1 * 1000 = 1000</code>, and then you would add the hundreds: <code>1 * 100 + 1 * 100 = 200</code>. And finally you would add all the different values together (no more carrying to process) and you'd end up with a total of 1200.</p>
+<p>So carrying happens when you add two numbers together (for example <code>9 + 9</code>) and they don't fit in the scale (in this case the ones) and you have to move, ie. you'd have to carry, the overflow to the tens. You'd end up with 18.</p>
+<p>In binary it works in exactly the same way. When you get overflow from addition you move it up, you carry it over.</p>
+<p>The only differences are that in binary you, usually, go from right to left, and 0 means that the value isn't set, and 1 means the value is set. Therefore:</p>
+<pre><code class="language-cs">1101</code></pre>
+<p>Simply means, from right to left:t 1 * 1 + 0 * 2 + 1 * 4 + 1 * 8. From right to left -&gt; ones (set), twos (not set), fours (set), eights (set). Giving us the total of 13 in our every day base-10.</p>
+<pre><code class="language-cs">
+var a = (byte) 0b_0101; // (This is a "binary literal" in C#)
+var b = (byte) 0b_0110;
+var carryBits = (byte) (a &amp; b);</code></pre>
+<p>So, when we do a bitwise AND operation, like <code>0101 &amp; 0110</code>(as shown in the above example) simply imagine in your head that you place the numbers on top of each other like in regular base-10 calculus:</p>
+<pre><code class="language-cs">
+  0101
+&amp; 0110
+= 0100</code></pre>
+<p>The bitwise AND operation returns 1 only when the two overlapping binary numbers are both 1. For all other binary values it returns 0.</p>
+<p>So why are we doing this and storing the result in <code>carryBits</code>? Because it's exactly the same as when you add <code>100 + 900</code>, you know you need to carry the hundreds into thousands, except now you need to carry the overflowing bits. Now we know that there are overlapping values, and when we add them together we will need to carry this bit position to the next one.</p>
+<p>It should be starting to make sense now. Let's move on.</p>
+<pre><code class="language-cs">a = (byte) (a ^ b);</code></pre>
+<p>Here we are storing the result of an <strong>XOR</strong> (<strong>^</strong>) operation between a and b in the <strong>a</strong>. We are basically <em>simulating addition</em> with XOR.</p>
+<p>What XOR does is:</p>
+<pre><code class="language-cs">
+  0101
+^ 0110
+= 0011</code></pre>
+<p> It returns 1 only when the two bits that are being compared are different from each other.</p>
+<p>We have already safely stored the overflowing bits in the temporary <code>carryBits</code>and now we have copied the rest of the bits which are <em>not</em> overflowing (no need to carry anything) to <strong>a</strong>.</p>
+<p>We can now perform the final bitwise operation which is the <strong>left bitshift</strong>. What left bitshift does is that it simply moves all the bits left by whatever number you want to move them. For example:</p>
+<pre><code class="language-cs">
+  var a = (byte) 0b_0001; // a is 0001
+  a = a &lt;&lt; 1;             // a is 0010
+  a = a &lt;&lt; 1;             // a is 0100
+  a = a &lt;&lt; 1;             // a is 1000
+  a = a &lt;&lt; 1;             // a is 0000</code></pre>
+<p>In the final left bitshift operation we lose our data. By default we get behavior which simply drops overflowing bits - you lose them, they are gone.</p>
+<p>And if you move it by two:</p>
+<pre><code class="language-cs">
+var a = (byte) 0b_0001; // a is 0001
+a = a &lt;&lt; 2;             // a is 0100</code></pre>
+<p> The bits are simply shifted left by two positions.</p>
+<p>By now you might be starting to realize "Wait... but what if I have an overflow, carry bit, at position like:</p>
+<pre><code class="language-cs">1000</code></pre>
+<p>Where there is nowhere to go?" </p>
+<p>That's right. In that kind of situations you would get an incorrect answer from bitwise binary addition. For simplicity's sake this article doesn't show you how to handle situations like that where you actually run out of space from your value type. It can be handled, but the code gets much more complex and is therefore not a very good place to show the basic principles of binary bitwise addition and is therefore out of the scope of this article.</p>
+<pre><code class="language-cs">
+b = (byte) (carryBits &lt;&lt; 1);</code></pre>
+<p>Now that you understand what a left bitshift does, it's not hard to see what's going on here. We're simply <em>moving the carry bits</em>, the overflowing bits, one step further in the scale of numbers. One becomes two, two becomes four, and so on.</p>
+<p>We assign the result into <strong>b</strong>, all the numbers in b just moved one step left. The while loop is now ready for another round until there are no more <code>1</code> bits left in <strong>b</strong>.</p>
+<p>When b is zero we're ready to exit the while-loop and return <strong>a</strong> where we have shifted, combined, and shuffled all of our bits iteration by iteration. We're moving and fitting everything together in a nice and orderly line of bits.</p>
+<p>Logic! There's nothing better.</p>
+<p>If you don't understand binary addition straight away by simply reading this article, don't fret. There's hope for you yet. It's like driving a bicycle. You don't learn how to drive by simply reading a manual. Once you understand the basic principles of binary bitwise operations you have to play with them, and experiment with them.</p>
+<p>That's how you learn.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Array flattening</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://Pilvinen.github.io/array-flattening/"/>
+        <id>https://Pilvinen.github.io/array-flattening/</id>
+            <category term="Csharp"/>
+            <category term="C#"/>
+            <category term="Arrays"/>
+
+        <updated>2020-10-29T02:57:35+02:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
+                    One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" alt="Array flattening" />
+                <figure class="post__image"><img loading="lazy"  src="https://Pilvinen.github.io/media/posts/1/Array_flattening.png" sizes="100vw" srcset="https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-xs.png 300w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-sm.png 480w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-md.png 768w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-lg.png 1024w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-xl.png 1360w ,https://Pilvinen.github.io/media/posts/1/responsive/Array_flattening-2xl.png 1600w"  width="1281" height="720"></figure>
+<p><strong>One dimensional arrays</strong>, or <strong>flat arrays</strong> as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned to contiguous memory blocks.</p>
+<p>The above picture shows how <strong>indexing</strong> works when we turn our multi-dimensional array into a flat array.</p>
+<pre><code class="language-cs">int index = rowWidth * row + col;</code></pre>
+<p>The above code pretty much explains it all. But in case you're like me, and you sometimes have difficulties understanding things until you've studied them thoroughly, I will walk you through the gist of it.</p>
+<p>In the example above we have a multi-dimensional <code>3 x 4</code> array. 3 rows (0-2) and 4 columns (0-3) and, and we want to find the index for <code>1,2</code>in other words, we want the index for <strong>row position 1</strong>, <strong>column position 2</strong>, and we want to find that index position in our <em>one dimensional flat array</em> which is essentially emulating a multi-dimensional 3 x 4 array.</p>
+<p>We take the <strong>width</strong> of our <strong>rows</strong>, ie. their actual size (<strong>4</strong> columns wide) and we <strong>multiply</strong> it with the <em>index</em> of the <strong>row</strong> that we want to access (<strong>1</strong>). In other words <code>rowWidth * row</code> ie. <code>4 * 1</code> in our example. This gives us the combined length of all the <em>previous</em> rows of data (because the index starts from 0, we essentially always skip the current one), ie. <strong>row 0</strong> is the previous row in this case. <code>4 * 1 = 4</code>We have 4 entries in all the previous rows.</p>
+<p>Next we want to add our index location on the <strong>column</strong> to this number. This gives us the final index value. In our example our location on the column is 2, therefore we add <code>4 + 2 = 6</code>, giving us the final index of <strong>6</strong>.</p>
+<p>The explanation is probably harder to follow than the code and picture, but there you have it.</p>
+            ]]>
+        </content>
+    </entry>
+</feed>
