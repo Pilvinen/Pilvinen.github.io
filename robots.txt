@@ -1,3 +1,3 @@
 User-agent: *
 Disallow:
-Sitemap: http://www.pilvimaa.fi/sitemap.xml
+Sitemap: https://pilvimaa.fi/sitemap.xml

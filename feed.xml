@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>Csharp and Game Development Notes</title>
-    <link href="http://www.pilvimaa.fi/feed.xml" rel="self" />
-    <link href="http://www.pilvimaa.fi" />
+    <link href="https://pilvimaa.fi/feed.xml" rel="self" />
+    <link href="https://pilvimaa.fi" />
     <updated>2022-07-14T21:11:01+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
-    <id>http://www.pilvimaa.fi</id>
+    <id>https://pilvimaa.fi</id>
 
     <entry>
         <title>Seeded Random Numbers</title>
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/seeded-random-numbers/"/>
-        <id>http://www.pilvimaa.fi/seeded-random-numbers/</id>
+        <link href="https://pilvimaa.fi/seeded-random-numbers/"/>
+        <id>https://pilvimaa.fi/seeded-random-numbers/</id>
             <category term="World Generation"/>
             <category term="Random Numbers"/>
             <category term="C#"/>
@@ -23,13 +23,13 @@
         <updated>2022-07-14T21:10:44+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
+                        <img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
                     Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
+                    <img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
                 <p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
 <p>This can be achieved by giving the <code>Random</code> generator instance a seed value.</p>
 <pre><code class="language-cs">Random random = new Random(1273456);
@@ -68,8 +68,8 @@ internal class SeededRandomExample {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/godot-multimesh-setasbulkarray-method/"/>
-        <id>http://www.pilvimaa.fi/godot-multimesh-setasbulkarray-method/</id>
+        <link href="https://pilvimaa.fi/godot-multimesh-setasbulkarray-method/"/>
+        <id>https://pilvimaa.fi/godot-multimesh-setasbulkarray-method/</id>
             <category term="MultiMeshInstance"/>
             <category term="Godot Game Engine"/>
             <category term="C#"/>
@@ -77,13 +77,13 @@ internal class SeededRandomExample {
         <updated>2022-07-14T21:10:52+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
+                        <img src="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
                     This article tries to bridge the gaps and ambiguities in the official Godot documentation for SetAsBulkArray(). We don’t go over everything. But armed with this information you should be able&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
+                    <img src="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
                 <p>This article tries to bridge the gaps and ambiguities in the official Godot documentation for <code>SetAsBulkArray()</code>. We don’t go over <em><strong>everything</strong></em>. But armed with this information you should be able to figure it out.</p>
 <p><code>MultiMeshInstance</code>‘s <code>MultiMesh</code> resource has a <code>SetAsBulkArray()</code> method which allows you to set all the data for your <code>MultiMesh</code> directly from a <code>float[]</code> array in one swift operation.</p>
 <p>The great thing about this is that it’s as efficient as it can get. And you get to generate the data yourself in any way you want.</p>
@@ -306,8 +306,8 @@ float red = random.Next(0, 256);
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/inheritance-with-constructors/"/>
-        <id>http://www.pilvimaa.fi/inheritance-with-constructors/</id>
+        <link href="https://pilvimaa.fi/inheritance-with-constructors/"/>
+        <id>https://pilvimaa.fi/inheritance-with-constructors/</id>
             <category term="Inheritance"/>
             <category term="Constructors"/>
             <category term="C#"/>
@@ -315,13 +315,13 @@ float red = random.Next(0, 256);
         <updated>2022-07-14T21:11:01+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/7/Binary.png" alt="" />
+                        <img src="https://pilvimaa.fi/media/posts/7/Binary.png" alt="" />
                     Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By doing this way&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/7/Binary.png" alt="" />
+                    <img src="https://pilvimaa.fi/media/posts/7/Binary.png" alt="" />
                 <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
 <p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
 <pre><code class="language-cs">internal class A {
@@ -369,21 +369,21 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/vectors/"/>
-        <id>http://www.pilvimaa.fi/vectors/</id>
+        <link href="https://pilvimaa.fi/vectors/"/>
+        <id>https://pilvimaa.fi/vectors/</id>
             <category term="Vectors"/>
             <category term="Math"/>
 
         <updated>2021-08-27T20:07:52+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
+                        <img src="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
                     I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
+                    <img src="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
                 <p>I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or how they can be used.</p>
 <p>I understand vectors as a bunch of floating point numbers (eg. decimal numbers like 1.123, 1.0, 100.01, etc.) that are grouped together. That's it. Nothing special or particularly difficult about it.</p>
 <p><code>var myVector = new Vec2(2, 3);</code></p>
@@ -490,21 +490,21 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/data-oriented-design/"/>
-        <id>http://www.pilvimaa.fi/data-oriented-design/</id>
+        <link href="https://pilvimaa.fi/data-oriented-design/"/>
+        <id>https://pilvimaa.fi/data-oriented-design/</id>
             <category term="Data Oriented Design"/>
             <category term="DOD"/>
 
         <updated>2021-07-16T01:20:06+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
+                        <img src="https://pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
                     A few notes on Data Oriented Design. - Study the data access patterns to determine where performance bottlenecks are. - Group things together that are used together. - Avoid creating&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
+                    <img src="https://pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
                 <p>A few notes on Data Oriented Design.</p>
 <p>- Study the data access patterns to determine where performance bottlenecks are.<br>- Group things together that are used together.<br>- Avoid creating dependencies between properties.<br>- Split infrequently accessed data as it's own thing.</p>
 <p>Traditional Object Oriented Approach:</p>
@@ -523,8 +523,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/"/>
-        <id>http://www.pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/</id>
+        <link href="https://pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/"/>
+        <id>https://pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/</id>
             <category term="Procedural Programming"/>
             <category term="OOP"/>
             <category term="Functional Programming"/>
@@ -532,13 +532,13 @@ internal class B : A {
         <updated>2021-05-23T16:06:34+03:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
+                        <img src="https://pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
                     These are my study notes on a controversial video published on YouTube in 2016 by Brian Will called "Object-Oriented Programming is Bad". The video addresses many of the concerns I've&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
+                    <img src="https://pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
                 <p>These are my study notes on a controversial video published on YouTube in 2016 by <a href="https://www.youtube.com/channel/UCseUQK4kC3x2x543nHtGpzw" target="_blank" rel="noopener noreferrer">Brian Will</a> called "<strong>Object-Oriented Programming is Bad</strong>".</p>
 <p>The video addresses many of the concerns I've had ever since I first started learning Java and OOP years ago. Since then I have switched to C#, but the concerns have remained mostly unchanged.</p>
 <p>The solution Brian Will suggests on the video is a combination of procedural and functional programming.</p>
@@ -558,21 +558,21 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/radians-to-degrees-made-simple/"/>
-        <id>http://www.pilvimaa.fi/radians-to-degrees-made-simple/</id>
+        <link href="https://pilvimaa.fi/radians-to-degrees-made-simple/"/>
+        <id>https://pilvimaa.fi/radians-to-degrees-made-simple/</id>
             <category term="Radians"/>
             <category term="Math"/>
 
         <updated>2021-01-07T21:06:38+02:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
+                        <img src="https://pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
                     I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
+                    <img src="https://pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
                 <p>I was thinking about radians today and  how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at radians in a certain way, there's an emerging pattern which makes radians intuitive, fun, and easy.</p>
 <p>You know how we're taught about radians that:</p>
 <pre>2π radians = 360°<br>π radians = 180°</pre>
@@ -589,7 +589,7 @@ internal class B : A {
 <p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
 <p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>
 <pre>1 = full circle, 360°.<br>2 = divided into two parts, 180°.<br>3 = divided into three parts, 120°.<br>4 = divided into four parts, 90°.<br>...</pre>
-<figure class="post__image"><img loading="lazy"  src="http://www.pilvimaa.fi/media/posts/3/Radians-2.png" sizes="100vw" srcset="http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-xs.png 300w ,http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-sm.png 480w ,http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-md.png 768w ,http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-lg.png 1024w ,http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-xl.png 1360w ,http://www.pilvimaa.fi/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
+<figure class="post__image"><img loading="lazy"  src="https://pilvimaa.fi/media/posts/3/Radians-2.png" sizes="100vw" srcset="https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xs.png 300w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-sm.png 480w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-md.png 768w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
 <p>And so on. So, how many radians are in one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
 <pre>2 / 360 * π radians = 1°</pre>
 <p>Why does it work you ask?</p>
@@ -603,8 +603,8 @@ internal class B : A {
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/binary-addition/"/>
-        <id>http://www.pilvimaa.fi/binary-addition/</id>
+        <link href="https://pilvimaa.fi/binary-addition/"/>
+        <id>https://pilvimaa.fi/binary-addition/</id>
             <category term="Csharp"/>
             <category term="C#"/>
             <category term="Bitwise"/>
@@ -613,13 +613,13 @@ internal class B : A {
         <updated>2020-10-29T14:08:34+02:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
+                        <img src="https://pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
                     Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we can. And also because it's&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
+                    <img src="https://pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
                 <p>Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we  can. And also because it's fun and will help us understand how bitwise operations work and can be used together.</p>
 <pre><code class="language-cs">
 public byte AddBytes(byte a, byte b) {
@@ -708,8 +708,8 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
         <author>
             <name>Pilvinen</name>
         </author>
-        <link href="http://www.pilvimaa.fi/array-flattening/"/>
-        <id>http://www.pilvimaa.fi/array-flattening/</id>
+        <link href="https://pilvimaa.fi/array-flattening/"/>
+        <id>https://pilvimaa.fi/array-flattening/</id>
             <category term="Csharp"/>
             <category term="C#"/>
             <category term="Arrays"/>
@@ -717,14 +717,14 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
         <updated>2020-10-29T02:57:35+02:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="http://www.pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
+                        <img src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
                     One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="http://www.pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
-                <figure class="post__image"><img loading="lazy"  src="http://www.pilvimaa.fi/media/posts/1/Array_flattening.png" sizes="100vw" srcset="http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-xs.png 300w ,http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-sm.png 480w ,http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-md.png 768w ,http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-lg.png 1024w ,http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-xl.png 1360w ,http://www.pilvimaa.fi/media/posts/1/responsive/Array_flattening-2xl.png 1600w"  width="1281" height="720"></figure>
+                    <img src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
+                <figure class="post__image"><img loading="lazy"  src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" sizes="100vw" srcset="https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-xs.png 300w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-sm.png 480w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-md.png 768w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-lg.png 1024w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-xl.png 1360w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-2xl.png 1600w"  width="1281" height="720"></figure>
 <p><strong>One dimensional arrays</strong>, or <strong>flat arrays</strong> as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned to contiguous memory blocks.</p>
 <p>The above picture shows how <strong>indexing</strong> works when we turn our multi-dimensional array into a flat array.</p>
 <pre><code class="language-cs">int index = rowWidth * row + col;</code></pre>
