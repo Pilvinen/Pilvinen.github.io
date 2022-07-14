@@ -3,7 +3,7 @@
     <title>Journeys and Adventures in Csharp</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
-    <updated>2022-07-14T21:02:13+03:00</updated>
+    <updated>2022-07-14T21:11:01+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -20,18 +20,17 @@
             <category term="Random Numbers"/>
             <category term="C#"/>
 
-        <updated>2022-07-14T21:02:13+03:00</updated>
+        <updated>2022-07-14T21:10:44+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/9/Dice.jpg" alt="" />
-                    Seeded Random Numbers Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start&hellip;
+                    Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/9/Dice.jpg" alt="" />
-                <h1 id="seeded-random-numbers">Seeded Random Numbers</h1>
-<p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
+                <p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
 <p>This can be achieved by giving the <code>Random</code> generator instance a seed value.</p>
 <pre><code class="language-cs">Random random = new Random(1273456);
 </code></pre>
@@ -75,18 +74,17 @@ internal class SeededRandomExample {
             <category term="Godot Game Engine"/>
             <category term="C#"/>
 
-        <updated>2022-07-13T16:46:53+03:00</updated>
+        <updated>2022-07-14T21:10:52+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
-                    MultiMesh SetAsBulkArray Method This article tries to bridge the gaps and ambiguities in the official Godot documentation for SetAsBulkArray(). We don’t go over everything. But armed with this information you&hellip;
+                    This article tries to bridge the gaps and ambiguities in the official Godot documentation for SetAsBulkArray(). We don’t go over everything. But armed with this information you should be able&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/8/MultiMeshBlocks.png" alt="" />
-                <h1 id="multimesh-setasbulkarray-method">MultiMesh SetAsBulkArray Method</h1>
-<p>This article tries to bridge the gaps and ambiguities in the official Godot documentation for <code>SetAsBulkArray()</code>. We don’t go over <em><strong>everything</strong></em>. But armed with this information you should be able to figure it out.</p>
+                <p>This article tries to bridge the gaps and ambiguities in the official Godot documentation for <code>SetAsBulkArray()</code>. We don’t go over <em><strong>everything</strong></em>. But armed with this information you should be able to figure it out.</p>
 <p><code>MultiMeshInstance</code>‘s <code>MultiMesh</code> resource has a <code>SetAsBulkArray()</code> method which allows you to set all the data for your <code>MultiMesh</code> directly from a <code>float[]</code> array in one swift operation.</p>
 <p>The great thing about this is that it’s as efficient as it can get. And you get to generate the data yourself in any way you want.</p>
 <h2 id="but-how-to-generate-the-data">But how to generate the data?</h2>
@@ -314,18 +312,17 @@ float red = random.Next(0, 256);
             <category term="Constructors"/>
             <category term="C#"/>
 
-        <updated>2022-07-13T20:06:35+03:00</updated>
+        <updated>2022-07-14T21:11:01+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
-                    Inheritance with Constructors Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By&hellip;
+                    Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By doing this way&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://Pilvinen.github.io/media/posts/7/Binary.png" alt="" />
-                <h1 id="inheritance-with-constructors">Inheritance with Constructors</h1>
-<p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
+                <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
 <p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
 <pre><code class="language-cs">internal class A {
     string _id;    
