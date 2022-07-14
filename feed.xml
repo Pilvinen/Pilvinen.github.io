@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>Journeys and Adventures in Csharp</title>
+    <title>Csharp and Game Development Notes</title>
     <link href="https://Pilvinen.github.io/feed.xml" rel="self" />
     <link href="https://Pilvinen.github.io" />
     <updated>2022-07-14T21:11:01+03:00</updated>
