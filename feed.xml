@@ -3,12 +3,128 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-14T21:11:01+03:00</updated>
+    <updated>2022-07-16T01:47:10+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Axis Aligned Bounding Boxes and Intersections</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/"/>
+        <id>https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/</id>
+            <category term="Math"/>
+            <category term="C#"/>
+            <category term="AABB"/>
+
+        <updated>2022-07-16T01:47:10+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" alt="" />
+                    Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" alt="" />
+                <p>Let’s do a quick overview of AABBs and intersections.</p>
+<p>Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.</p>
+<p>In one dimension it is a <code>Segment</code> or <code>AxisAlignedBounds1D</code>:</p>
+<pre><code class="language-cs">struct Segment {
+    public float min;
+    public float max;
+}
+</code></pre>
+<p>Let’s calculate an intersection for two segments.</p>
+<pre><code class="language-cs">Segment Intersect(Segment a, Segment b) =&gt;
+    new Segment {
+        Min = Math.Max(a.Min, b.Min),
+        Max = Math.Min(a.Max, b.Max)
+    };
+</code></pre>
+<p>In two dimensions it is a <code>Rectangle</code> or <code>AxisAlignedBounds2D</code>:</p>
+<pre><code class="language-cs">struct Rectangle {
+    Segment boundsX;
+    Segment boundsY;
+}
+</code></pre>
+<p>Let’s calculate an intersection for two rectangles.</p>
+<pre><code class="language-cs">Rectangle Intersect(Rectangle a, Rectangle b) =&gt;
+    new Rectangle {
+        X = Segment.Intersect(a.X, b.X),
+        Y = Segment.Intersect(a.Y, b.Y)
+    };
+</code></pre>
+<p>In three dimensions it is <code>AABB</code> (Axis Aligned Bounding Box) or <code>AxisAlignedBounds3D</code>:</p>
+<pre><code class="language-cs">struct AABB {
+    public Segment boundsX;
+    public Segment boundsY;
+    public Segment boundsZ;
+}
+</code></pre>
+<p>Let’s calculate an intersection for two AABBs.</p>
+<pre><code class="language-cs">AABB Intersect(AABB a, AABB b) =&gt;
+    new AABB {
+        X = Segment.Intersect(a.X, b.X),
+        Y = Segment.Intersect(a.Y, b.Y),
+        Z = Segment.Intersect(a.Z, b.Z),
+    };
+</code></pre>
+<p>Let’s do it slightly differently for fun.</p>
+<p>Testing intersection via bounds in 1D:</p>
+<pre><code class="language-cs">struct Bounds{
+    public float Min;
+    public float Max;
+    
+    public Bounds Intersection(Bounds other) =&gt;
+        new Bounds {
+            Min = Math.Max(this.Min, other.Min),
+            Max = Math.Min(this.Max, other.Max)
+        };
+        
+    public bool Intersects(Bounds other) {
+        var i = this.Intersection(other);
+        return i.Min &lt; i.Max;
+    }
+}
+</code></pre>
+<p>Testing intersections via bounds in 2D:</p>
+<pre><code class="language-cs">struct Bounds2D {
+    public Bounds BoundsX;
+    public Bounds BoundsY;
+    public Bounds2D Intersection(Bounds2D other) =&gt;
+        new Bounds2D {
+            BoundsX = this.XBounds.Intersection(other.BoundsX),
+            BoundsY = this.YBounds.Intersection(other.BoundsY);
+        };
+    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid;
+    public bool Intersects(Bounds2D other) =&gt;
+        this.Intersection(other).IsValid;
+}
+</code></pre>
+<p>Testing intersections via bounds in 3D:</p>
+<pre><code class="language-cs">struct Bounds3D {
+    public Bounds BoundsX;
+    public Bounds BoundsY;
+    public Bounds BoundsZ;
+    public Bounds3D Intersection(Bounds3D other) =&gt;
+        new Bounds3D {
+            BoundsX = this.BoundsX.Intersection(other.BoundsX),
+            BoundsY = this.BoundsY.Intersection(other.BoundsY);
+            BoundsZ = this.BoundsZ.Intersection(other.BoundsZ);
+        };
+    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid &amp;&amp; BoundsZ.IsValid;
+    public bool Intersects(Bounds3D other) =&gt;
+        this.Intersection(other).IsValid;
+}
+</code></pre>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Seeded Random Numbers</title>
         <author>

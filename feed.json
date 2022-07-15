@@ -11,6 +11,24 @@
     },
     "items": [
         {
+            "id": "https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/",
+            "url": "https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/",
+            "title": "Axis Aligned Bounding Boxes and Intersections",
+            "summary": "Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.",
+            "content_html": "<p>Let’s do a quick overview of AABBs and intersections.</p>\n<p>Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.</p>\n<p>In one dimension it is a <code>Segment</code> or <code>AxisAlignedBounds1D</code>:</p>\n<pre><code class=\"language-cs\">struct Segment {\n    public float min;\n    public float max;\n}\n</code></pre>\n<p>Let’s calculate an intersection for two segments.</p>\n<pre><code class=\"language-cs\">Segment Intersect(Segment a, Segment b) =&gt;\n    new Segment {\n        Min = Math.Max(a.Min, b.Min),\n        Max = Math.Min(a.Max, b.Max)\n    };\n</code></pre>\n<p>In two dimensions it is a <code>Rectangle</code> or <code>AxisAlignedBounds2D</code>:</p>\n<pre><code class=\"language-cs\">struct Rectangle {\n    Segment boundsX;\n    Segment boundsY;\n}\n</code></pre>\n<p>Let’s calculate an intersection for two rectangles.</p>\n<pre><code class=\"language-cs\">Rectangle Intersect(Rectangle a, Rectangle b) =&gt;\n    new Rectangle {\n        X = Segment.Intersect(a.X, b.X),\n        Y = Segment.Intersect(a.Y, b.Y)\n    };\n</code></pre>\n<p>In three dimensions it is <code>AABB</code> (Axis Aligned Bounding Box) or <code>AxisAlignedBounds3D</code>:</p>\n<pre><code class=\"language-cs\">struct AABB {\n    public Segment boundsX;\n    public Segment boundsY;\n    public Segment boundsZ;\n}\n</code></pre>\n<p>Let’s calculate an intersection for two AABBs.</p>\n<pre><code class=\"language-cs\">AABB Intersect(AABB a, AABB b) =&gt;\n    new AABB {\n        X = Segment.Intersect(a.X, b.X),\n        Y = Segment.Intersect(a.Y, b.Y),\n        Z = Segment.Intersect(a.Z, b.Z),\n    };\n</code></pre>\n<p>Let’s do it slightly differently for fun.</p>\n<p>Testing intersection via bounds in 1D:</p>\n<pre><code class=\"language-cs\">struct Bounds{\n    public float Min;\n    public float Max;\n    \n    public Bounds Intersection(Bounds other) =&gt;\n        new Bounds {\n            Min = Math.Max(this.Min, other.Min),\n            Max = Math.Min(this.Max, other.Max)\n        };\n        \n    public bool Intersects(Bounds other) {\n        var i = this.Intersection(other);\n        return i.Min &lt; i.Max;\n    }\n}\n</code></pre>\n<p>Testing intersections via bounds in 2D:</p>\n<pre><code class=\"language-cs\">struct Bounds2D {\n    public Bounds BoundsX;\n    public Bounds BoundsY;\n    public Bounds2D Intersection(Bounds2D other) =&gt;\n        new Bounds2D {\n            BoundsX = this.XBounds.Intersection(other.BoundsX),\n            BoundsY = this.YBounds.Intersection(other.BoundsY);\n        };\n    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid;\n    public bool Intersects(Bounds2D other) =&gt;\n        this.Intersection(other).IsValid;\n}\n</code></pre>\n<p>Testing intersections via bounds in 3D:</p>\n<pre><code class=\"language-cs\">struct Bounds3D {\n    public Bounds BoundsX;\n    public Bounds BoundsY;\n    public Bounds BoundsZ;\n    public Bounds3D Intersection(Bounds3D other) =&gt;\n        new Bounds3D {\n            BoundsX = this.BoundsX.Intersection(other.BoundsX),\n            BoundsY = this.BoundsY.Intersection(other.BoundsY);\n            BoundsZ = this.BoundsZ.Intersection(other.BoundsZ);\n        };\n    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid &amp;&amp; BoundsZ.IsValid;\n    public bool Intersects(Bounds3D other) =&gt;\n        this.Intersection(other).IsValid;\n}\n</code></pre>\n",
+            "image": "https://pilvimaa.fi/media/posts/10/AABB.jpg",
+            "author": {
+                "name": "Pilvinen"
+            },
+            "tags": [
+                   "Math",
+                   "C#",
+                   "AABB"
+            ],
+            "date_published": "2022-07-16T01:15:43+03:00",
+            "date_modified": "2022-07-16T01:47:10+03:00"
+        },
+        {
             "id": "https://pilvimaa.fi/seeded-random-numbers/",
             "url": "https://pilvimaa.fi/seeded-random-numbers/",
             "title": "Seeded Random Numbers",

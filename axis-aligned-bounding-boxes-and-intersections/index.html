@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en-us"><head><link rel="stylesheet" href="https://pilvimaa.fi/assets/css/prism.css?v=1caa16b9d9db6430ff86df681aca81b1"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Axis Aligned Bounding Boxes and Intersections - Csharp and Game Development Notes</title><meta name="description" content="Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests."><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/"><link rel="alternate" type="application/atom+xml" href="https://pilvimaa.fi/feed.xml"><link rel="alternate" type="application/json" href="https://pilvimaa.fi/feed.json"><link rel="shortcut icon" href="https://pilvimaa.fi/media/website/favicon.ico" type="image/x-icon"><link rel="stylesheet" href="https://pilvimaa.fi/assets/css/style.css?v=6a97755fc2a3a6c26e0db18d9b200cd9"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/"},"headline":"Axis Aligned Bounding Boxes and Intersections","datePublished":"2022-07-16T01:15","dateModified":"2022-07-16T01:47","image":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/posts/10/AABB.jpg","height":512,"width":960},"description":"Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.","author":{"@type":"Person","name":"Pilvinen","url":"https://pilvimaa.fi/authors/pilvinen/"},"publisher":{"@type":"Organization","name":"Pilvinen","logo":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/website/Hedgehog.png","height":397,"width":640}}}</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-NT7DGE75CF"></script><script>window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NT7DGE75CF');</script></head><body><div class="site-container"><header class="top" id="js-header"><a class="logo" href="https://pilvimaa.fi/"><img src="https://pilvimaa.fi/media/website/Hedgehog.png" alt="Csharp and Game Development Notes" width="640" height="397"></a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://www.starandserpent.com" title="Star and Serpent" target="_blank">Star and Serpent</a></li><li><a href="https://www.starandserpent.com/blog/" title="S.&#x27;.S.&#x27;. blog" target="_blank">S.&#x27;.S.&#x27;. Blog</a></li><li><a href="https://github.com/starandserpent" title="S.&#x27;.S.&#x27;. Github" target="_blank">S.&#x27;.S.&#x27;. Github</a></li><li><a href="https://www.punydemigods.com" title="Puny Demigods" target="_blank">Puny Demigods</a></li><li><a href="https://www.ritualsoftheold.com" title="Rituals of the old" target="_blank">Rituals of the old</a></li><li><a href="https://github.com/Pilvinen" title="Personal Github" target="_blank">Personal Github</a></li></ul></nav></header><main><article class="post"><div class="hero"><figure class="hero__image hero__image--overlay"><img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" srcset="https://pilvimaa.fi/media/posts/10/responsive/AABB-xs.jpg 300w, https://pilvimaa.fi/media/posts/10/responsive/AABB-sm.jpg 480w, https://pilvimaa.fi/media/posts/10/responsive/AABB-md.jpg 768w, https://pilvimaa.fi/media/posts/10/responsive/AABB-lg.jpg 1024w, https://pilvimaa.fi/media/posts/10/responsive/AABB-xl.jpg 1360w, https://pilvimaa.fi/media/posts/10/responsive/AABB-2xl.jpg 1600w" sizes="(max-width: 1600px) 100vw, 1600px" loading="eager" height="512" width="960" alt=""></figure><header class="hero__content"><div class="wrapper"><div class="post__meta"><time datetime="2022-07-16T01:15">July 16, 2022</time></div><h1>Axis Aligned Bounding Boxes and Intersections</h1><div class="post__meta post__meta--author"><img src="https://pilvimaa.fi/media/website/Pilvinen.jpg" loading="eager" height="300" width="300" class="post__author-thumb" alt="Pilvinen"> <a href="https://pilvimaa.fi/authors/pilvinen/" class="feed__author">Pilvinen</a></div></div></header></div><div class="wrapper post__entry"><p>Let’s do a quick overview of AABBs and intersections.</p><p>Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.</p><p>In one dimension it is a <code>Segment</code> or <code>AxisAlignedBounds1D</code>:</p><pre><code class="language-cs">struct Segment {
+    public float min;
+    public float max;
+}
+</code></pre><p>Let’s calculate an intersection for two segments.</p><pre><code class="language-cs">Segment Intersect(Segment a, Segment b) =&gt;
+    new Segment {
+        Min = Math.Max(a.Min, b.Min),
+        Max = Math.Min(a.Max, b.Max)
+    };
+</code></pre><p>In two dimensions it is a <code>Rectangle</code> or <code>AxisAlignedBounds2D</code>:</p><pre><code class="language-cs">struct Rectangle {
+    Segment boundsX;
+    Segment boundsY;
+}
+</code></pre><p>Let’s calculate an intersection for two rectangles.</p><pre><code class="language-cs">Rectangle Intersect(Rectangle a, Rectangle b) =&gt;
+    new Rectangle {
+        X = Segment.Intersect(a.X, b.X),
+        Y = Segment.Intersect(a.Y, b.Y)
+    };
+</code></pre><p>In three dimensions it is <code>AABB</code> (Axis Aligned Bounding Box) or <code>AxisAlignedBounds3D</code>:</p><pre><code class="language-cs">struct AABB {
+    public Segment boundsX;
+    public Segment boundsY;
+    public Segment boundsZ;
+}
+</code></pre><p>Let’s calculate an intersection for two AABBs.</p><pre><code class="language-cs">AABB Intersect(AABB a, AABB b) =&gt;
+    new AABB {
+        X = Segment.Intersect(a.X, b.X),
+        Y = Segment.Intersect(a.Y, b.Y),
+        Z = Segment.Intersect(a.Z, b.Z),
+    };
+</code></pre><p>Let’s do it slightly differently for fun.</p><p>Testing intersection via bounds in 1D:</p><pre><code class="language-cs">struct Bounds{
+    public float Min;
+    public float Max;
+    
+    public Bounds Intersection(Bounds other) =&gt;
+        new Bounds {
+            Min = Math.Max(this.Min, other.Min),
+            Max = Math.Min(this.Max, other.Max)
+        };
+        
+    public bool Intersects(Bounds other) {
+        var i = this.Intersection(other);
+        return i.Min &lt; i.Max;
+    }
+}
+</code></pre><p>Testing intersections via bounds in 2D:</p><pre><code class="language-cs">struct Bounds2D {
+    public Bounds BoundsX;
+    public Bounds BoundsY;
+    public Bounds2D Intersection(Bounds2D other) =&gt;
+        new Bounds2D {
+            BoundsX = this.XBounds.Intersection(other.BoundsX),
+            BoundsY = this.YBounds.Intersection(other.BoundsY);
+        };
+    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid;
+    public bool Intersects(Bounds2D other) =&gt;
+        this.Intersection(other).IsValid;
+}
+</code></pre><p>Testing intersections via bounds in 3D:</p><pre><code class="language-cs">struct Bounds3D {
+    public Bounds BoundsX;
+    public Bounds BoundsY;
+    public Bounds BoundsZ;
+    public Bounds3D Intersection(Bounds3D other) =&gt;
+        new Bounds3D {
+            BoundsX = this.BoundsX.Intersection(other.BoundsX),
+            BoundsY = this.BoundsY.Intersection(other.BoundsY);
+            BoundsZ = this.BoundsZ.Intersection(other.BoundsZ);
+        };
+    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid &amp;&amp; BoundsZ.IsValid;
+    public bool Intersects(Bounds3D other) =&gt;
+        this.Intersection(other).IsValid;
+}
+</code></pre></div><footer class="wrapper post__footer"><p class="post__last-updated">This article was updated on July 16, 2022</p><ul class="post__tag"><li><a href="https://pilvimaa.fi/tag/aabb/">AABB</a></li><li><a href="https://pilvimaa.fi/tag/c/">C#</a></li><li><a href="https://pilvimaa.fi/tag/math/">Math</a></li></ul><div class="post__share"></div><div class="post__bio bio"><img src="https://pilvimaa.fi/media/website/Pilvinen.jpg" loading="lazy" height="300" width="300" class="bio__avatar" alt="Pilvinen"><div class="bio__info"><h3 class="bio__name"><a href="https://pilvimaa.fi/authors/pilvinen/" rel="author">Pilvinen</a></h3><p>Star and Serpent indie game studio founder, team leader, programmer wannabe, and game designer. Human friendly. Likes to talk. Interested in math, sciences, logic, languages, literature, medieval history, programming, philosophy, and games.</p></div></div></footer></article><nav class="post__nav"><div class="post__nav-inner"><div class="post__nav-prev"><svg width="1.041em" height="0.416em" aria-hidden="true"><use xlink:href="https://pilvimaa.fi/assets/svg/svg-map.svg#arrow-prev"/></svg> <a href="https://pilvimaa.fi/seeded-random-numbers/" class="post__nav-link" rel="prev"><span>Previous</span> Seeded Random Numbers</a></div></div></nav></main><footer class="footer"><script defer="defer" src="https://pilvimaa.fi/assets/js/prism.js?v=4bd006477d0d358daace75bbde4ce792"></script><div class="footer__copyright"><p><a href="https://www.starandserpent.com" target="_blank" rel="noopener noreferrer">https://www.starandserpent.com</a></p></div><button onclick="backToTopFunction()" id="backToTop" class="footer__bttop" aria-label="Back to top" title="Back to top"><svg><use xlink:href="https://pilvimaa.fi/assets/svg/svg-map.svg#toparrow"/></svg></button></footer></div><script defer="defer" src="https://pilvimaa.fi/assets/js/scripts.min.js?v=f47c11534595205f20935f0db2a62a85"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script></body></html>
