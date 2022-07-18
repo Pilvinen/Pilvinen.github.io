@@ -3,12 +3,85 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-16T01:47:10+03:00</updated>
+    <updated>2022-07-18T17:54:14+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Getting GodotXUnit up and Running with Rider</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/getting-godotxunit-up-and-running-with-rider/"/>
+        <id>https://pilvimaa.fi/getting-godotxunit-up-and-running-with-rider/</id>
+            <category term="XUnit"/>
+            <category term="Unit Testing"/>
+            <category term="GodotXUnit"/>
+            <category term="Godot"/>
+            <category term="C#"/>
+
+        <updated>2022-07-18T17:54:14+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/11/Test.jpg" alt="" />
+                    Installation from Github These instructions will explain how to get GodotXUnit integrated to your project and working with Rider. [XunitTestCaseDiscoverer(&quot;GodotXUnitApi.Internal.GodotFactDiscoverer&quot;, &quot;GodotXUnitApi&quot;)] And replace the GodotXUnitApi with your project’s assembly name,&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://pilvimaa.fi/media/posts/11/Test.jpg" alt="" />
+                <h2 id="installation-from-github">Installation from Github</h2>
+<p>These instructions will explain how to get GodotXUnit integrated to your project and working with Rider.</p>
+<ol>
+<li>Clone the <code>Master</code> branch of the GodotXUnit project in some temporary folder:
+<code>git clone https://github.com/fledware/GodotXUnit.git</code></li>
+<li>From the freshly cloned project, copy the contents of the <code>addons</code> folder into your project’s <code>addons</code> folder - or if that doesn’t exist yet then simply copy the whole <code>addons</code> folder itself to your Godot project’s root. After doing this you  can delete the rest of the files from the cloned project, you don’t need them.</li>
+<li>Delete any <code>.csproj</code> files you can find under <code>addons/GodotXUnit</code> and its sub-folders. At the time of writing this there should be only one <code>.csproj</code> located at <code>addons/GodotXUnit/GodotXUnitApi/GodotXUnitApi.csproj</code>. Delete it. With this installation method the GodotXUnit will become a part of your own project, so there’s no need to have any other <code>.csproj</code> files lying around.</li>
+<li>In the file <code>addons/GodotXUnit/GodotXUnitApi/GodotFactAttribute.cs</code> find a line that says:</li>
+</ol>
+<pre><code class="language-xml">[XunitTestCaseDiscoverer(&quot;GodotXUnitApi.Internal.GodotFactDiscoverer&quot;, &quot;GodotXUnitApi&quot;)]
+</code></pre>
+<p>And replace the <code>GodotXUnitApi</code> with your project’s assembly name, eg.</p>
+<pre><code class="language-xml">[XunitTestCaseDiscoverer(&quot;GodotXUnitApi.Internal.GodotFactDiscoverer&quot;, &quot;MyAwesomeGodotProject&quot;)]
+</code></pre>
+<p>You have to do this because GodotXUnit will scan your project for test cases and it needs to know the assembly to scan. If you <em><strong>don’t</strong></em> do this GodotXUnit will not find your test cases. </p>
+<ol start="6">
+<li>Add these dependencies to your project’s <code>.csproj</code><pre><code class="language-xml">&lt;ItemGroup&gt;
+ &lt;PackageReference Include=&quot;Newtonsoft.Json&quot; Version=&quot;12.0.3&quot; /&gt;
+ &lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.4.1&quot; /&gt;
+ &lt;PackageReference Include=&quot;xunit.runner.utility&quot; Version=&quot;2.4.1&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+</li>
+</ol>
+<p>Now you should be good to go.</p>
+<h2 id="running-the-tests">Running the tests</h2>
+<p>Annotate your tests with <code>[GodotFact]</code> and they should work directly from Rider.</p>
+<p>If you want to write anything that uses the <strong>Godot Engine</strong>, make sure you make a <strong>base class</strong> for these tests and annotate it with a <strong>Collection attribute</strong>, as shown in the example below.</p>
+<pre><code class="language-cs">// super important - this prevents the tests from running in parallel.
+// if they would run in parallel, they would interfere with each other.
+[Collection(&quot;Integration Tests&quot;)] public abstract class BaseTest : IAsyncLifetime
+</code></pre>
+<p>And when <strong>waiting</strong> for things:</p>
+<pre><code class="language-cs">
+// Then within 5 seconds the player should be dead because
+// the monster will attack the player.
+    await GetTree().WithinSeconds(5, () =&gt; {
+        // This assertion will be repeatedly run every frame
+        // until it either succeeds or the 5 seconds have elapsed.
+        Assert.True(arena.Player.IsDead);
+    });
+</code></pre>
+<p>Generally you can follow any instructions you can find for <strong>XUnit</strong>. The only real difference aside from the cases above is that you use <code>[GodotFact]</code> instead of <code>[Fact]</code>.</p>
+<h2 id="more-information">More information</h2>
+<p>Check out the GodotXUnit Github page: 
+<a href="https://github.com/fledware/GodotXUnit">https://github.com/fledware/GodotXUnit</a></p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Axis Aligned Bounding Boxes and Intersections</title>
         <author>
@@ -816,39 +889,6 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
 <p>Logic! There's nothing better.</p>
 <p>If you don't understand binary addition straight away by simply reading this article, don't fret. There's hope for you yet. It's like driving a bicycle. You don't learn how to drive by simply reading a manual. Once you understand the basic principles of binary bitwise operations you have to play with them, and experiment with them.</p>
 <p>That's how you learn.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Array flattening</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/array-flattening/"/>
-        <id>https://pilvimaa.fi/array-flattening/</id>
-            <category term="Csharp"/>
-            <category term="C#"/>
-            <category term="Arrays"/>
-
-        <updated>2020-10-29T02:57:35+02:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
-                    One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
-                <figure class="post__image"><img loading="lazy"  src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" sizes="100vw" srcset="https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-xs.png 300w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-sm.png 480w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-md.png 768w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-lg.png 1024w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-xl.png 1360w ,https://pilvimaa.fi/media/posts/1/responsive/Array_flattening-2xl.png 1600w"  width="1281" height="720"></figure>
-<p><strong>One dimensional arrays</strong>, or <strong>flat arrays</strong> as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned to contiguous memory blocks.</p>
-<p>The above picture shows how <strong>indexing</strong> works when we turn our multi-dimensional array into a flat array.</p>
-<pre><code class="language-cs">int index = rowWidth * row + col;</code></pre>
-<p>The above code pretty much explains it all. But in case you're like me, and you sometimes have difficulties understanding things until you've studied them thoroughly, I will walk you through the gist of it.</p>
-<p>In the example above we have a multi-dimensional <code>3 x 4</code> array. 3 rows (0-2) and 4 columns (0-3) and, and we want to find the index for <code>1,2</code>in other words, we want the index for <strong>row position 1</strong>, <strong>column position 2</strong>, and we want to find that index position in our <em>one dimensional flat array</em> which is essentially emulating a multi-dimensional 3 x 4 array.</p>
-<p>We take the <strong>width</strong> of our <strong>rows</strong>, ie. their actual size (<strong>4</strong> columns wide) and we <strong>multiply</strong> it with the <em>index</em> of the <strong>row</strong> that we want to access (<strong>1</strong>). In other words <code>rowWidth * row</code> ie. <code>4 * 1</code> in our example. This gives us the combined length of all the <em>previous</em> rows of data (because the index starts from 0, we essentially always skip the current one), ie. <strong>row 0</strong> is the previous row in this case. <code>4 * 1 = 4</code>We have 4 entries in all the previous rows.</p>
-<p>Next we want to add our index location on the <strong>column</strong> to this number. This gives us the final index value. In our example our location on the column is 2, therefore we add <code>4 + 2 = 6</code>, giving us the final index of <strong>6</strong>.</p>
-<p>The explanation is probably harder to follow than the code and picture, but there you have it.</p>
             ]]>
         </content>
     </entry>
