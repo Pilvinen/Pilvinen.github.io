@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-24T14:32:10+03:00</updated>
+    <updated>2022-07-24T14:43:32+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Unit Testing"/>
             <category term="C#"/>
 
-        <updated>2022-07-24T14:32:10+03:00</updated>
+        <updated>2022-07-24T14:43:32+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" alt="" />
@@ -52,7 +52,7 @@
     
 }
 </code></pre>
-<p>You can’t test the above methods, <code>Kill()</code> and <code>Move()</code>, because they are <code>private</code> and not exposed to the outside world. But you also want to keep it that way, it’s an important requirement.</p>
+<p>You can’t test the above methods, <code>Attack()</code> and <code>Move()</code>, because they are <code>private</code> and not exposed to the outside world. But you also want to keep it that way, it’s an important requirement.</p>
 <p>Making the methods <code>public</code> would be bad. Using reflection to test the methods would work, but it’s not fun nor a good approach in general.</p>
 <p>Let’s use <strong>method extraction</strong> instead and turn those methods into <strong>abstractions</strong>.</p>
 <pre><code class="language-cs">public class RefactoredPlayer {
@@ -67,14 +67,14 @@
 </code></pre>
 <p>What we’ve done here is we’ve refactored the <code>Player</code> class and extracted the <code>Attack()</code> and <code>Move()</code> methods into their own classes, <code>Attacker</code> and <code>Mover</code>. Now the <code>RefactoredPlayer</code> describes only the <em>flow of the code</em> and not it’s <em>implementation</em>, thus allowing us to keep the composed <code>attacker</code> and <code>mover</code> objects in the <code>RefactoredPlayer</code> class <code>private</code> while exposing the abstractions as <code>public</code> (see below).</p>
 <pre><code class="language-cs">public abstract class Attacker {
-    public override void Attack();
+    public abstract void Attack();
 }
 
 public abstract class Mover {
-    public override void Move();
+    public abstract void Move();
 }
 </code></pre>
-<p><strong>IMPORTANT:</strong> We don’t have to test the <code>RefactoredPlayer</code> class anymore, we can now test the <em><strong>actual implementations</strong></em> of <code>Attacker</code> and <code>Mover</code> or the <em><strong>abstract classes themselves</strong></em>. Which one you want to do depends mostly on whether your actual implementations have extra features beyond the promises made in the <code>abstract</code> classes or not.</p>
+<p><strong>IMPORTANT:</strong> We don’t have to test the <code>RefactoredPlayer</code> class anymore, we can now test the <em><strong>actual implementations</strong></em> of <code>Attacker</code> and <code>Mover</code> or the <em><strong>abstract classes</strong></em> themselves (for that you need to make an anonymous class implementation of your abstract class as you can’t instantiate an abstract class). Which one you want to do depends mostly on whether your actual implementations have extra features beyond the promises made in the <code>abstract</code> classes or not.</p>
 <p>As a bonus you can now have several implementations of <code>Attacker</code> and <code>Mover</code> and depend upon <strong>abstractions</strong> instead of concrete implementations giving your <code>RefactoredPlayer</code> class less reasons to change and your code becomes more flexible.</p>
 <pre><code class="language-cs">public class SwordAttack : Attacker {
     public override void Attack() {
