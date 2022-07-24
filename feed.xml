@@ -3,12 +3,90 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-18T17:54:14+03:00</updated>
+    <updated>2022-07-24T14:32:10+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Unit testing private methods through extraction</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/unit-testing-private-methods-through-extraction/"/>
+        <id>https://pilvimaa.fi/unit-testing-private-methods-through-extraction/</id>
+            <category term="Unit Testing"/>
+            <category term="C#"/>
+
+        <updated>2022-07-24T14:32:10+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" alt="" />
+                    When you use unit tests you have to intentionally write code that is testable. What about private methods? How do you test those? And no, you should NOT change the&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" alt="" />
+                <p>When you use unit tests you have to <em><strong>intentionally</strong></em> write code that is testable.</p>
+<p>What about <code>private</code> methods? How do you test those?</p>
+<p>And no, you <em><strong>should NOT</strong></em> change the accessibility of your methods (eg. <code>internal</code>, <code>public</code>, etc.) to make your code testable as you would lose your code’s correctness - there’s a reason why those <code>private</code> methods have been made <code>private</code>!</p>
+<p>There are several ways to approach this problem. For example you could use the <code>PrivateObject</code> class. Or you could use <strong>reflection</strong>. </p>
+<p>In this article, however, we are going to take a look at using <strong>extraction</strong> and good coding practices to make our <code>private</code> methods more accessible while also retaining our code’s correctness.</p>
+<p>Let’s assume a situation where</p>
+<pre><code class="language-cs">public class Player {
+    
+    private void Attack() {
+        System.Console.WriteLine(&quot;Enemy takes damage!&quot;);
+    }
+    
+    private void Move() {
+        System.Console.WriteLine(&quot;You moved!&quot;);
+    }
+    
+    public override void _PhysicsProcess(float delta) {
+        Attack();
+        Move();
+    }
+    
+}
+</code></pre>
+<p>You can’t test the above methods, <code>Kill()</code> and <code>Move()</code>, because they are <code>private</code> and not exposed to the outside world. But you also want to keep it that way, it’s an important requirement.</p>
+<p>Making the methods <code>public</code> would be bad. Using reflection to test the methods would work, but it’s not fun nor a good approach in general.</p>
+<p>Let’s use <strong>method extraction</strong> instead and turn those methods into <strong>abstractions</strong>.</p>
+<pre><code class="language-cs">public class RefactoredPlayer {
+    private Attacker attacker;
+    private Mover mover;
+
+    public override void _PhysicsProcess(float delta) {
+        attacker.Attack();
+        mover.Move();
+    }
+}
+</code></pre>
+<p>What we’ve done here is we’ve refactored the <code>Player</code> class and extracted the <code>Attack()</code> and <code>Move()</code> methods into their own classes, <code>Attacker</code> and <code>Mover</code>. Now the <code>RefactoredPlayer</code> describes only the <em>flow of the code</em> and not it’s <em>implementation</em>, thus allowing us to keep the composed <code>attacker</code> and <code>mover</code> objects in the <code>RefactoredPlayer</code> class <code>private</code> while exposing the abstractions as <code>public</code> (see below).</p>
+<pre><code class="language-cs">public abstract class Attacker {
+    public override void Attack();
+}
+
+public abstract class Mover {
+    public override void Move();
+}
+</code></pre>
+<p><strong>IMPORTANT:</strong> We don’t have to test the <code>RefactoredPlayer</code> class anymore, we can now test the <em><strong>actual implementations</strong></em> of <code>Attacker</code> and <code>Mover</code> or the <em><strong>abstract classes themselves</strong></em>. Which one you want to do depends mostly on whether your actual implementations have extra features beyond the promises made in the <code>abstract</code> classes or not.</p>
+<p>As a bonus you can now have several implementations of <code>Attacker</code> and <code>Mover</code> and depend upon <strong>abstractions</strong> instead of concrete implementations giving your <code>RefactoredPlayer</code> class less reasons to change and your code becomes more flexible.</p>
+<pre><code class="language-cs">public class SwordAttack : Attacker {
+    public override void Attack() {
+        System.Console.WriteLine(&quot;You skewer the enemy with your sword!&quot;);
+    }
+}
+</code></pre>
+<p>Here we have an example of an actual implementation of one of our abstract classes. We would still want to depend upon the abstraction <code>Attacker</code> rather than the implementation <code>SwordAttack</code> - to make our code more fluid and easier to change. This way we don’t have to change our <code>RefactoredPlayer</code> class if our implementation changes or gets swapped out to something else that is also implementing the <code>abstract</code> class <code>Attacker</code>.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Getting GodotXUnit up and Running with Rider</title>
         <author>
@@ -784,111 +862,6 @@ internal class B : A {
 <p>Why does it work you ask?</p>
 <p>Since there are <em><strong>two</strong></em> π radians in a full circle, dividing two by how many degrees we want we get a multiplier for the conversion and everything stays nice and uniform.</p>
 <p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using "π radians =  180°" as the starting point.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Binary addition</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/binary-addition/"/>
-        <id>https://pilvimaa.fi/binary-addition/</id>
-            <category term="Csharp"/>
-            <category term="C#"/>
-            <category term="Bitwise"/>
-            <category term="Binary"/>
-
-        <updated>2020-10-29T14:08:34+02:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                    Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we can. And also because it's&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
-                <p>Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we  can. And also because it's fun and will help us understand how bitwise operations work and can be used together.</p>
-<pre><code class="language-cs">
-public byte AddBytes(byte a, byte b) {
-    while (b != 0) {
-        var carryBits = (byte) (a &amp; b);
-        a = (byte) (a ^ b);
-        b = (byte) (carryBits &lt;&lt; 1);
-    }
-    return a;
-}
-</code></pre>
-<p>Let's take an overview of what just happened.</p>
-<p>Essentially we <strong>add</strong> two bytes together. You get that much from the name of the method.</p>
-<p>The signature of the <strong>AddBytes</strong> method also tells us that it takes in two <strong>bytes</strong>, <strong>a</strong> and <strong>b</strong> as parameters, and returns a <strong>byte</strong> which contains the result of the addition.</p>
-<p>Inside the method we loop until <strong>b</strong> is zero. Inside the while loop we <strong>AND</strong> (<strong>&amp;</strong>), then we <strong>XOR</strong> (<strong>^</strong>), and finally we <strong>left shift</strong> (<strong>&lt;&lt;</strong>) by one.</p>
-<p>And, apparently, as a result we get two binary numbers added together nicely, just like in our everyday base-10, where we could calculate something like <code>2 + 2 = 4</code> </p>
-<p>So why does the above piece of code work and do what it does? Let's break it down and make it simple.</p>
-<p>The first operation inside the while loop is storing temporarily in <strong>carryBits</strong> variable the result of the bitwise <strong>AND</strong> (<strong>&amp;</strong>) operation between a and b, ie:</p>
-<pre><code class="language-cs">var carryBits = (byte) (a &amp; b);</code></pre>
-<p>There's a little bit of casting going on here through and through because C# doesn't support performing bitwise operations directly on the actual <code>byte</code> type, it converts them for the bitwise operations. You could also perform these operations on the <code>int</code> type, for example, in which case you would have:</p>
-<pre><code class="language-cs">var carryBits = a &amp; b;</code></pre>
-<p>Don't get distracted by the casting.</p>
-<p>So, we're carrying bits. But what is carrying? Let's take a quick refresher on carrying in math. Carrying is just like in normal everyday addition:</p>
-<pre><code class="language-cs">
-   122
-+  921
-= 1043</code></pre>
-<p>Where you add the numbers together which are on top of each other and you combine them at the bottom for the final result. You have the ones, you have the tens, you have the hundreds, and you have the thousands. In the same way in binary you have the ones, you have the twos, you have the fours, you have the eights, and so on. It's just base-2 (0, and 1) instead of base-10 (0, 1, 2, 3, 4, 5, 6, 7, 8, and 9) before the numbers flip over to the next scale.</p>
-<p>In the above example carrying happens when you add the one hundred and nine hundred together, you carry the one to the thousands and in hundreds you then have a zero because <code>100 + 900</code> doesn't leave a remainder in the hundreds. If you had <code>100 + 1100</code> instead you  would add the thousands: <code>0 * 1000 + 1 * 1000 = 1000</code>, and then you would add the hundreds: <code>1 * 100 + 1 * 100 = 200</code>. And finally you would add all the different values together (no more carrying to process) and you'd end up with a total of 1200.</p>
-<p>So carrying happens when you add two numbers together (for example <code>9 + 9</code>) and they don't fit in the scale (in this case the ones) and you have to move, ie. you'd have to carry, the overflow to the tens. You'd end up with 18.</p>
-<p>In binary it works in exactly the same way. When you get overflow from addition you move it up, you carry it over.</p>
-<p>The only differences are that in binary you, usually, go from right to left, and 0 means that the value isn't set, and 1 means the value is set. Therefore:</p>
-<pre><code class="language-cs">1101</code></pre>
-<p>Simply means, from right to left:t 1 * 1 + 0 * 2 + 1 * 4 + 1 * 8. From right to left -&gt; ones (set), twos (not set), fours (set), eights (set). Giving us the total of 13 in our every day base-10.</p>
-<pre><code class="language-cs">
-var a = (byte) 0b_0101; // (This is a "binary literal" in C#)
-var b = (byte) 0b_0110;
-var carryBits = (byte) (a &amp; b);</code></pre>
-<p>So, when we do a bitwise AND operation, like <code>0101 &amp; 0110</code>(as shown in the above example) simply imagine in your head that you place the numbers on top of each other like in regular base-10 calculus:</p>
-<pre><code class="language-cs">
-  0101
-&amp; 0110
-= 0100</code></pre>
-<p>The bitwise AND operation returns 1 only when the two overlapping binary numbers are both 1. For all other binary values it returns 0.</p>
-<p>So why are we doing this and storing the result in <code>carryBits</code>? Because it's exactly the same as when you add <code>100 + 900</code>, you know you need to carry the hundreds into thousands, except now you need to carry the overflowing bits. Now we know that there are overlapping values, and when we add them together we will need to carry this bit position to the next one.</p>
-<p>It should be starting to make sense now. Let's move on.</p>
-<pre><code class="language-cs">a = (byte) (a ^ b);</code></pre>
-<p>Here we are storing the result of an <strong>XOR</strong> (<strong>^</strong>) operation between a and b in the <strong>a</strong>. We are basically <em>simulating addition</em> with XOR.</p>
-<p>What XOR does is:</p>
-<pre><code class="language-cs">
-  0101
-^ 0110
-= 0011</code></pre>
-<p> It returns 1 only when the two bits that are being compared are different from each other.</p>
-<p>We have already safely stored the overflowing bits in the temporary <code>carryBits</code>and now we have copied the rest of the bits which are <em>not</em> overflowing (no need to carry anything) to <strong>a</strong>.</p>
-<p>We can now perform the final bitwise operation which is the <strong>left bitshift</strong>. What left bitshift does is that it simply moves all the bits left by whatever number you want to move them. For example:</p>
-<pre><code class="language-cs">
-  var a = (byte) 0b_0001; // a is 0001
-  a = a &lt;&lt; 1;             // a is 0010
-  a = a &lt;&lt; 1;             // a is 0100
-  a = a &lt;&lt; 1;             // a is 1000
-  a = a &lt;&lt; 1;             // a is 0000</code></pre>
-<p>In the final left bitshift operation we lose our data. By default we get behavior which simply drops overflowing bits - you lose them, they are gone.</p>
-<p>And if you move it by two:</p>
-<pre><code class="language-cs">
-var a = (byte) 0b_0001; // a is 0001
-a = a &lt;&lt; 2;             // a is 0100</code></pre>
-<p> The bits are simply shifted left by two positions.</p>
-<p>By now you might be starting to realize "Wait... but what if I have an overflow, carry bit, at position like:</p>
-<pre><code class="language-cs">1000</code></pre>
-<p>Where there is nowhere to go?" </p>
-<p>That's right. In that kind of situations you would get an incorrect answer from bitwise binary addition. For simplicity's sake this article doesn't show you how to handle situations like that where you actually run out of space from your value type. It can be handled, but the code gets much more complex and is therefore not a very good place to show the basic principles of binary bitwise addition and is therefore out of the scope of this article.</p>
-<pre><code class="language-cs">
-b = (byte) (carryBits &lt;&lt; 1);</code></pre>
-<p>Now that you understand what a left bitshift does, it's not hard to see what's going on here. We're simply <em>moving the carry bits</em>, the overflowing bits, one step further in the scale of numbers. One becomes two, two becomes four, and so on.</p>
-<p>We assign the result into <strong>b</strong>, all the numbers in b just moved one step left. The while loop is now ready for another round until there are no more <code>1</code> bits left in <strong>b</strong>.</p>
-<p>When b is zero we're ready to exit the while-loop and return <strong>a</strong> where we have shifted, combined, and shuffled all of our bits iteration by iteration. We're moving and fitting everything together in a nice and orderly line of bits.</p>
-<p>Logic! There's nothing better.</p>
-<p>If you don't understand binary addition straight away by simply reading this article, don't fret. There's hope for you yet. It's like driving a bicycle. You don't learn how to drive by simply reading a manual. Once you understand the basic principles of binary bitwise operations you have to play with them, and experiment with them.</p>
-<p>That's how you learn.</p>
             ]]>
         </content>
     </entry>
