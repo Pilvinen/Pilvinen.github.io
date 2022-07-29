@@ -3,12 +3,76 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-24T14:43:32+03:00</updated>
+    <updated>2022-07-29T16:15:52+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Implicit and explicit conversion operators</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/implicit-and-explicit-conversion-operators/"/>
+        <id>https://pilvimaa.fi/implicit-and-explicit-conversion-operators/</id>
+            <category term="Implicit"/>
+            <category term="Explicit"/>
+            <category term="Conversion"/>
+            <category term="C#"/>
+
+        <updated>2022-07-29T16:15:52+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
+                    Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another. public void SetPositionFromVector3(Vector3&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
+                <p>Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another.</p>
+<pre><code class="language-cs">    public void SetPositionFromVector3(Vector3 vector) {
+        // Do stuff.
+    }
+
+    MyType myType = new MyType(0,0,0);
+    SetPositionFromVector3(myType); // Argument type &#39;MyType&#39; is not assignable to parameter type &#39;Vector3&#39;
+</code></pre>
+<p>If you’ve ever experienced one of those situations where you have your awesome custom type <code>MyType</code> which is essentially a <code>Vector3</code>, or what ever, with some extra spices that you really need … but now you can’t pass it to anything that really wants a <code>Vector3</code>. And you end up doing all kinds of weird things like exposing a special property or using inheritance and polymorphism to get it working… </p>
+<p>Do not fret! We’ll have none of those shenanigans. <code>implicit</code> and <code>explicit</code> conversion operators to the rescue!</p>
+<p>Let’s look at a simplification of how <code>implicit</code> operator is used.</p>
+<pre><code class="language-cs">class MyType {
+    private Vector3 _myValue;
+    public float x =&gt; _myValue.x;
+    public float y =&gt; _myValue.x;
+    public float z =&gt; _myValue.x;
+    public static implicit operator Vector3(MyType myType) =&gt; _myvalue;
+    //  ^    ^       ^        ^       ^        ^-- Input type    ^-- Return value
+    //  |    |       |        |       `-- Output type
+    //  `----`-------`--------`-- Magical keywords
+}
+</code></pre>
+<p>All the operators have to be declared <code>public</code> and they also have to be <code>static</code>.  What <code>implicit</code> means is basically “Don’t ask stupid questions, just do the conversion for me - <em>implicitly</em>.”” Even if you don’t cast to the type <em>explicitly</em> it is <em>implied</em> that this is what you want. Then we have to use the <code>operator</code> keyword which allows us to overload existing C# operators. Next we have <code>Vector3</code> as the type which we overload, ie. essentially our “return type”. In the parameters we the type we are converting from. In our function we define how the value gets returned. In the example we just return the value from the private field <code>_myValue</code>.</p>
+<p>The <code>explicit</code> works pretty much the same as <code>implicit</code> except you have to do the casting <em>explicitly</em> yourself when you use it, eg.</p>
+<pre><code class="language-cs">    MyType myType = new MyType(0,0,0);
+    SetPositionFromVector3((Vector3) myType); // explicit operator was used, explicit casting is required.
+</code></pre>
+<p>Instead of implicitly as shown below.</p>
+<pre><code class="language-cs">    MyType myType = new MyType(0,0,0);
+    SetPositionFromVector3(myType); // implicit operator was used, casting is done automatically.
+</code></pre>
+<p>To do the conversion the other way around, from <code>Vector3</code> to <code>MyType</code> in our example, we can simply switch the places of the types.</p>
+<pre><code class="language-csharp">class MyType {
+    private Vector3 _myValue;
+    public static implicit operator Vector3(MyType myType) =&gt; _myvalue;
+    public static implicit operator MyType(Vector3 myType) =&gt; new Vector3(myType.x, myType.z, myType.z);
+}
+</code></pre>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Unit testing private methods through extraction</title>
         <author>
@@ -817,51 +881,6 @@ internal class B : A {
 <p><strong>Problems with OOP:</strong><br><br><strong>NOT the problem:</strong><br>- Classes<br>- Performance<br>- Abstraction<br>- Aesthetics<br><br><strong>Code Aesthetics DO matter:</strong><br>- Elegance<br>- Simplicity<br>- Flexibility<br>- Readability<br>- Maintenance<br>- Structure<br><br><strong>Competing paradigms:</strong></p>
 <p><strong>Procedural and imperative (the default)</strong><br>- Procedural: "No explicit association with data types and functions and behaviors."<br>- Imperative: "Mutate state whenever you feel like it. No special handling for shared state. Cope with the problems as they arise."<br><br><strong>Procedural and functional (minimize state)</strong><br>- Get rid of state as much as possible.<br>- All or most of the functions should be pure, they should not deal with state.<br><br><strong>Object oriented and imperative (segregate state)</strong><br>- Segregate state. Divide and conquer the problem. Separate everything into objects.<br>- Segregation is a viable strategy up to a point of complexity.<br><br><strong>Claims:</strong><br>- Procedural code is better (even when not functional)<br>- Inheritance is irrelevant.<br>- Polymorphism is not exclusively OOP.<br>- Encapsulation does not work at fine-grained levels of code. This is the biggest problem with OOP.<br>- Fractioning code artificially to follow OOP rules leads to unnecessary complexity which is hard to follow.<br><br><strong>What is an object?</strong><br><br>An object is a bundle of encapsulated state. We don't interact with the state of that object directly. All interactions with that state from the outside world come in through from messages. The object has a defined set of messages called it's interface. We have private information hidden behind the public interface. When an object receives a message it may in turn send messages to other object. We may conceive of an object-oriented program being as a graph of object all communicating with each other by sending messages.<br><br>For object A to send a message to object B, A must hold a private reference to B.<br>Messages may indirectly read and modify state.<br>The moment objects are shared encapsulation flies out of the window.<br><br><strong>Solution, procedural programming:</strong><br><br>- Prefer <strong>functions</strong> over methods. Write <strong>methods</strong> only when the exclusive association with the data type is not in doubt, e.g. ADT's (abstract data types like queues, lists, etc.)<br><br>- When in doubt -&gt; parameterize. Do not encapsulate the state of the program at fine-grained level. However, shared state is a problem. It cannot be fully solved without pure functional programming. This means that rather then passing data through global variables you should instead make that data explicit parameter of the function so it has to be explicitly passed in. Any time you get the temptation to pass in data through a global because it's convenient you should seriously reconsider.<br><br>- When you DO end up with globals - Bundle the globals into structs/records/classes, ie. bundle them logically into data types. Even if this effectively means you have a data type with one instance in your whole program this little trick can often make your code seem just a little bit more organized. In a sense you are just using data types in this way to create tiny little sub namespaces. But if you do a good job logically grouping your globals this way as a side benefit this supports parameterization - you can more conveniently pass this global state to functions.<br><br>- Favor pure functions. If you see an opportunity to make a function pure it's a good policy to take that opportunity. Pure functions are easier to understand and to make correct. This is easier when efficiency is not a priority.<br><br>- You should try to encapsulate (loosely) at the level of namespaces/packages/modules. Think of each package as having it's own private state and public interface.<br><br>- Don't be afraid of long functions! Most programs have key sections. The problem of extracting everything into separate functions breaks up the natural sequence of code and is spread out of order throughout the code base. Prefer commenting each section of the function when needed over extracting the sections. Keep in mind general code readability for long functions:  Prefer extracting to nested functions. Don't stray from left margin too far or for too long. Watch out for too much complexity and split up and extract to other functions as needed. Constrain scope of local variables. When in doubt enclose variables into curly braces to limit their scope - even better, enclose them into their own anonymous functions.</p>
 <p>Good luck!</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Radians to degrees made simple</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/radians-to-degrees-made-simple/"/>
-        <id>https://pilvimaa.fi/radians-to-degrees-made-simple/</id>
-            <category term="Radians"/>
-            <category term="Math"/>
-
-        <updated>2021-01-07T21:06:38+02:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
-                    I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
-                <p>I was thinking about radians today and  how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at radians in a certain way, there's an emerging pattern which makes radians intuitive, fun, and easy.</p>
-<p>You know how we're taught about radians that:</p>
-<pre>2π radians = 360°<br>π radians = 180°</pre>
-<p>And so on. And you can do your degree conversions like so:</p>
-<pre> π radians<br>-----------  = 1°<br>    180</pre>
-<p>And it's all right and well, but... radians can sometimes be kind of hard to keep in your head when you do more complex conversions.</p>
-<p>And if you're like me, it's easy to lose track of what you're doing and what the numbers actually represent. You end up going back and forth and becoming confused.</p>
-<p>Don't worry. There's an easier way to visualize radian conversions.</p>
-<p>Take a look at this:</p>
-<pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>
-<p>When we always divide two by parts-of-a-circle we get a really nice uniform and intuitive progression of numbers.</p>
-<p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>
-<p>2/2 is of course equal to 1, ie. 180°.</p>
-<p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>
-<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as "parts of the circle". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>
-<pre>1 = full circle, 360°.<br>2 = divided into two parts, 180°.<br>3 = divided into three parts, 120°.<br>4 = divided into four parts, 90°.<br>...</pre>
-<figure class="post__image"><img loading="lazy"  src="https://pilvimaa.fi/media/posts/3/Radians-2.png" sizes="100vw" srcset="https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xs.png 300w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-sm.png 480w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-md.png 768w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-2xl.png 1600w"  alt="Radians and other units" width="1920" height="1080"></figure>
-<p>And so on. So, how many radians are in one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>
-<pre>2 / 360 * π radians = 1°</pre>
-<p>Why does it work you ask?</p>
-<p>Since there are <em><strong>two</strong></em> π radians in a full circle, dividing two by how many degrees we want we get a multiplier for the conversion and everything stays nice and uniform.</p>
-<p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using "π radians =  180°" as the starting point.</p>
             ]]>
         </content>
     </entry>

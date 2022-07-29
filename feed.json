@@ -11,6 +11,25 @@
     },
     "items": [
         {
+            "id": "https://pilvimaa.fi/implicit-and-explicit-conversion-operators/",
+            "url": "https://pilvimaa.fi/implicit-and-explicit-conversion-operators/",
+            "title": "Implicit and explicit conversion operators",
+            "summary": "Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another. public void SetPositionFromVector3(Vector3&hellip;",
+            "content_html": "<p>Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another.</p>\n<pre><code class=\"language-cs\">    public void SetPositionFromVector3(Vector3 vector) {\n        // Do stuff.\n    }\n\n    MyType myType = new MyType(0,0,0);\n    SetPositionFromVector3(myType); // Argument type &#39;MyType&#39; is not assignable to parameter type &#39;Vector3&#39;\n</code></pre>\n<p>If you’ve ever experienced one of those situations where you have your awesome custom type <code>MyType</code> which is essentially a <code>Vector3</code>, or what ever, with some extra spices that you really need … but now you can’t pass it to anything that really wants a <code>Vector3</code>. And you end up doing all kinds of weird things like exposing a special property or using inheritance and polymorphism to get it working… </p>\n<p>Do not fret! We’ll have none of those shenanigans. <code>implicit</code> and <code>explicit</code> conversion operators to the rescue!</p>\n<p>Let’s look at a simplification of how <code>implicit</code> operator is used.</p>\n<pre><code class=\"language-cs\">class MyType {\n    private Vector3 _myValue;\n    public float x =&gt; _myValue.x;\n    public float y =&gt; _myValue.x;\n    public float z =&gt; _myValue.x;\n    public static implicit operator Vector3(MyType myType) =&gt; _myvalue;\n    //  ^    ^       ^        ^       ^        ^-- Input type    ^-- Return value\n    //  |    |       |        |       `-- Output type\n    //  `----`-------`--------`-- Magical keywords\n}\n</code></pre>\n<p>All the operators have to be declared <code>public</code> and they also have to be <code>static</code>.  What <code>implicit</code> means is basically “Don’t ask stupid questions, just do the conversion for me - <em>implicitly</em>.”” Even if you don’t cast to the type <em>explicitly</em> it is <em>implied</em> that this is what you want. Then we have to use the <code>operator</code> keyword which allows us to overload existing C# operators. Next we have <code>Vector3</code> as the type which we overload, ie. essentially our “return type”. In the parameters we the type we are converting from. In our function we define how the value gets returned. In the example we just return the value from the private field <code>_myValue</code>.</p>\n<p>The <code>explicit</code> works pretty much the same as <code>implicit</code> except you have to do the casting <em>explicitly</em> yourself when you use it, eg.</p>\n<pre><code class=\"language-cs\">    MyType myType = new MyType(0,0,0);\n    SetPositionFromVector3((Vector3) myType); // explicit operator was used, explicit casting is required.\n</code></pre>\n<p>Instead of implicitly as shown below.</p>\n<pre><code class=\"language-cs\">    MyType myType = new MyType(0,0,0);\n    SetPositionFromVector3(myType); // implicit operator was used, casting is done automatically.\n</code></pre>\n<p>To do the conversion the other way around, from <code>Vector3</code> to <code>MyType</code> in our example, we can simply switch the places of the types.</p>\n<pre><code class=\"language-csharp\">class MyType {\n    private Vector3 _myValue;\n    public static implicit operator Vector3(MyType myType) =&gt; _myvalue;\n    public static implicit operator MyType(Vector3 myType) =&gt; new Vector3(myType.x, myType.z, myType.z);\n}\n</code></pre>\n",
+            "image": "https://pilvimaa.fi/media/posts/13/Spaghetti.jpg",
+            "author": {
+                "name": "Pilvinen"
+            },
+            "tags": [
+                   "Implicit",
+                   "Explicit",
+                   "Conversion",
+                   "C#"
+            ],
+            "date_published": "2022-07-29T16:15:52+03:00",
+            "date_modified": "2022-07-29T16:15:52+03:00"
+        },
+        {
             "id": "https://pilvimaa.fi/unit-testing-private-methods-through-extraction/",
             "url": "https://pilvimaa.fi/unit-testing-private-methods-through-extraction/",
             "title": "Unit testing private methods through extraction",
@@ -170,23 +189,6 @@
             ],
             "date_published": "2021-05-23T15:58:49+03:00",
             "date_modified": "2021-05-23T16:06:34+03:00"
-        },
-        {
-            "id": "https://pilvimaa.fi/radians-to-degrees-made-simple/",
-            "url": "https://pilvimaa.fi/radians-to-degrees-made-simple/",
-            "title": "Radians to degrees made simple",
-            "summary": "I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;",
-            "content_html": "<p>I was thinking about radians today and  how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at radians in a certain way, there's an emerging pattern which makes radians intuitive, fun, and easy.</p>\n<p>You know how we're taught about radians that:</p>\n<pre>2π radians = 360°<br>π radians = 180°</pre>\n<p>And so on. And you can do your degree conversions like so:</p>\n<pre> π radians<br>-----------  = 1°<br>    180</pre>\n<p>And it's all right and well, but... radians can sometimes be kind of hard to keep in your head when you do more complex conversions.</p>\n<p>And if you're like me, it's easy to lose track of what you're doing and what the numbers actually represent. You end up going back and forth and becoming confused.</p>\n<p>Don't worry. There's an easier way to visualize radian conversions.</p>\n<p>Take a look at this:</p>\n<pre>2 / 1 * π radians = 360°<br>2 / 2 * π radians = 180°<br>2 / 3 * π radians = 120°<br>2 / 4 * π radians = 90°<br>2 / 5 * π radians = 72°<br>...</pre>\n<p>When we always divide two by parts-of-a-circle we get a really nice uniform and intuitive progression of numbers.</p>\n<p>2 / 1 is of course equal to 2, so that would be the 2π radians, giving us 360°.</p>\n<p>2/2 is of course equal to 1, ie. 180°.</p>\n<p>The only reason I even put them there is to make the whole thing uniform and easy to visualize.</p>\n<p>Notice how the divisor starts from 1 and goes to 2, 3, 4, 5 ... and so on. You can think of the divisor as \"parts of the circle\". Two times π is a full circle, 360°. When your dividend is always two, like in the above example, the divisor then always directly represent into how many parts the circle has been divided into.</p>\n<pre>1 = full circle, 360°.<br>2 = divided into two parts, 180°.<br>3 = divided into three parts, 120°.<br>4 = divided into four parts, 90°.<br>...</pre>\n<figure class=\"post__image\"><img loading=\"lazy\"  src=\"https://pilvimaa.fi/media/posts/3/Radians-2.png\" sizes=\"100vw\" srcset=\"https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xs.png 300w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-sm.png 480w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-md.png 768w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-lg.png 1024w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-xl.png 1360w ,https://pilvimaa.fi/media/posts/3/responsive/Radians-2-2xl.png 1600w\"  alt=\"Radians and other units\" width=\"1920\" height=\"1080\"></figure>\n<p>And so on. So, how many radians are in one degree? Easy. There are 360 degrees in a full rotation, so we just drop in 360:</p>\n<pre>2 / 360 * π radians = 1°</pre>\n<p>Why does it work you ask?</p>\n<p>Since there are <em><strong>two</strong></em> π radians in a full circle, dividing two by how many degrees we want we get a multiplier for the conversion and everything stays nice and uniform.</p>\n<p>In my opinion this approach makes it much easier to visualize radians to degrees conversions than using \"π radians =  180°\" as the starting point.</p>",
-            "image": "https://pilvimaa.fi/media/posts/3/Radians.png",
-            "author": {
-                "name": "Pilvinen"
-            },
-            "tags": [
-                   "Radians",
-                   "Math"
-            ],
-            "date_published": "2021-01-07T20:33:13+02:00",
-            "date_modified": "2021-01-07T21:06:38+02:00"
         }
     ]
 }
