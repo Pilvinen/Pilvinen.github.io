@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-29T16:15:52+03:00</updated>
+    <updated>2022-07-29T16:35:16+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,17 +21,17 @@
             <category term="Conversion"/>
             <category term="C#"/>
 
-        <updated>2022-07-29T16:15:52+03:00</updated>
+        <updated>2022-07-29T16:35:16+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
-                    Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another. public void SetPositionFromVector3(Vector3&hellip;
+                    Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing conversions from one type to another as explained below. public void SetPositionFromVector3(Vector3&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
-                <p>Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another.</p>
+                <p>Implicit and explicit conversion operators allow you to ingegrate your <strong>custom types</strong> seamlessly with other types by doing conversions from one type to another as explained below.</p>
 <pre><code class="language-cs">    public void SetPositionFromVector3(Vector3 vector) {
         // Do stuff.
     }
@@ -53,19 +53,22 @@
     //  `----`-------`--------`-- Magical keywords
 }
 </code></pre>
-<p>All the operators have to be declared <code>public</code> and they also have to be <code>static</code>.  What <code>implicit</code> means is basically “Don’t ask stupid questions, just do the conversion for me - <em>implicitly</em>.”” Even if you don’t cast to the type <em>explicitly</em> it is <em>implied</em> that this is what you want. Then we have to use the <code>operator</code> keyword which allows us to overload existing C# operators. Next we have <code>Vector3</code> as the type which we overload, ie. essentially our “return type”. In the parameters we the type we are converting from. In our function we define how the value gets returned. In the example we just return the value from the private field <code>_myValue</code>.</p>
-<p>The <code>explicit</code> works pretty much the same as <code>implicit</code> except you have to do the casting <em>explicitly</em> yourself when you use it, eg.</p>
+<p>That’s how you get it working. But lets examine this declaration word by word and break it apart.</p>
+<p>All the operators have to be declared <code>public</code> and they also have to be <code>static</code>.  Next we declare the <code>implicit</code> or <code>explicit</code> keyword. What <code>implicit</code> means is basically “Don’t ask stupid questions, just do the conversion for me - <em>implicitly</em>, automatically, ie. it is <em>implied</em>.” (The <code>explicit</code> keyword will be explained further down below). Next up we have to use the <code>operator</code> keyword which allows overloading existing C# operators. Then we have <code>Vector3</code> as the type which we overload, ie. essentially our “return type” if you allow such a simplification. In the parameters we the type we are converting from. In our function we define how the correct value gets returned. In this example we simply return the value from the private field <code>_myValue</code>.</p>
+<p>The <code>explicit</code> keyword works in pretty much the same way as the <code>implicit</code> keyword, except you have to do the casting yourself, <em>explicitly</em>, when you use it, eg.</p>
 <pre><code class="language-cs">    MyType myType = new MyType(0,0,0);
-    SetPositionFromVector3((Vector3) myType); // explicit operator was used, explicit casting is required.
+    SetPositionFromVector3((Vector3) myType); // explicit casting is required with explicit keyword.
 </code></pre>
 <p>Instead of implicitly as shown below.</p>
 <pre><code class="language-cs">    MyType myType = new MyType(0,0,0);
-    SetPositionFromVector3(myType); // implicit operator was used, casting is done automatically.
+    SetPositionFromVector3(myType); // with implicit keyword casting is done automatically.
 </code></pre>
-<p>To do the conversion the other way around, from <code>Vector3</code> to <code>MyType</code> in our example, we can simply switch the places of the types.</p>
+<p>To do the conversion the other way around, ie. in our example from <code>Vector3</code> to <code>MyType</code>, we can simply switch the places of the types and make sure somehow that the correct type and values are returned.</p>
 <pre><code class="language-csharp">class MyType {
     private Vector3 _myValue;
+    // This is what we did before.
     public static implicit operator Vector3(MyType myType) =&gt; _myvalue;
+    // Here we switched things around.
     public static implicit operator MyType(Vector3 myType) =&gt; new Vector3(myType.x, myType.z, myType.z);
 }
 </code></pre>
