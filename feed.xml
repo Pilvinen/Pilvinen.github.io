@@ -3,12 +3,129 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2022-07-30T10:25:33+03:00</updated>
+    <updated>2023-06-14T02:08:31+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Node2D double click detection in Godot</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/node2d-double-click-detection-in-godot/"/>
+        <id>https://pilvimaa.fi/node2d-double-click-detection-in-godot/</id>
+            <category term="InputEvent"/>
+            <category term="Input"/>
+            <category term="Godot"/>
+            <category term="Csharp"/>
+            <category term="C#"/>
+
+        <updated>2023-06-14T02:08:31+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" alt="Two mice using a computer mouse" />
+                    Clicks for Node2D based nodes can easily be detected by using CollisionObject2D‘s input_event signal. To capture the mouse clicks we can add an Area2D node and a CollisionShape2D or CollisionPolygon2D&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" alt="Two mice using a computer mouse" />
+                <p>Clicks for <code>Node2D</code>  based nodes can easily be detected by using <code>CollisionObject2D</code>‘s <code>input_event</code> signal.</p>
+<p>To capture the mouse clicks we can add an <code>Area2D</code> node and a <code>CollisionShape2D</code> or <code>CollisionPolygon2D</code> as its child node. </p>
+<p>Since we are using <code>CollisionObject2D</code>‘s <code>input_event</code> signal directly the <code>Area2D</code>‘s <code>Monitoring</code> and <code>Monitorable</code> won’t be used and we can disable those.</p>
+<p><code>Area2D</code>‘s ‘<code>Collision &gt; Layer</code> needs to be set to some value or the clicks won’t be detected.</p>
+<p>The <code>Area2D</code> node also needs to have <code>Input &gt; Pickable</code> set to <code>True</code>.</p>
+<p>Give the <code>CollisionShape2D</code> a <code>Shape</code>, eg. <code>RectangleShape2D</code>, <code>CircleShape2D</code>, <code>CapsuleShape2D</code>, etc. and set its <code>Size</code> to the dimensions you want. This defines the area’s size and shape that can be clicked with the mouse. </p>
+<p>Finally set the <code>CollisionShape2D</code>‘s <code>Transform &gt; Position</code> to the location where you want it.</p>
+<p>Now we can add a script to the <code>Area2D</code> node and in <code>Area2D</code>‘s <code>Node &gt; Signals</code> connect the <code>input_event</code> to the script.</p>
+<p>See example below.</p>
+<pre><code class="language-cs">public void OnContainerBeingClicked(Node viewport, InputEvent @event, int shapeIdx) {  
+  
+    // Return if not mouse left button double click.  
+    if (@event is not InputEventMouseButton mouseButtonEvent) return;  
+    if (!mouseButtonEvent.Pressed) return;  
+    if (mouseButtonEvent.ButtonIndex != MouseButton.Left) return;  
+    if (!mouseButtonEvent.DoubleClick) return;  
+  
+    ToggleContainer();  
+}
+</code></pre>
+<p>The code is pretty self-explanatory, but let’s break it down.</p>
+<p>In the method signature we need to return <code>void</code>, and accept <code>Node</code>, <code>InputEvent</code>, and <code>int</code> as parameters - even if we don’t use them all. It’s simply required to connect the signal.</p>
+<p>Since <code>event</code> is a reserved keyword we are required to place <code>@</code> in front of it if we want to use that particular name in our parameters, ie. <code>@event</code> instead of <code>event</code>. But we might as well use any other name such as <code>inputEvent</code> if it strikes your fancy - it really doesn’t matter. The parameter names can be what ever you want as long as the types match <code>Node</code>, <code>InputEvent</code> and <code>int</code>. The signal will still work.</p>
+<p>We cannot directly handle <code>InputEventMouseButton</code>, so we need to use <code>InputEvent</code>  instead and cast it to <code>InputEventMouseButton</code>:</p>
+<pre><code class="language-cs">if (@event is not InputEventMouseButton mouseButtonEvent) return;  
+</code></pre>
+<p>Here we check whether <code>@event</code> is or isn’t <code>InputEventMouseButton</code>. If it’s not we simply return and do nothing further with that particular input event - someone else can handle that one, what ever it is.</p>
+<p>If the <code>@event</code> is <code>InputEventMouseButton</code> we cast it as <code>InputEventMouseButton</code> and expose the cast as a local variable called <code>mouseButtonEvent</code> and continue executing our code. We can now access the <code>InputEventMouseButton</code> mouse button event via <code>mouseButtonEvent</code> and do further things.</p>
+<pre><code class="language-cs">if (!mouseButtonEvent.Pressed) return;
+</code></pre>
+<p>Here we immediately put it to use and check if the mouse button is not being pressed (ie. it’s likely being released instead), we will simply return and call it quits there - it’s not our concern.</p>
+<pre><code class="language-cs">if (mouseButtonEvent.ButtonIndex != MouseButton.Left) return;
+</code></pre>
+<p>We still don’t know what kind of mouse button press this was, so we can check by using the <code>ButtonIndex</code> whether it was something else than a <strong>left</strong> mouse button press - in which case we simply return and call it quits again. It’s not our concern, since in this example we want to handle left mouse buttons clicks only.</p>
+<pre><code class="language-csharp">if (!mouseButtonEvent.DoubleClick) return;
+</code></pre>
+<p>Finally we have a very handy way of checking whether a double click happened without having to deal with timers and special logic each time - we can simply check the <code>DoubleClick</code> property. Godot will expose to us automatically the information whether it was a double click or not. If it’s not a double click, again, we return and call it quits there.</p>
+<p>Now we’ve determined:</p>
+<ol>
+<li>It is a mouse button event.</li>
+<li>It is a mouse button being pressed down event.</li>
+<li>It is a left mouse button event.</li>
+<li>It is a double click</li>
+</ol>
+<p>So we know the user did a left mouse button double click, so we can now do what ever we want with that information.</p>
+<pre><code class="language-csharp">ToggleContainer();
+</code></pre>
+<p>In the above example what we do is we call our own custom <code>ToggleContainer()</code> method which opens - or closes - an inventory container window for us.</p>
+<p>But you can call your own methods or do what ever you want once you’ve ruled out all the cases you don’t want to react to like we did above one step at a time.</p>
+<p>You can also combine the if-statements if you like. We have kept them separate in the example for additional clarity and readability.</p>
+<p>But you might also do this:</p>
+<pre><code class="language-csharp">if (@event is not InputEventMouseButton mouseButtonEvent  
+    || !mouseButtonEvent.Pressed  
+    || mouseButtonEvent.ButtonIndex != MouseButton.Left  
+    || !mouseButtonEvent.DoubleClick) {  
+    return;  
+}
+</code></pre>
+<p>The IL code produced by either of these examples is slightly different, but not meaningfully so.</p>
+<p>It’s also worth noting that when using <code>return</code>s, like in the first example, the stack traces can be more meaningful when tracking down problems.</p>
+<p>But generally the second example would execute faster. But this would be in the realm of nano optimizations and might be made a moot point anyway by future updates to the runtime.</p>
+<p>It’s also worth noting that in Godot 4 you can implicitly cast the <code>Node</code> by accepting <code>Viewport</code> instead of <code>Node</code> in the signal’s method signature as a parameter - and it will still work because <code>Viewport</code> is a child of <code>Node</code>.</p>
+<p>So if you want to handle the input, for example, so it doesn’t propagate any further - and you don’t want to cast the <code>Node</code> in your code explicitly to <code>Viewport</code> which you need to access the <code>SetInputAsHandled()</code> method, you can accept a <code>Viewport</code> directly instead of <code>Node</code> which is declared in the <code>input_event</code> signal’s signature.</p>
+<p>Eg.</p>
+<pre><code class="language-csharp">public void OnContainerBeingClicked(Viewport viewport, InputEvent @event, int shapeIdx) {  
+  
+    // Return if not mouse left button double click.  
+    if (@event is not InputEventMouseButton mouseButtonEvent) return;  
+    if (!mouseButtonEvent.Pressed) return;  
+    if (mouseButtonEvent.ButtonIndex != MouseButton.Left) return;  
+    if (!mouseButtonEvent.DoubleClick) return;  
+      
+    viewport.SetInputAsHandled();  
+    ToggleContainer();  
+}
+</code></pre>
+<p>This will also work. Otherwise we would have to:</p>
+<pre><code class="language-csharp">public void OnContainerBeingClicked(Node viewport, InputEvent @event, int shapeIdx) {  
+  
+    // Return if not mouse left button double click.  
+    if (@event is not InputEventMouseButton mouseButtonEvent) return;  
+    if (!mouseButtonEvent.Pressed) return;  
+    if (mouseButtonEvent.ButtonIndex != MouseButton.Left) return;  
+    if (!mouseButtonEvent.DoubleClick) return;  
+      
+    ((Viewport)viewport).SetInputAsHandled();  
+    ToggleContainer();  
+}
+</code></pre>
+<p>That’s mostly it for handling mouse double clicks in Node2D nodes.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Implicit and explicit conversion operators</title>
         <author>
@@ -850,41 +967,6 @@ internal class B : A {
 <p>In this design there's no single Circle, just a bunch of implied circles. Operations can be run on the the circles at the same time. There's a separation of functionality. When you want to process an OO Circle you get all it's properties all at once even if you don't need them. In DO design the data that is used together is grouped together.</p>
 <p>Results:</p>
 <p>- Less cache misses.<br>- Improved performance in many cases.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Notes on why OOP is bad (and how to solve it)</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/"/>
-        <id>https://pilvimaa.fi/notes-on-why-oop-is-bad-and-how-to-solve-it/</id>
-            <category term="Procedural Programming"/>
-            <category term="OOP"/>
-            <category term="Functional Programming"/>
-
-        <updated>2021-05-23T16:06:34+03:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
-                    These are my study notes on a controversial video published on YouTube in 2016 by Brian Will called "Object-Oriented Programming is Bad". The video addresses many of the concerns I've&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
-                <p>These are my study notes on a controversial video published on YouTube in 2016 by <a href="https://www.youtube.com/channel/UCseUQK4kC3x2x543nHtGpzw" target="_blank" rel="noopener noreferrer">Brian Will</a> called "<strong>Object-Oriented Programming is Bad</strong>".</p>
-<p>The video addresses many of the concerns I've had ever since I first started learning Java and OOP years ago. Since then I have switched to C#, but the concerns have remained mostly unchanged.</p>
-<p>The solution Brian Will suggests on the video is a combination of procedural and functional programming.</p>
-<p>From where I'm standing his solution seems ideal to many of my problems. Separation of data from logic clicks hard with me and I absolutely love certain concepts in functional programming (such a purity of functions) while I would not necessarily want to program fully functionally or abandon the notion of classes and objects altogether.</p>
-<p>If you are interested in functional programming in C# in particular I recommend Enrico Buonanno's book "<strong>Functional Programming in C#</strong>", which I own both as a paperback edition and as a digital book.</p>
-<p>However functional programming doesn't come without it's set of problems (to which I won't go in a depth here) and the combination of procedural and functional Brian Will suggest in the video below is a perfect match in my opinion.</p>
-<figure class="post__video"><iframe loading="lazy" width="560" height="314" src="https://www.youtube.com/embed/QM1iUe6IofM" allowfullscreen="allowfullscreen" data-mce-fragment="1"></iframe></figure>
-<p>My study notes on the video start here:</p>
-<p><strong>Problems with OOP:</strong><br><br><strong>NOT the problem:</strong><br>- Classes<br>- Performance<br>- Abstraction<br>- Aesthetics<br><br><strong>Code Aesthetics DO matter:</strong><br>- Elegance<br>- Simplicity<br>- Flexibility<br>- Readability<br>- Maintenance<br>- Structure<br><br><strong>Competing paradigms:</strong></p>
-<p><strong>Procedural and imperative (the default)</strong><br>- Procedural: "No explicit association with data types and functions and behaviors."<br>- Imperative: "Mutate state whenever you feel like it. No special handling for shared state. Cope with the problems as they arise."<br><br><strong>Procedural and functional (minimize state)</strong><br>- Get rid of state as much as possible.<br>- All or most of the functions should be pure, they should not deal with state.<br><br><strong>Object oriented and imperative (segregate state)</strong><br>- Segregate state. Divide and conquer the problem. Separate everything into objects.<br>- Segregation is a viable strategy up to a point of complexity.<br><br><strong>Claims:</strong><br>- Procedural code is better (even when not functional)<br>- Inheritance is irrelevant.<br>- Polymorphism is not exclusively OOP.<br>- Encapsulation does not work at fine-grained levels of code. This is the biggest problem with OOP.<br>- Fractioning code artificially to follow OOP rules leads to unnecessary complexity which is hard to follow.<br><br><strong>What is an object?</strong><br><br>An object is a bundle of encapsulated state. We don't interact with the state of that object directly. All interactions with that state from the outside world come in through from messages. The object has a defined set of messages called it's interface. We have private information hidden behind the public interface. When an object receives a message it may in turn send messages to other object. We may conceive of an object-oriented program being as a graph of object all communicating with each other by sending messages.<br><br>For object A to send a message to object B, A must hold a private reference to B.<br>Messages may indirectly read and modify state.<br>The moment objects are shared encapsulation flies out of the window.<br><br><strong>Solution, procedural programming:</strong><br><br>- Prefer <strong>functions</strong> over methods. Write <strong>methods</strong> only when the exclusive association with the data type is not in doubt, e.g. ADT's (abstract data types like queues, lists, etc.)<br><br>- When in doubt -&gt; parameterize. Do not encapsulate the state of the program at fine-grained level. However, shared state is a problem. It cannot be fully solved without pure functional programming. This means that rather then passing data through global variables you should instead make that data explicit parameter of the function so it has to be explicitly passed in. Any time you get the temptation to pass in data through a global because it's convenient you should seriously reconsider.<br><br>- When you DO end up with globals - Bundle the globals into structs/records/classes, ie. bundle them logically into data types. Even if this effectively means you have a data type with one instance in your whole program this little trick can often make your code seem just a little bit more organized. In a sense you are just using data types in this way to create tiny little sub namespaces. But if you do a good job logically grouping your globals this way as a side benefit this supports parameterization - you can more conveniently pass this global state to functions.<br><br>- Favor pure functions. If you see an opportunity to make a function pure it's a good policy to take that opportunity. Pure functions are easier to understand and to make correct. This is easier when efficiency is not a priority.<br><br>- You should try to encapsulate (loosely) at the level of namespaces/packages/modules. Think of each package as having it's own private state and public interface.<br><br>- Don't be afraid of long functions! Most programs have key sections. The problem of extracting everything into separate functions breaks up the natural sequence of code and is spread out of order throughout the code base. Prefer commenting each section of the function when needed over extracting the sections. Keep in mind general code readability for long functions:  Prefer extracting to nested functions. Don't stray from left margin too far or for too long. Watch out for too much complexity and split up and extract to other functions as needed. Constrain scope of local variables. When in doubt enclose variables into curly braces to limit their scope - even better, enclose them into their own anonymous functions.</p>
-<p>Good luck!</p>
             ]]>
         </content>
     </entry>
