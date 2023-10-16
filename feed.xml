@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-10-16T18:47:16+03:00</updated>
+    <updated>2023-10-16T19:10:56+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Godot"/>
             <category term="C#"/>
 
-        <updated>2023-10-16T18:47:16+03:00</updated>
+        <updated>2023-10-16T19:10:56+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" alt="Confusing schematics" />
@@ -32,21 +32,6 @@
             <![CDATA[
                     <p><img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" class="type:primaryImage" alt="Confusing schematics" /></p>
                 <p>Godot is a powerful and versatile game engine that supports two scripting languages: GDScript and C#. Both languages have their own advantages and disadvantages, so it’s important to choose the one that’s right for you.</p>
-<h1 id="performance">Performance</h1>
-<p>This is a big talking point that a lot of new developers coming to Godot often worry about, so let’s talk about it first.</p>
-<h2 id="csharp-is-generally-faster">Csharp is generally faster</h2>
-<p>C# is generally faster than GDScript. There you go. But this is not true in all circumstances and all situations. However, if you’re developing a performance-critical game, then C# may be a better choice. </p>
-<h2 id="marshalling-overhead-in-csharp">Marshalling overhead in Csharp</h2>
-<p>Marshalling can add overhead to C# code, especially when calling native Godot functions.</p>
-<p>Marshalling is the process of converting data between different programming languages. Godot is written in C++. When you call a native Godot function from C#, the .NET runtime needs to marshal the data between the two languages. This can add overhead to your code, especially if you’re calling native functions frequently.</p>
-<p>GDScript, on the other hand, doesn’t need to marshal data when calling native Godot functions. This is because GDScript is built on top of the Godot engine, and it has direct access to the Godot API.</p>
-<p>As a result, GDScript code can sometimes be faster than C# code, especially when calling native Godot functions frequently.</p>
-<h2 id="does-it-really-matter">Does it really matter</h2>
-<p>For most games, the difference in performance between GDScript and C# will be negligible.</p>
-<p>You can always write performance critical parts of your game in C++ if you find it necessary. It’s always an option whether you choose GDScript or C#.</p>
-<p>About  marshalling specifically, you can avoid any major problems simply by being mindful of the fact that marshalling happens and avoiding excessive and unnecessary back and forth between C# and Godot.</p>
-<p>Marshalling overhead is typically only significant in performance-critical applications, and you’re likely to hit other more critical bottle necks way before that happens. </p>
-<p>Know the scale of your game, know your skillset, know your personal preferences. There are a lot of things to consider when choosing a language and performance is only one of those.</p>
 <h1 id="official-support">Official support</h1>
 <p>Both GDScript and C# are officially supported by the Godot team. This means that both languages have equal access to the Godot API and documentation.</p>
 <h1 id="popularity">Popularity</h1>
@@ -79,6 +64,25 @@
 <p>However, there are also some potential drawbacks to using both C# and GDScript in the same project:</p>
 <p>It can be more difficult to maintain a project that uses multiple languages. This is because you need to be aware of the differences between the two languages, and you need to make sure that your code is compatible with both languages.</p>
 <p>It can be more difficult to debug a project that uses multiple languages. This is because you need to be able to debug code written in both languages.</p>
+<h2 id="language-interoperability">Language interoperability</h2>
+<p>C# code within a Godot project can be difficult to remove once it is introduced. This is because GDscript calling into C# is good, idiomatic GDscript. However, C# calling into GDscript is bad C#, as it requires referencing functions by string. This can make your code more difficult to maintain and debug.</p>
+<p>In other words, once you start using C# code in your Godot project, it can be difficult to go back. This is because GDscript is designed to make it easy to call C# code, but C# is not designed to make it easy to call GDscript code.</p>
+<p>If you are considering using multiple languages in your Godot project, I recommend that you think carefully about whether or not you need to use C#. If you do need to use C#, try to limit the amount of code that you call.</p>
+<h1 id="performance">Performance</h1>
+<p>A lot of new developers coming to Godot often worry about performance, so let’s talk about that for a bit.</p>
+<h2 id="gdscript-vs-csharp-speed">GDScript vs. Csharp speed</h2>
+<p>C# is generally faster than GDScript, but this is not true in all circumstances and all situations.</p>
+<p>Marshalling can add overhead to C# code, especially when calling native Godot functions.</p>
+<p>Marshalling is the process of converting data between different programming languages. Godot is written in C++. When you call a native Godot function from C#, the .NET runtime needs to marshal the data between the two languages. This can add overhead to your code, especially if you’re calling native functions frequently.</p>
+<p>GDScript, on the other hand, doesn’t need to marshal data when calling native Godot functions. This is because GDScript is built on top of the Godot engine, and it has direct access to the Godot API.</p>
+<p>As a result, GDScript code can sometimes be faster than C# code, especially when calling native Godot functions frequently.</p>
+<h2 id="does-it-really-matter">Does it really matter</h2>
+<p>If you’re developing a performance-critical game, then C# may be a better choice. </p>
+<p>But for most games, the difference in performance between GDScript and C# will be negligible.</p>
+<p>You can always write performance critical parts of your game in C++ if you find it necessary. It’s always an option whether you choose GDScript or C#.</p>
+<p>About  marshalling specifically, you can avoid any major problems simply by being mindful of the fact that marshalling happens and avoiding excessive and unnecessary back and forth between C# and Godot.</p>
+<p>Marshalling overhead is typically only significant in performance-critical applications, and you’re likely to hit other more critical bottle necks way before that happens. </p>
+<p>Know the scale of your game, know your skillset, know your personal preferences. There are a lot of things to consider when choosing a language and performance is only one of those.</p>
 <h1 id="final-words">Final words</h1>
 <p>If you’re new to game development, or if you’re looking for a language that is easy to prototype with, or you’re already familiar with Python then GDScript is a good choice.</p>
 <p>If you’re already familiar with C#, or if you need a language with better performance or a wider ecosystem, then C# is a good choice.</p>
