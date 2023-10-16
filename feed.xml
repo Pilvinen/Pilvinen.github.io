@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-10-16T19:10:56+03:00</updated>
+    <updated>2023-10-16T19:18:04+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="Godot"/>
             <category term="C#"/>
 
-        <updated>2023-10-16T19:10:56+03:00</updated>
+        <updated>2023-10-16T19:18:04+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" alt="Confusing schematics" />
@@ -38,7 +38,7 @@
 <p>GDScript is by far the more popular language in Godot. It’s supported by a large community of developers. C#, on the other hand, is a newer addition to Godot, but it’s quickly gaining popularity, especially among developers who are already familiar with the language.</p>
 <h1 id="tutorials-and-resources">Tutorials and resources</h1>
 <p>There are more tutorials and resources available for GDScript than for C#. This is because GDScript has been around for longer, and it’s the default language for Godot. However, the C# community is growing rapidly, and more tutorials and resources are becoming available all the time.</p>
-<h1 id="your-existing-skills">Your existing skills</h1>
+<h1 id="your-existing-skills-matter">Your existing skills matter</h1>
 <p>Your existing skill set and personal preferences are the most important factors to consider when choosing between GDScript and C#. </p>
 <p>If you’re already familiar with C#, or if you have experience with other statically typed languages, then C# will be a more natural choice for you. You’ll be able to get started quickly, and you’ll be able to leverage your existing knowledge and skills.</p>
 <p>On the other hand, if you’re new to programming, or if you have experience with dynamically typed languages like Python, then GDScript may be a better choice for you. GDScript is easier to learn, and it has a more forgiving syntax.</p>
@@ -58,7 +58,7 @@
 <p>The .NET ecosystem is massive in comparison to the GDScript ecosystem. This means that there are a lot more libraries and tools available for C# developers.</p>
 <h1 id="debugging">Debugging</h1>
 <p>It’s generally easier to get hard to fix runtime bugs in GDScript than in C#. This is because GDScript is dynamically typed, so you can inspect and modify variables at runtime. C#, on the other hand, is statically typed, so it can be more difficult to debug runtime errors.</p>
-<h1 id="using-both-languages-in-a-single-project">Using both languages in a single project</h1>
+<h1 id="using-both-gdscript-and-csharp">Using both GDScript and Csharp</h1>
 <p>It is possible to use both C# and GDScript in the same Godot project (but definitely not required). This can be useful for a variety of reasons, such as:</p>
 <p>You could leverage the strengths of both languages. For example, you could use C# (or even C++) for performance-critical code, and GDScript for prototyping and scripting simple game mechanics.</p>
 <p>However, there are also some potential drawbacks to using both C# and GDScript in the same project:</p>
