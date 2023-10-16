@@ -1,14 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-06-14T02:08:31+03:00</updated>
+    <updated>2023-10-16T18:47:16+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>GDScript vs. C# in Godot: Which language should you use?</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/gdscript-vs-c-in-godot-which-language-should-you-use/"/>
+        <id>https://pilvimaa.fi/gdscript-vs-c-in-godot-which-language-should-you-use/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" medium="image" />
+            <category term="gdscript"/>
+            <category term="Godot"/>
+            <category term="C#"/>
+
+        <updated>2023-10-16T18:47:16+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" alt="Confusing schematics" />
+                    Godot is a powerful and versatile game engine that supports two scripting languages: GDScript and C#. Both languages have their own advantages and disadvantages, so it’s important to choose the&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <p><img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" class="type:primaryImage" alt="Confusing schematics" /></p>
+                <p>Godot is a powerful and versatile game engine that supports two scripting languages: GDScript and C#. Both languages have their own advantages and disadvantages, so it’s important to choose the one that’s right for you.</p>
+<h1 id="performance">Performance</h1>
+<p>This is a big talking point that a lot of new developers coming to Godot often worry about, so let’s talk about it first.</p>
+<h2 id="csharp-is-generally-faster">Csharp is generally faster</h2>
+<p>C# is generally faster than GDScript. There you go. But this is not true in all circumstances and all situations. However, if you’re developing a performance-critical game, then C# may be a better choice. </p>
+<h2 id="marshalling-overhead-in-csharp">Marshalling overhead in Csharp</h2>
+<p>Marshalling can add overhead to C# code, especially when calling native Godot functions.</p>
+<p>Marshalling is the process of converting data between different programming languages. Godot is written in C++. When you call a native Godot function from C#, the .NET runtime needs to marshal the data between the two languages. This can add overhead to your code, especially if you’re calling native functions frequently.</p>
+<p>GDScript, on the other hand, doesn’t need to marshal data when calling native Godot functions. This is because GDScript is built on top of the Godot engine, and it has direct access to the Godot API.</p>
+<p>As a result, GDScript code can sometimes be faster than C# code, especially when calling native Godot functions frequently.</p>
+<h2 id="does-it-really-matter">Does it really matter</h2>
+<p>For most games, the difference in performance between GDScript and C# will be negligible.</p>
+<p>You can always write performance critical parts of your game in C++ if you find it necessary. It’s always an option whether you choose GDScript or C#.</p>
+<p>About  marshalling specifically, you can avoid any major problems simply by being mindful of the fact that marshalling happens and avoiding excessive and unnecessary back and forth between C# and Godot.</p>
+<p>Marshalling overhead is typically only significant in performance-critical applications, and you’re likely to hit other more critical bottle necks way before that happens. </p>
+<p>Know the scale of your game, know your skillset, know your personal preferences. There are a lot of things to consider when choosing a language and performance is only one of those.</p>
+<h1 id="official-support">Official support</h1>
+<p>Both GDScript and C# are officially supported by the Godot team. This means that both languages have equal access to the Godot API and documentation.</p>
+<h1 id="popularity">Popularity</h1>
+<p>GDScript is by far the more popular language in Godot. It’s supported by a large community of developers. C#, on the other hand, is a newer addition to Godot, but it’s quickly gaining popularity, especially among developers who are already familiar with the language.</p>
+<h1 id="tutorials-and-resources">Tutorials and resources</h1>
+<p>There are more tutorials and resources available for GDScript than for C#. This is because GDScript has been around for longer, and it’s the default language for Godot. However, the C# community is growing rapidly, and more tutorials and resources are becoming available all the time.</p>
+<h1 id="your-existing-skills">Your existing skills</h1>
+<p>Your existing skill set and personal preferences are the most important factors to consider when choosing between GDScript and C#. </p>
+<p>If you’re already familiar with C#, or if you have experience with other statically typed languages, then C# will be a more natural choice for you. You’ll be able to get started quickly, and you’ll be able to leverage your existing knowledge and skills.</p>
+<p>On the other hand, if you’re new to programming, or if you have experience with dynamically typed languages like Python, then GDScript may be a better choice for you. GDScript is easier to learn, and it has a more forgiving syntax.</p>
+<h1 id="ease-of-prototyping">Ease of prototyping</h1>
+<p>GDScript is generally considered to be easier to prototype with than C#. This is because GDScript has a more relaxed syntax, and it doesn’t require as much boilerplate code. C#, on the other hand, is a more statically typed language, which can make it more difficult to prototype quickly.</p>
+<h1 id="applicability-beyond-godot">Applicability beyond Godot</h1>
+<p>C# is a more widely applicable language than GDScript. C# is the primary language used in the Unity game engine, and it’s also used in a variety of other game development tools and libraries. GDScript, on the other hand, is specific to the Godot game engine.</p>
+<h1 id="syntax-and-style">Syntax and style</h1>
+<p>GDScript is a Python-like language, with a simple and easy-to-read syntax. C#, on the other hand, is a more verbose language with a more traditional C-style syntax.</p>
+<h1 id="type-safety">Type safety</h1>
+<p>GDScript has a level of optional type safety. This means that you can choose to use type hints to make your code more type-safe, but it’s not required. C#, on the other hand, is a statically typed language, which means that all variables and expressions must have explicitly defined types.</p>
+<h1 id="static-vs-dynamic-typing">Static vs. dynamic typing</h1>
+<p>Static typing can help to prevent errors and make your code more maintainable. However, it can also make your code more verbose and difficult to prototype with. Dynamic typing, on the other hand, can make your code more concise and easier to prototype with, but it can also lead to more errors.</p>
+<h1 id="ides">IDEs</h1>
+<p>C# has several professional IDEs available, such as Rider, Visual Studio and Visual Studio Code. GDScript, on the other hand, doesn’t have any dedicated IDEs. However, GDScript can be used with any text editor, and there are several plugins available that provide IDE-like features, such as syntax highlighting, code completion, and debugging.</p>
+<h1 id="ecosystem">Ecosystem</h1>
+<p>The .NET ecosystem is massive in comparison to the GDScript ecosystem. This means that there are a lot more libraries and tools available for C# developers.</p>
+<h1 id="debugging">Debugging</h1>
+<p>It’s generally easier to get hard to fix runtime bugs in GDScript than in C#. This is because GDScript is dynamically typed, so you can inspect and modify variables at runtime. C#, on the other hand, is statically typed, so it can be more difficult to debug runtime errors.</p>
+<h1 id="using-both-languages-in-a-single-project">Using both languages in a single project</h1>
+<p>It is possible to use both C# and GDScript in the same Godot project (but definitely not required). This can be useful for a variety of reasons, such as:</p>
+<p>You could leverage the strengths of both languages. For example, you could use C# (or even C++) for performance-critical code, and GDScript for prototyping and scripting simple game mechanics.</p>
+<p>However, there are also some potential drawbacks to using both C# and GDScript in the same project:</p>
+<p>It can be more difficult to maintain a project that uses multiple languages. This is because you need to be aware of the differences between the two languages, and you need to make sure that your code is compatible with both languages.</p>
+<p>It can be more difficult to debug a project that uses multiple languages. This is because you need to be able to debug code written in both languages.</p>
+<h1 id="final-words">Final words</h1>
+<p>If you’re new to game development, or if you’re looking for a language that is easy to prototype with, or you’re already familiar with Python then GDScript is a good choice.</p>
+<p>If you’re already familiar with C#, or if you need a language with better performance or a wider ecosystem, then C# is a good choice.</p>
+<p>Ultimately it comes down to personal preference.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Node2D double click detection in Godot</title>
         <author>
@@ -16,6 +94,7 @@
         </author>
         <link href="https://pilvimaa.fi/node2d-double-click-detection-in-godot/"/>
         <id>https://pilvimaa.fi/node2d-double-click-detection-in-godot/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" medium="image" />
             <category term="InputEvent"/>
             <category term="Input"/>
             <category term="Godot"/>
@@ -31,7 +110,7 @@
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" alt="Two mice using a computer mouse" />
+                    <p><img src="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" class="type:primaryImage" alt="Two mice using a computer mouse" /></p>
                 <p>Clicks for <code>Node2D</code>  based nodes can easily be detected by using <code>CollisionObject2D</code>‘s <code>input_event</code> signal.</p>
 <p>To capture the mouse clicks we can add an <code>Area2D</code> node and a <code>CollisionShape2D</code> or <code>CollisionPolygon2D</code> as its child node. </p>
 <p>Since we are using <code>CollisionObject2D</code>‘s <code>input_event</code> signal directly the <code>Area2D</code>‘s <code>Monitoring</code> and <code>Monitorable</code> won’t be used and we can disable those.</p>
@@ -133,6 +212,7 @@
         </author>
         <link href="https://pilvimaa.fi/implicit-and-explicit-conversion-operators/"/>
         <id>https://pilvimaa.fi/implicit-and-explicit-conversion-operators/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" medium="image" />
             <category term="Implicit"/>
             <category term="Explicit"/>
             <category term="Conversion"/>
@@ -147,7 +227,7 @@
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" class="type:primaryImage" alt="" /></p>
                 <p>Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another.</p>
 <pre><code class="language-cs">    public void SetPositionFromVector3(Vector3 vector) {
         // Do stuff.
@@ -201,6 +281,7 @@
         </author>
         <link href="https://pilvimaa.fi/unit-testing-private-methods-through-extraction/"/>
         <id>https://pilvimaa.fi/unit-testing-private-methods-through-extraction/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/12/Bugs.jpg" medium="image" />
             <category term="Unit Testing"/>
             <category term="C#"/>
 
@@ -213,7 +294,7 @@
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" class="type:primaryImage" alt="" /></p>
                 <p>When you use unit tests you have to <em><strong>intentionally</strong></em> write code that is testable.</p>
 <p>What about <code>private</code> methods? How do you test those?</p>
 <p>And no, you <em><strong>should NOT</strong></em> change the accessibility of your methods (eg. <code>internal</code>, <code>public</code>, etc.) to make your code testable as you would lose your code’s correctness - there’s a reason why those <code>private</code> methods have been made <code>private</code>!</p>
@@ -279,6 +360,7 @@ public abstract class Mover {
         </author>
         <link href="https://pilvimaa.fi/getting-godotxunit-up-and-running-with-rider/"/>
         <id>https://pilvimaa.fi/getting-godotxunit-up-and-running-with-rider/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/11/Test.jpg" medium="image" />
             <category term="XUnit"/>
             <category term="Unit Testing"/>
             <category term="GodotXUnit"/>
@@ -294,7 +376,7 @@ public abstract class Mover {
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/11/Test.jpg" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/11/Test.jpg" class="type:primaryImage" alt="" /></p>
                 <h2 id="installation-from-github">Installation from Github</h2>
 <p>These instructions will explain how to get GodotXUnit integrated to your project and working with Rider.</p>
 <ol>
@@ -311,14 +393,14 @@ public abstract class Mover {
 </code></pre>
 <p>You have to do this because GodotXUnit will scan your project for test cases and it needs to know the assembly to scan. If you <em><strong>don’t</strong></em> do this GodotXUnit will not find your test cases. </p>
 <ol start="6">
-<li>Add these dependencies to your project’s <code>.csproj</code><pre><code class="language-xml">&lt;ItemGroup&gt;
- &lt;PackageReference Include=&quot;Newtonsoft.Json&quot; Version=&quot;12.0.3&quot; /&gt;
- &lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.4.1&quot; /&gt;
- &lt;PackageReference Include=&quot;xunit.runner.utility&quot; Version=&quot;2.4.1&quot; /&gt;
+<li>Add these dependencies to your project’s <code>.csproj</code></li>
+</ol>
+<pre><code class="language-xml">&lt;ItemGroup&gt;
+    &lt;PackageReference Include=&quot;Newtonsoft.Json&quot; Version=&quot;12.0.3&quot; /&gt;
+    &lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.4.1&quot; /&gt;
+    &lt;PackageReference Include=&quot;xunit.runner.utility&quot; Version=&quot;2.4.1&quot; /&gt;
 &lt;/ItemGroup&gt;
 </code></pre>
-</li>
-</ol>
 <p>Now you should be good to go.</p>
 <h2 id="running-the-tests">Running the tests</h2>
 <p>Annotate your tests with <code>[GodotFact]</code> and they should work directly from Rider.</p>
@@ -352,6 +434,7 @@ public abstract class Mover {
         </author>
         <link href="https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/"/>
         <id>https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/10/AABB.jpg" medium="image" />
             <category term="Math"/>
             <category term="C#"/>
             <category term="AABB"/>
@@ -365,7 +448,7 @@ public abstract class Mover {
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" class="type:primaryImage" alt="" /></p>
                 <p>Let’s do a quick overview of AABBs and intersections.</p>
 <p>Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.</p>
 <p>In one dimension it is a <code>Segment</code> or <code>AxisAlignedBounds1D</code>:</p>
@@ -468,6 +551,7 @@ public abstract class Mover {
         </author>
         <link href="https://pilvimaa.fi/seeded-random-numbers/"/>
         <id>https://pilvimaa.fi/seeded-random-numbers/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/9/Dice.jpg" medium="image" />
             <category term="World Generation"/>
             <category term="Random Numbers"/>
             <category term="C#"/>
@@ -481,7 +565,7 @@ public abstract class Mover {
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" class="type:primaryImage" alt="" /></p>
                 <p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
 <p>This can be achieved by giving the <code>Random</code> generator instance a seed value.</p>
 <pre><code class="language-cs">Random random = new Random(1273456);
@@ -522,6 +606,7 @@ internal class SeededRandomExample {
         </author>
         <link href="https://pilvimaa.fi/godot-multimesh-setasbulkarray-method/"/>
         <id>https://pilvimaa.fi/godot-multimesh-setasbulkarray-method/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" medium="image" />
             <category term="MultiMeshInstance"/>
             <category term="Godot Game Engine"/>
             <category term="C#"/>
@@ -535,7 +620,7 @@ internal class SeededRandomExample {
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" class="type:primaryImage" alt="" /></p>
                 <p>This article tries to bridge the gaps and ambiguities in the official Godot documentation for <code>SetAsBulkArray()</code>. We don’t go over <em><strong>everything</strong></em>. But armed with this information you should be able to figure it out.</p>
 <p><code>MultiMeshInstance</code>‘s <code>MultiMesh</code> resource has a <code>SetAsBulkArray()</code> method which allows you to set all the data for your <code>MultiMesh</code> directly from a <code>float[]</code> array in one swift operation.</p>
 <p>The great thing about this is that it’s as efficient as it can get. And you get to generate the data yourself in any way you want.</p>
@@ -760,6 +845,7 @@ float red = random.Next(0, 256);
         </author>
         <link href="https://pilvimaa.fi/inheritance-with-constructors/"/>
         <id>https://pilvimaa.fi/inheritance-with-constructors/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/7/Binary.png" medium="image" />
             <category term="Inheritance"/>
             <category term="Constructors"/>
             <category term="C#"/>
@@ -773,7 +859,7 @@ float red = random.Next(0, 256);
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/7/Binary.png" alt="" />
+                    <p><img src="https://pilvimaa.fi/media/posts/7/Binary.png" class="type:primaryImage" alt="" /></p>
                 <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
 <p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
 <pre><code class="language-cs">internal class A {
@@ -823,6 +909,7 @@ internal class B : A {
         </author>
         <link href="https://pilvimaa.fi/vectors/"/>
         <id>https://pilvimaa.fi/vectors/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" medium="image" />
             <category term="Vectors"/>
             <category term="Math"/>
 
@@ -835,7 +922,7 @@ internal class B : A {
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
+                    <p><img src="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" class="type:primaryImage" alt="360 degrees in a circle" /></p>
                 <p>I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or how they can be used.</p>
 <p>I understand vectors as a bunch of floating point numbers (eg. decimal numbers like 1.123, 1.0, 100.01, etc.) that are grouped together. That's it. Nothing special or particularly difficult about it.</p>
 <p><code>var myVector = new Vec2(2, 3);</code></p>
@@ -934,39 +1021,6 @@ internal class B : A {
 <pre>var myVector = new Vec2(3, 4);<br>var multipliedVector = myVector * 2;  // (3, 4) * 2 = (6, 8)<br>var dividedVector = myVector / 2;     // (3, 4) / 2 = (1.5, 2)</pre>
 <p>However, multiplying a vector by a <strong>negative scalar</strong> changes not only the scale but also <strong>reverses the direction</strong> of the vector.</p>
 <p>Dividing a vector by a scalar only affects the scale.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Data Oriented Design</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/data-oriented-design/"/>
-        <id>https://pilvimaa.fi/data-oriented-design/</id>
-            <category term="Data Oriented Design"/>
-            <category term="DOD"/>
-
-        <updated>2021-07-16T01:20:06+03:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
-                    A few notes on Data Oriented Design. - Study the data access patterns to determine where performance bottlenecks are. - Group things together that are used together. - Avoid creating&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
-                <p>A few notes on Data Oriented Design.</p>
-<p>- Study the data access patterns to determine where performance bottlenecks are.<br>- Group things together that are used together.<br>- Avoid creating dependencies between properties.<br>- Split infrequently accessed data as it's own thing.</p>
-<p>Traditional Object Oriented Approach:</p>
-<p><code>// Single object, everything grouped together.<br>class Circle {<br>    Point Position;<br>    Color Color;<br>    float Radius;<br><br>    void Draw() {}<br>}</code></p>
-<p>And you would store the Circle instances in a collection.</p>
-<p>Data Oriented Design:</p>
-<p><code>// Data that is used frequently together is grouped together.<br>class Body {<br>    Point Position;<br>    float Radius;<br>}<br><br>// Contains all the implied, non-explicit, circles.<br>class Circles {<br>    List&lt;Body&gt; Bodies;<br>    List&lt;Color&gt; Color;<br><br>    void Draw() {}<br>}</code></p>
-<p>In this design there's no single Circle, just a bunch of implied circles. Operations can be run on the the circles at the same time. There's a separation of functionality. When you want to process an OO Circle you get all it's properties all at once even if you don't need them. In DO design the data that is used together is grouped together.</p>
-<p>Results:</p>
-<p>- Less cache misses.<br>- Improved performance in many cases.</p>
             ]]>
         </content>
     </entry>
