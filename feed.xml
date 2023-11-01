@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-11-01T21:09:44+02:00</updated>
+    <updated>2023-11-01T21:12:20+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -22,18 +22,18 @@
             <category term="InputEvent"/>
             <category term="Godot"/>
 
-        <updated>2023-11-01T21:09:44+02:00</updated>
+        <updated>2023-11-01T21:12:20+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/16/GodotMouseInput.jpeg" alt="" />
-                    Godot mouse input handling is a source of lot of confusion. The basic idea is that **Mouse Filter set to Ignore ignores the element. Stop processes the received event and&hellip;
+                    Godot mouse input handling is a source of lot of confusion. The basic idea is that Mouse Filter set to Ignore ignores the element. Stop processes the received event and&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <p><img src="https://pilvimaa.fi/media/posts/16/GodotMouseInput.jpeg" class="type:primaryImage" alt="" /></p>
                 <p>Godot mouse input handling is a source of lot of confusion.</p>
-<p>The basic idea is that **Mouse Filter set to <code>Ignore</code> ignores the element. <code>Stop</code> processes the received event and doesn’t pass it along. It stops there. While <code>Pass</code> handles the event but then passes it along so other nodes can process it.</p>
+<p>The basic idea is that <strong>Mouse Filter</strong> set to <code>Ignore</code> ignores the element. <code>Stop</code> processes the received event and doesn’t pass it along. It stops there. While <code>Pass</code> handles the event but then passes it along so other nodes can process it.</p>
 <p>Where most of the confusion happens is trying to figure out in what order the mouse input events get processed.</p>
 <p>Godot handles the input in nodes in reverse depth-first order.</p>
 <p>In other words the order is:</p>
