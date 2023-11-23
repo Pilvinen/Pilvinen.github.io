@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-11-23T18:35:03+02:00</updated>
+    <updated>2023-11-23T20:10:24+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -18,7 +18,7 @@
         <id>https://pilvimaa.fi/what-to-return-when-you-dont-have-anything-to-return/</id>
         <media:content url="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" medium="image" />
 
-        <updated>2023-11-23T18:35:03+02:00</updated>
+        <updated>2023-11-23T20:10:24+02:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" alt="" />
@@ -38,50 +38,44 @@
 <p>Handling a returned <code>Result</code> type without resorting to branching logic (like if or switch statements) often involves leveraging higher-order functions or patterns such as monadic binding. In C#, this can be achieved through extension methods that abstract away the branching logic. It’s still there, but hidden away for the most part. You don’t get the branching logic vomited all over your classes which should be focused on other things.</p>
 <p>Let’s consider a hypothetical <code>Result&lt;T, E&gt;</code> type, where <code>T</code> is the type of the value in case of success, and <code>E</code> is the type of the error. We will define extension methods like <code>OnSuccess</code> and <code>OnError</code> to handle each case.</p>
 <p>Here’s an example implementation:</p>
-<pre><code class="language-csharp">public class Result&lt;T, E&gt; {
-
-    public T Value { get; private set; }
-    public E Error { get; private set; }
-    public bool HasValue { get; private set; }
-    
-    // Constructors
-    
-    public Result(T value) {
-        Error = default!;
-        Value = value;
-        HasValue = true;
-    }
-    
-    public Result(E error) {
-        Error = error;
-        Value = default!;
-        HasValue = false;
-    }
-    
-    // Handles success case.
-    public Result&lt;T, E&gt; OnSuccess(Action&lt;T&gt; action) {
-    
-        if (HasValue) {
-            action(Value);
-        }
-        return this;
-    }
-    
-    // Handles error case.
-    public Result&lt;T, E&gt; OnError(Action&lt;E&gt; action) {
-    
-        if (!HasValue) {
-            action(Error);
-        }
-
-        throw new UserException(&quot;OnError was called to handle error when there&#39;s no error state to &quot; +
-        &quot;handle. This can only be caused by an error in implementing the Result class. Particularly&quot; +
-        &quot;this can only happen if OnError is called when IsSuccess is false. This should never&quot; +
-        &quot;happen in any sensible implementation. This exception is here to draw your attention&quot; +
-        &quot;to that fact. You&#39;re doing something incredibly wrong and embarrassing.&quot;);
-
-    }
+<pre><code class="language-csharp">public class Result&lt;T, E&gt; {  
+    public T Value { get; private set; }  
+    public E Error { get; private set; }  
+    public bool HasValue { get; private set; }  
+  
+    // Constructors  
+    public Result(T value) {  
+        Error = default!; // Replace with what you want to do here
+        Value = value;  
+        HasValue = true;  
+    }  
+  
+    public Result(E error) {  
+        Error = error;  
+        Value = default!; // Replace with what you want to do here 
+        HasValue = false;  
+    }  
 }
+
+public static class ResultExtensions {  
+  
+    // Extension method for success case.  
+    public static Result&lt;T, E&gt; OnSuccess&lt;T, E&gt;(this Result&lt;T, E&gt; result, Action&lt;T&gt; action) {  
+        if (result.HasValue) {  
+            action(result.Value);  
+        }  
+        return result;  
+    }  
+  
+    // Extension method for error case.  
+    public static void OnError&lt;T, E&gt;(this Result&lt;T, E&gt; result, Action&lt;E&gt; action) {  
+        bool errorHasOccurredHasNoValue = !result.HasValue;  
+        if (errorHasOccurredHasNoValue) {  
+            action(result.Error);  
+        }  
+    }  
+  
+}  
 
 public sealed class ResultTypeTest {  
   
@@ -97,9 +91,7 @@ public sealed class ResultTypeTest {
     public void Test() {  
   
         // Database has been set up with data that we should be able to fetch with _correctId,  
-        // whereas _wrongId should return an error because data by that id does not exist.
-        
-        Result&lt;SomeData, DomainError&gt; correctResult = GetData(_correctId);  
+        // whereas _wrongId should return an error because data by that id does not exist.        Result&lt;SomeData, DomainError&gt; correctResult = GetData(_correctId);  
         Result&lt;SomeData, DomainError&gt; wrongResult = GetData(_wrongId);  
   
         correctResult.OnSuccess(data =&gt; {  
@@ -125,12 +117,13 @@ public sealed class ResultTypeTest {
   
         if (dataExists) {  
             return new Result&lt;SomeData, DomainError&gt;(_database.data);  
-        } else {  
-            return new Result&lt;SomeData, DomainError&gt;(new DomainError(&quot;Domain error: Data not found.&quot;));  
         }  
+  
+        return new Result&lt;SomeData, DomainError&gt;(new DomainError(&quot;Domain error: Data not found.&quot;));  
     }  
   
 }  
+  
   
 public class Database {  
     public SomeData data { get; set; }  
@@ -149,7 +142,7 @@ public class SomeData {
         Id = id;  
     }  
 }  
-  
+
 public class DomainError {  
     public string Message { get; }  
     public DomainError(string message) {  
