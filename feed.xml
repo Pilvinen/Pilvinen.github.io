@@ -3,12 +3,183 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2023-11-01T21:12:20+02:00</updated>
+    <updated>2023-11-23T18:35:03+02:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>What to return when you don&#x27;t have anything to return?</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/what-to-return-when-you-dont-have-anything-to-return/"/>
+        <id>https://pilvimaa.fi/what-to-return-when-you-dont-have-anything-to-return/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" medium="image" />
+
+        <updated>2023-11-23T18:35:03+02:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" alt="" />
+                    Not finding your data that you are trying to fetch via Guid Id can be handled elegantly either as a case of domain error or just as a regular case&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <p><img src="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" class="type:primaryImage" alt="" /></p>
+                <p>Not finding your data that you are trying to fetch via <code>Guid</code> <strong>Id</strong> can be handled elegantly either as a case of <strong>domain error</strong> or just as a <strong>regular case</strong> that you’re expecting to happen. We will only go in-depth with domain error in this article and do a quick overview on regular cases.</p>
+<h2 id="domain-error">Domain error</h2>
+<p>When fetching data we can handle domain errors with our own custom <code>Result</code> type which also includes an <strong>error</strong>.</p>
+<p>But what is a “domain error”?</p>
+<p>In software development, a “domain error” happens when there’s a mistake or issue because the rules or limitations of a particular area, or situation, that the software is designed for are not followed properly. For example, if the software is made to handle banking transactions but does something against banking rules, that’s a domain error.</p>
+<p>If you’re working with a system where each entity is uniquely identified by a GUID (Globally Unique Identifier), not finding an entity by its GUID could indicate a more serious issue. This might be because the data doesn’t exist, it’s not accessible for some reason, or there’s an inconsistency in the data integrity.</p>
+<p>In such scenarios, using a <code>Result</code> type that includes an <strong>error</strong> is beneficial. The Result type, commonly found in functional programming - and increasingly in other paradigms - is a way to encapsulate either a successful outcome (with the expected data) or an error (with details about what went wrong). This approach is more informative than simply returning <code>null</code> or an <strong>optional</strong> object because it provides explicit information about the nature of the error, which is critical for debugging and handling exceptional cases properly.</p>
+<p>Handling a returned <code>Result</code> type without resorting to branching logic (like if or switch statements) often involves leveraging higher-order functions or patterns such as monadic binding. In C#, this can be achieved through extension methods that abstract away the branching logic. It’s still there, but hidden away for the most part. You don’t get the branching logic vomited all over your classes which should be focused on other things.</p>
+<p>Let’s consider a hypothetical <code>Result&lt;T, E&gt;</code> type, where <code>T</code> is the type of the value in case of success, and <code>E</code> is the type of the error. We will define extension methods like <code>OnSuccess</code> and <code>OnError</code> to handle each case.</p>
+<p>Here’s an example implementation:</p>
+<pre><code class="language-csharp">public class Result&lt;T, E&gt; {
+
+    public T Value { get; private set; }
+    public E Error { get; private set; }
+    public bool HasValue { get; private set; }
+    
+    // Constructors
+    
+    public Result(T value) {
+        Error = default!;
+        Value = value;
+        HasValue = true;
+    }
+    
+    public Result(E error) {
+        Error = error;
+        Value = default!;
+        HasValue = false;
+    }
+    
+    // Handles success case.
+    public Result&lt;T, E&gt; OnSuccess(Action&lt;T&gt; action) {
+    
+        if (HasValue) {
+            action(Value);
+        }
+        return this;
+    }
+    
+    // Handles error case.
+    public Result&lt;T, E&gt; OnError(Action&lt;E&gt; action) {
+    
+        if (!HasValue) {
+            action(Error);
+        }
+
+        throw new UserException(&quot;OnError was called to handle error when there&#39;s no error state to &quot; +
+        &quot;handle. This can only be caused by an error in implementing the Result class. Particularly&quot; +
+        &quot;this can only happen if OnError is called when IsSuccess is false. This should never&quot; +
+        &quot;happen in any sensible implementation. This exception is here to draw your attention&quot; +
+        &quot;to that fact. You&#39;re doing something incredibly wrong and embarrassing.&quot;);
+
+    }
+}
+
+public sealed class ResultTypeTest {  
+  
+    private readonly Guid _correctId = Guid.NewGuid();  
+    private readonly Guid _wrongId = Guid.NewGuid();  
+  
+    private readonly Database _database;  
+  
+    public ResultTypeTest() {  
+        _database = new (_correctId);  
+    }  
+  
+    public void Test() {  
+  
+        // Database has been set up with data that we should be able to fetch with _correctId,  
+        // whereas _wrongId should return an error because data by that id does not exist.
+        
+        Result&lt;SomeData, DomainError&gt; correctResult = GetData(_correctId);  
+        Result&lt;SomeData, DomainError&gt; wrongResult = GetData(_wrongId);  
+  
+        correctResult.OnSuccess(data =&gt; {  
+            // Do something with data  
+            Console.WriteLine($&quot;DEBUG: correctResult: Data fetched successfully, data.Id: {data.Id}&quot;);  
+        }).OnError(error =&gt; {  
+            // Do something with error  
+            Console.WriteLine($&quot;DEBUG: correctResult: Error fetching data, error message: {error.Message}&quot;);  
+        });  
+  
+        wrongResult.OnSuccess(data =&gt; {  
+            // Do something with data  
+            Console.WriteLine($&quot;DEBUG: wrongResult: Data fetched successfully, data.Id: {data.Id}&quot;);  
+        }).OnError(error =&gt; {  
+            // Print error  
+            Console.WriteLine($&quot;DEBUG: wrongResult: Error fetching data, error message: {error.Message}&quot;);  
+        });  
+  
+    }  
+  
+    private Result&lt;SomeData, DomainError&gt; GetData(Guid id) {  
+        bool dataExists = _database.CheckDataExists(id);  
+  
+        if (dataExists) {  
+            return new Result&lt;SomeData, DomainError&gt;(_database.data);  
+        } else {  
+            return new Result&lt;SomeData, DomainError&gt;(new DomainError(&quot;Domain error: Data not found.&quot;));  
+        }  
+    }  
+  
+}  
+  
+public class Database {  
+    public SomeData data { get; set; }  
+    public Database(Guid id) {  
+        data = new SomeData(id);  
+    }  
+  
+    public bool CheckDataExists(Guid id) {  
+        return id == data.Id;  
+    }  
+}  
+  
+public class SomeData {  
+    public Guid Id { get; }  
+    public SomeData(Guid id) {  
+        Id = id;  
+    }  
+}  
+  
+public class DomainError {  
+    public string Message { get; }  
+    public DomainError(string message) {  
+        Message = message;  
+    }  
+}
+</code></pre>
+<p>In this example, <code>GetData</code> returns a <code>Result&lt;SomeData, DomainError&gt;</code>. Depending on whether <code>GetData</code> succeeds or fails, either <code>HandleData</code> or <code>LogError</code> will be executed. The key here is that the <code>OnSuccess</code> and <code>OnError</code> methods encapsulate the branching logic, allowing for a more fluent and declarative style of programming.</p>
+<p>The <code>data =&gt; HandleData(data)</code> is a lambda expression that represents an <code>Action&lt;T&gt;</code>. It’s a method taking <code>data</code> as a parameter and then calling <code>HandleData</code> with it. Similarly, <code>error =&gt; LogError(error)</code> is an <code>Action&lt;E&gt;</code>, handling the error case.</p>
+<p>This approach is quite powerful as it separates the concerns of error handling from the main business logic, leading to cleaner and more maintainable code. You can further refine this pattern by adding more methods for chaining, like Map for transforming the result, Bind for monadic operations, etc. This makes the Result type a very flexible tool for robust error handling without resorting to traditional branching logic.</p>
+<p>The provided code snippet demonstrated several programming techniques and concepts:</p>
+<ol>
+<li><p><strong>Encapsulation and Monadic Design Pattern</strong>: The <code>Result&lt;T, E&gt;</code> class demonstrates encapsulation by containing both success and error states along with their values. This approach, akin to a monadic design pattern, organizes state handling within a structured object, avoiding dispersed code management. While not a full monad, <code>Result</code> mimics monadic aspects by providing methods to process values or errors without manual state checks.</p>
+</li>
+<li><p><strong>Fluent Interface and Method Chaining</strong>: The <code>Result</code> class employs a fluent interface through method chaining. The methods <code>OnSuccess</code> and <code>OnError</code> return the <code>Result</code> object itself, allowing for chaining multiple methods in a single statement. This design enhances code readability and conciseness, characteristic of fluent interfaces.</p>
+</li>
+<li><p><strong>Delegation and Higher-Order Functions</strong>: <code>OnSuccess</code> and <code>OnError</code> serve as higher-order functions, taking <code>Action&lt;T&gt;</code> and <code>Action&lt;E&gt;</code> delegates as parameters. They exemplify delegation by passing execution based on the <code>Result</code> object’s state to these provided action functions. This pattern allows for flexible and dynamic handling of different execution scenarios.</p>
+</li>
+<li><p><strong>Lambda Expressions and Conditional Execution</strong>: Lambda expressions like <code>data =&gt; HandleData(data)</code> and <code>error =&gt; LogError(error)</code> in C# provide concise representations of anonymous methods. The implementation of <code>OnSuccess</code> and <code>OnError</code> involves conditional execution, determining action invocation based on the <code>Result</code> object’s success state, often utilizing these lambda expressions for inline logic definition.</p>
+</li>
+</ol>
+<h2 id="regular-case">Regular case</h2>
+<p>Default value such as Optional object can help to recover from not finding the Guid Id.</p>
+<p>If the absence of data corresponding to a GUID is a regular occurrence and not indicative of a deeper issue, then using an optional object like <code>Option&lt;T&gt;</code> is a more appropriate approach. <code>Option&lt;T&gt;</code> is a container that either holds a value of type <code>T</code> (representing the presence of data) or is empty (representing the absence of data).</p>
+<p>This approach is particularly useful in cases where the absence of data is a normal - an expected part of the application’s flow. For example if a user is searching for a record that doesn’t exist, it isn’t necessarily an error. It could also mean that the record hasn’t been created yet. By using <code>Option&lt;T&gt;</code>, you can handle these scenarios without resorting to <code>null</code> checks or throwing exceptions. It allows the calling code to handle the case of missing data, perhaps by taking alternative actions or providing a default value.</p>
+<p>I won’t go into details about this. But <code>Option&lt;T&gt;</code> is available, for example, from the popular function library <code>LanguageExt</code>.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Godot Control node mouse input handling order</title>
         <author>
@@ -912,70 +1083,6 @@ float red = random.Next(0, 256);
 <li><p>It didn’t fix the issue? Go through the checklist again, carefully.</p>
 </li>
 </ol>
-
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Inheritance with Constructors</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/inheritance-with-constructors/"/>
-        <id>https://pilvimaa.fi/inheritance-with-constructors/</id>
-        <media:content url="https://pilvimaa.fi/media/posts/7/Binary.png" medium="image" />
-            <category term="Inheritance"/>
-            <category term="Constructors"/>
-            <category term="C#"/>
-
-        <updated>2022-07-14T21:11:01+03:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/7/Binary.png" alt="" />
-                    Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By doing this way&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <p><img src="https://pilvimaa.fi/media/posts/7/Binary.png" class="type:primaryImage" alt="" /></p>
-                <p>Here we call the constructor of the <strong>base class A</strong> and pass the <code>id</code> as a parameter to initialize <code>_id</code> in the <strong>constructor</strong> of <strong>A</strong> class.</p>
-<p>By doing this way we can avoid unnecessary <em>code duplication</em>.</p>
-<pre><code class="language-cs">internal class A {
-    string _id;    
-    internal A(string id) =&gt; _id = id;
-}
-
-internal class B : A {
-    string _name;
-    internal B(string name) : base(id) =&gt; _name = name;
-}
-</code></pre>
-<p>Here we call another constructor inside the same class and create a new <code>Author</code> object from the data provided to the first constructor. This is useful in cases where you already have an object constructed which you want to reuse.</p>
-<pre><code class="language-cs">internal class C {
-    Author _author;    
-    string _message;
-    
-    internal C(Author author, string message) {
-        _author = author;
-        _message = message;
-    }
-
-    internal C(string id, string name, string message) : this(new Author(id, name), message) {}
-}
-</code></pre>
-<p>Passing in <strong>default values</strong> when default values cannot be used.</p>
-<p>This example will not compile, but this is what we’d like to do.</p>
-<pre><code class="language-cs">public class D {
-    public D(string[] myArray = new string[] {&quot;Entry1&quot;, &quot;Entry2&quot;}) {}
-}
-</code></pre>
-<p>We can make it work by passing a faked default value.</p>
-<pre><code class="language-cs">public class E {
-    public E(string[] myArray) {}
-
-    public E() : this(new string[] {&quot;Entry1&quot;, &quot;Entry2&quot;}) {}
-}
-</code></pre>
 
             ]]>
         </content>
