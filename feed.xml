@@ -3,12 +3,339 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2024-02-09T11:06:05+02:00</updated>
+    <updated>2024-07-03T01:24:09+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>How to setup SQLite database with EF Core and Godot</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/how-to-setup-sqlite-database-with-ef-core-and-godot/"/>
+        <id>https://pilvimaa.fi/how-to-setup-sqlite-database-with-ef-core-and-godot/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/19/Database.png" medium="image" />
+            <category term="tutorial"/>
+            <category term="sqlite"/>
+            <category term="ef core"/>
+            <category term="database"/>
+            <category term="Godot"/>
+            <category term="Csharp"/>
+
+        <updated>2024-07-03T01:24:09+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/19/Database.png" alt="Database" />
+                    EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend. As a database noobie, I recently had a bit of a&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <p><img src="https://pilvimaa.fi/media/posts/19/Database.png" class="type:primaryImage" alt="Database" /></p>
+                <p>EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend.</p>
+<p>As a database noobie, I recently had a bit of a trouble setting it up with Godot and SQLite. There was very little practical information available from a beginner’s perspective for setting it up successfully with Godot.</p>
+<p>I hit a dead end several times trying to follow the official MS docs and bunch of tutorials, but eventually with a help from a friend got it working.</p>
+<p>So I thought I might as well write a quick article about it - from my own unique database noob perspective. In case someone else is having the same challenges.</p>
+<p>If you’re looking for educated, accurate, precise and scientific description of how this piece of… technology… works, avert your eyes and never return!</p>
+<p>At the time of writing this, Godot 4.2.2 has been out for a while and Godot 4.3 hasn’t yet been released. I’m running on .NET 8 and using C# 12. These instructions have been written for that in mind and specifically for Rider IDE. If you’re dealing with another IDE or the command line, you will have to figure those parts out for yourself.</p>
+<h1 id="setting-up-a-class-library">Setting up a class library</h1>
+<p>Since we’re going to use the Migrations feature of EF Core, to get things working  properly with Godot’s SDK, you’re going to need to create your database as a separate project, as a <strong>class library</strong>.</p>
+<p>To do that, right click your solution in Rider’s solution explorer and select <strong>Add &gt; New Project</strong> and make it a <strong>Class Library</strong>. It will be created directly under your main project for easy access. You can call it “Database”, or what ever you like.</p>
+<h1 id="linking">Linking</h1>
+<p>To be able to do anything with the Database project it needs to be linked with your main project. So right click in Rider’s solution explorer your main project and select <strong>Add &gt; Reference</strong>, select the box for Database and click the <strong>Add</strong> button. Done.</p>
+<h1 id="dealing-with-assemblyinfo-duplicate-attributes">Dealing with AssemblyInfo duplicate attributes</h1>
+<p>You might have noticed that there’s now a funny new folder in your main project, which is from the Database project. You might be tempted to exclude it, and if you do, you’re on your own dealing with potential issues that might arise from that.</p>
+<p>In this tutorial we’re going to edit the your main project’s <code>.csproj</code> file and add inside the <code>&lt;PropertyGroup&gt;&lt;/PropertyGroup&gt;</code> tags near the top the following mystical tags:</p>
+<pre><code class="language-xml">&lt;GenerateAssemblyInfo&gt;false&lt;/GenerateAssemblyInfo&gt;
+</code></pre>
+<p>And its good buddy:</p>
+<pre><code class="language-xml">&lt;GenerateTargetFrameworkAttribute&gt;false&lt;/GenerateTargetFrameworkAttribute&gt;
+</code></pre>
+<p>And by doing this magical ritual you will get rid of <strong>compilation errors</strong> caused by not excluding the aforementioned folders from your Database project - by doing which you will avoid <em>another set of problems</em>.</p>
+<p>Just do it. You can change your setup later on your own if you’re not happy with it. Let’s first get things working.</p>
+<h1 id="dealing-with-nuget">Dealing with NuGet</h1>
+<p>The three packages you need to install from NuGet are:</p>
+<p><code>Microsoft.EntityFrameworkCore.Sqlite</code>
+<code>Microsoft.EntityFrameworkCore.Design</code>
+<code>Microsoft.EntityFrameworkCore.Tools</code></p>
+<p>You will need to add these to your <strong>Database</strong> project. You will likely not need them in your main project.</p>
+<h1 id="lets-add-some-classes">Let’s add some classes</h1>
+<p>We’re going to need some code to be able to do anything with the database.</p>
+<h3 id="savegamemanifestcs">SaveGameManifest.cs</h3>
+<p>You can arrange your projects how ever you like, but I recommend you create in the <strong>Database</strong> project a folder named <code>DatabaseSets</code>. This folder will hold your C# classes which essentially represent your database tables.</p>
+<p>For fun let’s add <code>SaveGameManifest.cs</code> file in that folder which will represent the data in your table. It’s basically a schema or “entity”. It’s the stuff you want to store in the database.</p>
+<pre><code class="language-cs">using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace Database;
+
+[Table(&quot;SaveGameManifest&quot;)] // Name of the table in the database for this class.
+[PrimaryKey(nameof(DatabaseId))] // They key you can directly fetch the data with.
+public sealed class SaveGameManifest {
+
+    // The primary Guid based key to access this save game manifest.
+    [Column(nameof(DatabaseId))] // The database column name.
+    public Guid DatabaseId { get; set; } 
+
+    // The name of the save game as inputted by user.
+    [Column(nameof(SaveName)), MaxLength(128),] // EF Core doesn&#39;t like strings of unrestricted length.
+    public string SaveName { get; set; } = string.Empty;
+
+    // The date when the save game was last saved.
+    [Column(nameof(LastSaved))]
+    public DateTime LastSaved { get; set; } = DateTime.Now;
+
+    // Required for database. Do not remove.
+    public SaveGameManifest() {}
+
+    public SaveGameManifest(Guid databaseId, string saveName) {
+        DatabaseId = databaseId;
+        SaveName = saveName;
+    }
+}
+</code></pre>
+<p>And that’s it. We decorated our class and properties with attributes which instruct EF Core what everything is, ie. how it should be saved in the database. SQLite database is basically just a fancy a big Excel sheet. <strong>Tables</strong> tell you what type of stuff is in there in general (they are kind like file system folders), and <strong>Columns</strong> tell you what should go in here, and <strong>rows</strong> of the columns contain the actual data, data, data and more data.</p>
+<h3 id="databaseconnectioncs">DatabaseConnection.cs</h3>
+<p>I like to name the <code>DbContext</code> class <code>DatabaseConnection</code>, it makes it easier for me to comprehend what is going on.</p>
+<p>There are lots of ways you could set up this file, so don’t be mistaken that this is the only way or even necessarily a good way. This is the database noob way that I came up with, the way which made sense to me personally.</p>
+<p>This class essentially represents your database / gives you access to everything.</p>
+<p>So in my setup you would call <code>DatabaseConnection.Instance.SaveGameManifests</code>, for example, to gain access to the <code>SaveGameManifest</code> tables via the <code>DbSet</code>. And you might call <code>DatabaseConnection.Instance.SaveChanges()</code> to save the database after making changes, etc.</p>
+<pre><code class="language-cs">using Database;
+using Microsoft.EntityFrameworkCore;
+
+namespace YourMainProjectNameSpace;
+
+// We need to inherit DbContext. This allows us to connect to the database.
+public sealed class DatabaseConnection : DbContext {
+
+    // I set this up as a singleton. But you can do what ever you like.
+    private static DatabaseConnection _instance;
+
+    /*
+        To be able to pass the user folder path to our database (where our database
+        is saved) I created a Configure method which must be called before using
+        the database for the first time. This is all about that.
+        */
+    private static bool _isConfigured = false;
+
+    public static void Configure(string userFolder) {
+        if (_instance == null) {
+            _instance = new DatabaseConnection(userFolder);
+            _isConfigured = true;
+        }
+    }
+
+    public static DatabaseConnection Instance {
+        get {
+            if (!_isConfigured) throw new InvalidOperationException(&quot;DatabaseHandler is not configured. Call Configure() before accessing Instance.&quot;);
+            return _instance;
+        }
+    }
+
+    // These are used in setting up the paths.
+    private string _userFolder;
+    private string _databaseFolder = &quot;database&quot;;
+    private string _databasePath = &quot;database.db&quot;;
+    private string _fullDatabaseFilePath;
+
+    /*
+        DbSets contain essentially the tables of the database.
+        You should probably have all your tables defined here in this class,
+        Instead of trying to spread them around or anything like that. I hear it&#39;s
+        a common practice, so it should be good enough for you too.
+        So below here, in production code, would be a big list of DbSet&lt;T&gt;s.
+        */ 
+    public DbSet&lt;SaveGameManifest&gt; SaveGameManifests { get; set; }
+
+    // Again, empty constructor is needed or everything fails to work.
+    public DatabaseConnection() {}
+
+    /*
+        And here is the constructor that we use to build things up.
+        Notice that we take in the user:// folder path here. But if you prefer
+        an alternate method, do what ever you like.
+        */
+    public DatabaseConnection(string userFolder) {
+        _userFolder = userFolder;
+
+        // Console.WriteLine(&quot;Initializing DatabaseHandler.&quot;);
+
+        // Generate the file paths.
+        GeneratePaths();
+
+        // Console.WriteLine(&quot;Database file paths generated.&quot;);
+
+        // Attempt to create the database file if it doesn&#39;t exist yet.
+        TryCreateDatabaseFile(_fullDatabaseFilePath);
+    }
+
+    /*
+        This bit of code is needed to configure that we&#39;re using SQLite and set the path.
+        Feel free to throw in more config options if you need them.
+        */
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        optionsBuilder.UseSqlite($&quot;Data Source={_fullDatabaseFilePath}&quot;);
+    }
+
+
+    private void GeneratePaths() {
+
+        //Console.WriteLine(&quot;Generating database file paths.&quot;);
+
+        // Get the full path to the database file.
+        _fullDatabaseFilePath = Path.Combine(_userFolder, _databaseFolder, _databasePath);
+    }
+
+    /// &lt;summary&gt;
+    /// If the database file does not exist, create it.
+    /// &lt;/summary&gt;
+    private static void TryCreateDatabaseFile(string fullDatabaseFilePath) {
+
+        //Console.WriteLine(&quot;Trying to create the database file.&quot;);
+
+        // If the database exists already, we don&#39;t need to create it.
+        bool databaseExists = File.Exists(fullDatabaseFilePath);
+        if (databaseExists) return;
+
+        //Console.WriteLine(&quot;Database does not exist. Trying to create a new SQLite database file.&quot;);
+
+        // Try to create the database folder first and then the database file.
+        try {
+            string fullFolderPath = Path.GetDirectoryName(fullDatabaseFilePath);
+            Directory.CreateDirectory(fullFolderPath ?? throw new InvalidOperationException());
+            File.Create(fullDatabaseFilePath).Close();
+        } catch (Exception e) {
+            Console.WriteLine(e);
+            throw;
+        }
+
+        // Check if the database file exists. It should.
+        if (!File.Exists(fullDatabaseFilePath)) {
+            throw new Exception(&quot;Failed to create the database file.&quot;);
+        }
+
+        //Console.WriteLine(&quot;SQLite database file created successfully.&quot;);
+    }
+}
+</code></pre>
+<h3 id="maincs">Main.cs</h3>
+<p>In our test this file resides in your main project - or where ever, but what I’m trying to say, it’s <em><strong>not</strong></em> in the <strong>Database</strong> project in this example.</p>
+<p>The <code>Main.cs</code> represents some kind of controller or other class which does something practical with the database.</p>
+<p>For our purposes we simply want to output something to see that everything works.</p>
+<pre><code class="language-cs">
+using Database;
+using Godot;
+using Microsoft.EntityFrameworkCore;
+using YourMainProjectNamespace.Database; // (Unless you excluded the database folder)
+
+namespace YourMainProjectNamespace;
+
+// Oh yes, we&#39;re likely in Godot now doing something fun with the database.
+public partial class Main : Node3D {
+
+    /*
+        In this example we store a reference to the connection, but normally you might
+        just use a using block for the duration of the database operation you want
+        to perform. You can do it both ways depending on the requirements.
+        */
+    private DatabaseConnection _databaseConnection;
+
+    public override async void _Ready() {
+
+        /*
+                Configure the database connection. We need to run configure
+                and pass the user data directory from Godot to the database
+                class library before we can access the instance.
+                (Simply because we happened to code it that way in this example.
+                You do what you like. It doesn&#39;t matter.)
+                */
+        DatabaseConnection.Configure(OS.GetUserDataDir());
+        _databaseConnection = DatabaseConnection.Instance;
+
+        try {
+            // Run migrate to create/update the database and tables if they don&#39;t exist/aren&#39;t up-to-date.
+            await _databaseConnection.Database.MigrateAsync();
+                        
+                        // Now we can use the database after we&#39;ve run Migrate. Not before.
+
+            // Add test data to the database so we have something to show.
+            await AddTestDataEntriesAsync();
+
+              // Do something for fun.
+            await RunDatabaseTests();
+
+        } catch (Exception e) {
+            GD.PrintErr(e);
+            throw;
+        }
+    }
+
+    /// &lt;summary&gt;
+    /// Add test data to the database.
+    /// &lt;/summary&gt;
+    private async Task AddTestDataEntriesAsync() {
+
+        // Instantiate test data.
+        SaveGameManifest saveGameManifest = new (Guid.NewGuid(), &quot;Test Save Game&quot;);
+
+        // Add test data to database.
+        await DatabaseConnection.Instance.AddAsync(saveGameManifest);
+
+        // Save changes to database to disc.
+        await DatabaseConnection.Instance.SaveChangesAsync();
+    }
+
+    /// &lt;summary&gt;
+    /// Run database tests to see if it&#39;s working.
+    /// &lt;/summary&gt;
+    private async Task RunDatabaseTests() {
+
+        // Get data from database and output it.
+        Console.WriteLine(&quot;Fetching SaveGameManifests from database...&quot;);
+
+        // Fetch all SaveGameManifest entries from the database table.
+        DbSet&lt;SaveGameManifest&gt; results = DatabaseConnection.Instance.SaveGameManifests;
+
+        // Output the results.
+
+        Console.WriteLine(&quot;Results:&quot;);
+
+        await foreach (SaveGameManifest manifest in results.AsAsyncEnumerable()) {
+            Console.WriteLine($&quot;DatabaseId: {manifest.DatabaseId}, SaveName: {manifest.SaveName}, LastSaved: {manifest.LastSaved}&quot;);
+        }
+
+        Console.WriteLine($&quot;Results count: {results.Count()}&quot;);
+    }
+}
+</code></pre>
+<h1 id="database-tab">Database tab</h1>
+<p>At this point you might like to, or need to, connect the database in the database tab in Rider. Among other things this will allow you to inspect the contents of the SQLite database, which can be very helpful in debugging.</p>
+<h1 id="migrations">Migrations</h1>
+<p>Now that we’re done with all of that, create a <code>Migrations</code> folder in the <strong>Database</strong> project.</p>
+<p>Right click on the <code>Database</code> project in the Solution Explorer and there should be entry for <strong>Entity Framework Core</strong> near the top of the context menu that pops open.</p>
+<p>Click <strong>Add Migration</strong>.</p>
+<p>The name can be anything you like which helps you understand what the migration is.</p>
+<p>Migration project and Startup project should be <code>Database</code>.</p>
+<p>DbContext class should be <code>DatabaseConnection</code>.</p>
+<p>The <code>Migrations</code> folder has to point to the <code>Migrations</code> folder you created.</p>
+<p><code>Target Framework</code> should probably be set to the .NET version you’re using.</p>
+<p>Everything else can be at defaults. Hit OK.</p>
+<p>If all goes well you should see <code>DatabaseConnectionModelSnapshot.cs</code> file being generated and also a file called something like <code>20240702182449_Initial.Designer.cs</code>.</p>
+<p>You should now have a fully functional setup ready for running.</p>
+<h1 id="how-to-use-migrations">How to use migrations?</h1>
+<p>Every time you’ve changed the schema, ie. your tables, columns, added new types, removed columns, tables, changed types, changed names, etc. In other words every time your data definitions change and your database types don’t anymore reflect your types in code, you should run <code>Entity Framework Core &gt; Add Migration</code>.</p>
+<p>This will update the migration path of your data and tell your database how it should update and change between different versions.</p>
+<h1 id="problems">Problems</h1>
+<p>The database will be created in Godot’s <code>user://</code> folder. If you have trouble finding it you can open Godot and go to <code>Editor &gt; Open Editor Data Folder</code> and look it up from there.</p>
+<p>You can always just delete the database file and delete the Migrations files when testing things. Don’t do that in production when you’ve released something. You should only add new migrations then, and never remove them, if they have already been released out to the wild.</p>
+<p>Unless I forgot something or you’ve got a different kind of setup, these instructions should more or less work. I did not, however, specifically go out of my way to test these instructions step by step to insure that they work on a clean system. I wrote the instructions from memory. So there may be factual errors. If that’s the case, you can contact me on Star and Serpent’s Discord. The link is on Star and Serpent’s home page.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Bullet parenting trick</title>
         <author>
@@ -827,61 +1154,6 @@ public abstract class Mover {
         this.Intersection(other).IsValid;
 }
 </code></pre>
-
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Seeded Random Numbers</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/seeded-random-numbers/"/>
-        <id>https://pilvimaa.fi/seeded-random-numbers/</id>
-        <media:content url="https://pilvimaa.fi/media/posts/9/Dice.jpg" medium="image" />
-            <category term="World Generation"/>
-            <category term="Random Numbers"/>
-            <category term="C#"/>
-
-        <updated>2022-07-14T21:10:44+03:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
-                    Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <p><img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" class="type:primaryImage" alt="" /></p>
-                <p>Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or re-create the <code>Random</code> generator object.</p>
-<p>This can be achieved by giving the <code>Random</code> generator instance a seed value.</p>
-<pre><code class="language-cs">Random random = new Random(1273456);
-</code></pre>
-<p>This is very useful in situations where you, for example, need to generate identical terrain each time your game runs.</p>
-<p>The seed value could be shared between client and server or between friends to generate the same world on different machines provided that the generation code remains identical between versions of the application.</p>
-<h2 id="several-random-number-generators-sharing-a-seed">Several Random Number Generators Sharing a Seed</h2>
-<p>Csharp’s random number generator is not thread safe.  This means if you need random number generation and you have several threads which need those numbers they can’t share the same instance, it’s not safe to do so.</p>
-<p>In such cases you might need to have several random number generators which are based on the same seed to keep the behavior consistent.</p>
-<p>A common way to do this is to use a master random number generator and have that generate the seed values for any subsequent random number generators. But this approach has problems even though it’s common. If you do this you will get bi-modal peaks for your range where it’s more likely to get numbers from those peaks - making the random generation less random.</p>
-<p>A simple working solution to this problem is to increment your seed by +1 for each new subsequent random number generator like shown in the example below.</p>
-<pre><code class="language-cs">using System;  
-  
-internal class SeededRandomExample {  
-    public Random TerrainRandom;  
-    public Random BiomeRandom;  
-    public Random VegetationRandom;  
-    public int Seed { get; set; } = 481203849;  
-    public SeededRandomExample() {  
-        int terrainSeed = Seed;  
-        TerrainRandom = new Random(terrainSeed);  
-        int biomeSeed = Seed + 1;  
-        BiomeRandom = new Random(biomeSeed);  
-        int vegetationSeed = Seed + 2;  
-        VegetationRandom = new Random(vegetationSeed);  
-    }  
-}
-</code></pre>
-<p>This solution will give you better and more consistently (pseudo-) random numbers while keeping the random number generators tied to the same seed value.</p>
 
             ]]>
         </content>

@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="en-us"><head><link rel="stylesheet" href="https://pilvimaa.fi/assets/css/prism.css?v=1caa16b9d9db6430ff86df681aca81b1"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to setup SQLite database with EF Core and Godot - Csharp and Game Development Notes</title><meta name="description" content="EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend. As a database noobie, I recently had a bit of a&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://pilvimaa.fi/how-to-setup-sqlite-database-with-ef-core-and-godot/"><link rel="alternate" type="application/atom+xml" href="https://pilvimaa.fi/feed.xml"><link rel="alternate" type="application/json" href="https://pilvimaa.fi/feed.json"><link rel="shortcut icon" href="https://pilvimaa.fi/media/website/favicon.ico" type="image/x-icon"><link rel="stylesheet" href="https://pilvimaa.fi/assets/css/style.css?v=7ee03c35559acda410ec1c38d6c6c98d"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://pilvimaa.fi/how-to-setup-sqlite-database-with-ef-core-and-godot/"},"headline":"How to setup SQLite database with EF Core and Godot","datePublished":"2024-07-03T01:24","dateModified":"2024-07-03T01:24","image":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/posts/19/Database.png","height":1024,"width":1024},"description":"EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend. As a database noobie, I recently had a bit of a&hellip;","author":{"@type":"Person","name":"Pilvinen","url":"https://pilvimaa.fi/authors/pilvinen/"},"publisher":{"@type":"Organization","name":"Pilvinen","logo":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/website/Hedgehog.png","height":397,"width":640}}}</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-NT7DGE75CF"></script><script>window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NT7DGE75CF');</script></head><body><div class="site-container"><header class="top" id="js-header"><a class="logo" href="https://pilvimaa.fi/"><img src="https://pilvimaa.fi/media/website/Hedgehog.png" alt="Csharp and Game Development Notes" width="640" height="397"></a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://www.starandserpent.com" title="Star and Serpent" target="_blank">Star and Serpent</a></li><li><a href="https://www.starandserpent.com/blog/" title="S.&#x27;.S.&#x27;. blog" target="_blank">S.&#x27;.S.&#x27;. Blog</a></li><li><a href="https://github.com/starandserpent" title="S.&#x27;.S.&#x27;. Github" target="_blank">S.&#x27;.S.&#x27;. Github</a></li><li><a href="https://github.com/Pilvinen" title="Personal Github" target="_blank">Personal Github</a></li></ul></nav></header><main><article class="post"><div class="hero"><figure class="hero__image hero__image--overlay"><img src="https://pilvimaa.fi/media/posts/19/Database.png" srcset="https://pilvimaa.fi/media/posts/19/responsive/Database-xs.png 300w, https://pilvimaa.fi/media/posts/19/responsive/Database-sm.png 480w, https://pilvimaa.fi/media/posts/19/responsive/Database-md.png 768w, https://pilvimaa.fi/media/posts/19/responsive/Database-lg.png 1024w, https://pilvimaa.fi/media/posts/19/responsive/Database-xl.png 1360w, https://pilvimaa.fi/media/posts/19/responsive/Database-2xl.png 1600w" sizes="(max-width: 1600px) 100vw, 1600px" loading="eager" height="1024" width="1024" alt="Database"></figure><header class="hero__content"><div class="wrapper"><div class="post__meta"><time datetime="2024-07-03T01:24">July 3, 2024</time></div><h1>How to setup SQLite database with EF Core and Godot</h1><div class="post__meta post__meta--author"><img src="https://pilvimaa.fi/media/website/Pilvinen-As_Space_Techno_Wizard.png" loading="eager" height="1024" width="1024" class="post__author-thumb" alt="Pilvinen"> <a href="https://pilvimaa.fi/authors/pilvinen/" class="feed__author">Pilvinen</a></div></div></header></div><div class="wrapper post__entry"><p>EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend.</p><p>As a database noobie, I recently had a bit of a trouble setting it up with Godot and SQLite. There was very little practical information available from a beginner’s perspective for setting it up successfully with Godot.</p><p>I hit a dead end several times trying to follow the official MS docs and bunch of tutorials, but eventually with a help from a friend got it working.</p><p>So I thought I might as well write a quick article about it - from my own unique database noob perspective. In case someone else is having the same challenges.</p><p>If you’re looking for educated, accurate, precise and scientific description of how this piece of… technology… works, avert your eyes and never return!</p><p>At the time of writing this, Godot 4.2.2 has been out for a while and Godot 4.3 hasn’t yet been released. I’m running on .NET 8 and using C# 12. These instructions have been written for that in mind and specifically for Rider IDE. If you’re dealing with another IDE or the command line, you will have to figure those parts out for yourself.</p><h1 id="setting-up-a-class-library">Setting up a class library</h1><p>Since we’re going to use the Migrations feature of EF Core, to get things working properly with Godot’s SDK, you’re going to need to create your database as a separate project, as a <strong>class library</strong>.</p><p>To do that, right click your solution in Rider’s solution explorer and select <strong>Add &gt; New Project</strong> and make it a <strong>Class Library</strong>. It will be created directly under your main project for easy access. You can call it “Database”, or what ever you like.</p><h1 id="linking">Linking</h1><p>To be able to do anything with the Database project it needs to be linked with your main project. So right click in Rider’s solution explorer your main project and select <strong>Add &gt; Reference</strong>, select the box for Database and click the <strong>Add</strong> button. Done.</p><h1 id="dealing-with-assemblyinfo-duplicate-attributes">Dealing with AssemblyInfo duplicate attributes</h1><p>You might have noticed that there’s now a funny new folder in your main project, which is from the Database project. You might be tempted to exclude it, and if you do, you’re on your own dealing with potential issues that might arise from that.</p><p>In this tutorial we’re going to edit the your main project’s <code>.csproj</code> file and add inside the <code>&lt;PropertyGroup&gt;&lt;/PropertyGroup&gt;</code> tags near the top the following mystical tags:</p><pre><code class="language-xml">&lt;GenerateAssemblyInfo&gt;false&lt;/GenerateAssemblyInfo&gt;
+</code></pre><p>And its good buddy:</p><pre><code class="language-xml">&lt;GenerateTargetFrameworkAttribute&gt;false&lt;/GenerateTargetFrameworkAttribute&gt;
+</code></pre><p>And by doing this magical ritual you will get rid of <strong>compilation errors</strong> caused by not excluding the aforementioned folders from your Database project - by doing which you will avoid <em>another set of problems</em>.</p><p>Just do it. You can change your setup later on your own if you’re not happy with it. Let’s first get things working.</p><h1 id="dealing-with-nuget">Dealing with NuGet</h1><p>The three packages you need to install from NuGet are:</p><p><code>Microsoft.EntityFrameworkCore.Sqlite</code> <code>Microsoft.EntityFrameworkCore.Design</code> <code>Microsoft.EntityFrameworkCore.Tools</code></p><p>You will need to add these to your <strong>Database</strong> project. You will likely not need them in your main project.</p><h1 id="lets-add-some-classes">Let’s add some classes</h1><p>We’re going to need some code to be able to do anything with the database.</p><h3 id="savegamemanifestcs">SaveGameManifest.cs</h3><p>You can arrange your projects how ever you like, but I recommend you create in the <strong>Database</strong> project a folder named <code>DatabaseSets</code>. This folder will hold your C# classes which essentially represent your database tables.</p><p>For fun let’s add <code>SaveGameManifest.cs</code> file in that folder which will represent the data in your table. It’s basically a schema or “entity”. It’s the stuff you want to store in the database.</p><pre><code class="language-cs">using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace Database;
+
+[Table(&quot;SaveGameManifest&quot;)] // Name of the table in the database for this class.
+[PrimaryKey(nameof(DatabaseId))] // They key you can directly fetch the data with.
+public sealed class SaveGameManifest {
+
+    // The primary Guid based key to access this save game manifest.
+    [Column(nameof(DatabaseId))] // The database column name.
+    public Guid DatabaseId { get; set; } 
+
+    // The name of the save game as inputted by user.
+    [Column(nameof(SaveName)), MaxLength(128),] // EF Core doesn&#39;t like strings of unrestricted length.
+    public string SaveName { get; set; } = string.Empty;
+
+    // The date when the save game was last saved.
+    [Column(nameof(LastSaved))]
+    public DateTime LastSaved { get; set; } = DateTime.Now;
+
+    // Required for database. Do not remove.
+    public SaveGameManifest() {}
+
+    public SaveGameManifest(Guid databaseId, string saveName) {
+        DatabaseId = databaseId;
+        SaveName = saveName;
+    }
+}
+</code></pre><p>And that’s it. We decorated our class and properties with attributes which instruct EF Core what everything is, ie. how it should be saved in the database. SQLite database is basically just a fancy a big Excel sheet. <strong>Tables</strong> tell you what type of stuff is in there in general (they are kind like file system folders), and <strong>Columns</strong> tell you what should go in here, and <strong>rows</strong> of the columns contain the actual data, data, data and more data.</p><h3 id="databaseconnectioncs">DatabaseConnection.cs</h3><p>I like to name the <code>DbContext</code> class <code>DatabaseConnection</code>, it makes it easier for me to comprehend what is going on.</p><p>There are lots of ways you could set up this file, so don’t be mistaken that this is the only way or even necessarily a good way. This is the database noob way that I came up with, the way which made sense to me personally.</p><p>This class essentially represents your database / gives you access to everything.</p><p>So in my setup you would call <code>DatabaseConnection.Instance.SaveGameManifests</code>, for example, to gain access to the <code>SaveGameManifest</code> tables via the <code>DbSet</code>. And you might call <code>DatabaseConnection.Instance.SaveChanges()</code> to save the database after making changes, etc.</p><pre><code class="language-cs">using Database;
+using Microsoft.EntityFrameworkCore;
+
+namespace YourMainProjectNameSpace;
+
+// We need to inherit DbContext. This allows us to connect to the database.
+public sealed class DatabaseConnection : DbContext {
+
+    // I set this up as a singleton. But you can do what ever you like.
+    private static DatabaseConnection _instance;
+
+    /*
+        To be able to pass the user folder path to our database (where our database
+        is saved) I created a Configure method which must be called before using
+        the database for the first time. This is all about that.
+        */
+    private static bool _isConfigured = false;
+
+    public static void Configure(string userFolder) {
+        if (_instance == null) {
+            _instance = new DatabaseConnection(userFolder);
+            _isConfigured = true;
+        }
+    }
+
+    public static DatabaseConnection Instance {
+        get {
+            if (!_isConfigured) throw new InvalidOperationException(&quot;DatabaseHandler is not configured. Call Configure() before accessing Instance.&quot;);
+            return _instance;
+        }
+    }
+
+    // These are used in setting up the paths.
+    private string _userFolder;
+    private string _databaseFolder = &quot;database&quot;;
+    private string _databasePath = &quot;database.db&quot;;
+    private string _fullDatabaseFilePath;
+
+    /*
+        DbSets contain essentially the tables of the database.
+        You should probably have all your tables defined here in this class,
+        Instead of trying to spread them around or anything like that. I hear it&#39;s
+        a common practice, so it should be good enough for you too.
+        So below here, in production code, would be a big list of DbSet&lt;T&gt;s.
+        */ 
+    public DbSet&lt;SaveGameManifest&gt; SaveGameManifests { get; set; }
+
+    // Again, empty constructor is needed or everything fails to work.
+    public DatabaseConnection() {}
+
+    /*
+        And here is the constructor that we use to build things up.
+        Notice that we take in the user:// folder path here. But if you prefer
+        an alternate method, do what ever you like.
+        */
+    public DatabaseConnection(string userFolder) {
+        _userFolder = userFolder;
+
+        // Console.WriteLine(&quot;Initializing DatabaseHandler.&quot;);
+
+        // Generate the file paths.
+        GeneratePaths();
+
+        // Console.WriteLine(&quot;Database file paths generated.&quot;);
+
+        // Attempt to create the database file if it doesn&#39;t exist yet.
+        TryCreateDatabaseFile(_fullDatabaseFilePath);
+    }
+
+    /*
+        This bit of code is needed to configure that we&#39;re using SQLite and set the path.
+        Feel free to throw in more config options if you need them.
+        */
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        optionsBuilder.UseSqlite($&quot;Data Source={_fullDatabaseFilePath}&quot;);
+    }
+
+
+    private void GeneratePaths() {
+
+        //Console.WriteLine(&quot;Generating database file paths.&quot;);
+
+        // Get the full path to the database file.
+        _fullDatabaseFilePath = Path.Combine(_userFolder, _databaseFolder, _databasePath);
+    }
+
+    /// &lt;summary&gt;
+    /// If the database file does not exist, create it.
+    /// &lt;/summary&gt;
+    private static void TryCreateDatabaseFile(string fullDatabaseFilePath) {
+
+        //Console.WriteLine(&quot;Trying to create the database file.&quot;);
+
+        // If the database exists already, we don&#39;t need to create it.
+        bool databaseExists = File.Exists(fullDatabaseFilePath);
+        if (databaseExists) return;
+
+        //Console.WriteLine(&quot;Database does not exist. Trying to create a new SQLite database file.&quot;);
+
+        // Try to create the database folder first and then the database file.
+        try {
+            string fullFolderPath = Path.GetDirectoryName(fullDatabaseFilePath);
+            Directory.CreateDirectory(fullFolderPath ?? throw new InvalidOperationException());
+            File.Create(fullDatabaseFilePath).Close();
+        } catch (Exception e) {
+            Console.WriteLine(e);
+            throw;
+        }
+
+        // Check if the database file exists. It should.
+        if (!File.Exists(fullDatabaseFilePath)) {
+            throw new Exception(&quot;Failed to create the database file.&quot;);
+        }
+
+        //Console.WriteLine(&quot;SQLite database file created successfully.&quot;);
+    }
+}
+</code></pre><h3 id="maincs">Main.cs</h3><p>In our test this file resides in your main project - or where ever, but what I’m trying to say, it’s <em><strong>not</strong></em> in the <strong>Database</strong> project in this example.</p><p>The <code>Main.cs</code> represents some kind of controller or other class which does something practical with the database.</p><p>For our purposes we simply want to output something to see that everything works.</p><pre><code class="language-cs">
+using Database;
+using Godot;
+using Microsoft.EntityFrameworkCore;
+using YourMainProjectNamespace.Database; // (Unless you excluded the database folder)
+
+namespace YourMainProjectNamespace;
+
+// Oh yes, we&#39;re likely in Godot now doing something fun with the database.
+public partial class Main : Node3D {
+
+    /*
+        In this example we store a reference to the connection, but normally you might
+        just use a using block for the duration of the database operation you want
+        to perform. You can do it both ways depending on the requirements.
+        */
+    private DatabaseConnection _databaseConnection;
+
+    public override async void _Ready() {
+
+        /*
+                Configure the database connection. We need to run configure
+                and pass the user data directory from Godot to the database
+                class library before we can access the instance.
+                (Simply because we happened to code it that way in this example.
+                You do what you like. It doesn&#39;t matter.)
+                */
+        DatabaseConnection.Configure(OS.GetUserDataDir());
+        _databaseConnection = DatabaseConnection.Instance;
+
+        try {
+            // Run migrate to create/update the database and tables if they don&#39;t exist/aren&#39;t up-to-date.
+            await _databaseConnection.Database.MigrateAsync();
+                        
+                        // Now we can use the database after we&#39;ve run Migrate. Not before.
+
+            // Add test data to the database so we have something to show.
+            await AddTestDataEntriesAsync();
+
+              // Do something for fun.
+            await RunDatabaseTests();
+
+        } catch (Exception e) {
+            GD.PrintErr(e);
+            throw;
+        }
+    }
+
+    /// &lt;summary&gt;
+    /// Add test data to the database.
+    /// &lt;/summary&gt;
+    private async Task AddTestDataEntriesAsync() {
+
+        // Instantiate test data.
+        SaveGameManifest saveGameManifest = new (Guid.NewGuid(), &quot;Test Save Game&quot;);
+
+        // Add test data to database.
+        await DatabaseConnection.Instance.AddAsync(saveGameManifest);
+
+        // Save changes to database to disc.
+        await DatabaseConnection.Instance.SaveChangesAsync();
+    }
+
+    /// &lt;summary&gt;
+    /// Run database tests to see if it&#39;s working.
+    /// &lt;/summary&gt;
+    private async Task RunDatabaseTests() {
+
+        // Get data from database and output it.
+        Console.WriteLine(&quot;Fetching SaveGameManifests from database...&quot;);
+
+        // Fetch all SaveGameManifest entries from the database table.
+        DbSet&lt;SaveGameManifest&gt; results = DatabaseConnection.Instance.SaveGameManifests;
+
+        // Output the results.
+
+        Console.WriteLine(&quot;Results:&quot;);
+
+        await foreach (SaveGameManifest manifest in results.AsAsyncEnumerable()) {
+            Console.WriteLine($&quot;DatabaseId: {manifest.DatabaseId}, SaveName: {manifest.SaveName}, LastSaved: {manifest.LastSaved}&quot;);
+        }
+
+        Console.WriteLine($&quot;Results count: {results.Count()}&quot;);
+    }
+}
+</code></pre><h1 id="database-tab">Database tab</h1><p>At this point you might like to, or need to, connect the database in the database tab in Rider. Among other things this will allow you to inspect the contents of the SQLite database, which can be very helpful in debugging.</p><h1 id="migrations">Migrations</h1><p>Now that we’re done with all of that, create a <code>Migrations</code> folder in the <strong>Database</strong> project.</p><p>Right click on the <code>Database</code> project in the Solution Explorer and there should be entry for <strong>Entity Framework Core</strong> near the top of the context menu that pops open.</p><p>Click <strong>Add Migration</strong>.</p><p>The name can be anything you like which helps you understand what the migration is.</p><p>Migration project and Startup project should be <code>Database</code>.</p><p>DbContext class should be <code>DatabaseConnection</code>.</p><p>The <code>Migrations</code> folder has to point to the <code>Migrations</code> folder you created.</p><p><code>Target Framework</code> should probably be set to the .NET version you’re using.</p><p>Everything else can be at defaults. Hit OK.</p><p>If all goes well you should see <code>DatabaseConnectionModelSnapshot.cs</code> file being generated and also a file called something like <code>20240702182449_Initial.Designer.cs</code>.</p><p>You should now have a fully functional setup ready for running.</p><h1 id="how-to-use-migrations">How to use migrations?</h1><p>Every time you’ve changed the schema, ie. your tables, columns, added new types, removed columns, tables, changed types, changed names, etc. In other words every time your data definitions change and your database types don’t anymore reflect your types in code, you should run <code>Entity Framework Core &gt; Add Migration</code>.</p><p>This will update the migration path of your data and tell your database how it should update and change between different versions.</p><h1 id="problems">Problems</h1><p>The database will be created in Godot’s <code>user://</code> folder. If you have trouble finding it you can open Godot and go to <code>Editor &gt; Open Editor Data Folder</code> and look it up from there.</p><p>You can always just delete the database file and delete the Migrations files when testing things. Don’t do that in production when you’ve released something. You should only add new migrations then, and never remove them, if they have already been released out to the wild.</p><p>Unless I forgot something or you’ve got a different kind of setup, these instructions should more or less work. I did not, however, specifically go out of my way to test these instructions step by step to insure that they work on a clean system. I wrote the instructions from memory. So there may be factual errors. If that’s the case, you can contact me on Star and Serpent’s Discord. The link is on Star and Serpent’s home page.</p></div><footer class="wrapper post__footer"><p class="post__last-updated">This article was updated on July 3, 2024</p><ul class="post__tag"><li><a href="https://pilvimaa.fi/tag/csharp/">Csharp</a></li><li><a href="https://pilvimaa.fi/tag/database/">database</a></li><li><a href="https://pilvimaa.fi/tag/ef-core/">ef core</a></li><li><a href="https://pilvimaa.fi/tag/godot/">Godot</a></li><li><a href="https://pilvimaa.fi/tag/sqlite/">sqlite</a></li><li><a href="https://pilvimaa.fi/tag/tutorial/">tutorial</a></li></ul><div class="post__share"></div><div class="post__bio bio"><img src="https://pilvimaa.fi/media/website/Pilvinen-As_Space_Techno_Wizard.png" loading="lazy" height="1024" width="1024" class="bio__avatar" alt="Pilvinen"><div class="bio__info"><h3 class="bio__name"><a href="https://pilvimaa.fi/authors/pilvinen/" rel="author">Pilvinen</a></h3><p>Star and Serpent indie game studio founder, team leader, programmer wannabe, and game designer. Human friendly. Likes to talk. Interested in math, sciences, logic, languages, literature, medieval history, programming, philosophy, and games.</p></div></div></footer></article><nav class="post__nav"><div class="post__nav-inner"><div class="post__nav-prev"><svg width="1.041em" height="0.416em" aria-hidden="true"><use xlink:href="https://pilvimaa.fi/assets/svg/svg-map.svg#arrow-prev"/></svg> <a href="https://pilvimaa.fi/bullet-parenting-trick/" class="post__nav-link" rel="prev"><span>Previous</span> Bullet parenting trick</a></div></div></nav><div class="post__related related"><div class="wrapper"><h2 class="h5 related__title">You should also read:</h2><article class="related__item"><div class="feed__meta"><time datetime="2023-11-01T21:09" class="feed__date">November 1, 2023</time></div><h3 class="h1"><a href="https://pilvimaa.fi/godot-control-node-mouse-input-handling-order/">Godot Control node mouse input handling order</a></h3></article><article class="related__item"><div class="feed__meta"><time datetime="2023-10-16T18:47" class="feed__date">October 16, 2023</time></div><h3 class="h1"><a href="https://pilvimaa.fi/gdscript-vs-c-in-godot-which-language-should-you-use/">GDScript vs. C# in Godot: Which language should you use?</a></h3></article><article class="related__item"><div class="feed__meta"><time datetime="2023-06-14T02:08" class="feed__date">June 14, 2023</time></div><h3 class="h1"><a href="https://pilvimaa.fi/node2d-double-click-detection-in-godot/">Node2D double click detection in Godot</a></h3></article></div></div></main><footer class="footer"><script defer="defer" src="https://pilvimaa.fi/assets/js/prism.js?v=4bd006477d0d358daace75bbde4ce792"></script><div class="footer__copyright"><p><a href="https://www.starandserpent.com" target="_blank" rel="noopener noreferrer">https://www.starandserpent.com</a></p></div><button onclick="backToTopFunction()" id="backToTop" class="footer__bttop" aria-label="Back to top" title="Back to top"><svg><use xlink:href="https://pilvimaa.fi/assets/svg/svg-map.svg#toparrow"/></svg></button></footer></div><script defer="defer" src="https://pilvimaa.fi/assets/js/scripts.min.js?v=f47c11534595205f20935f0db2a62a85"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script></body></html>
