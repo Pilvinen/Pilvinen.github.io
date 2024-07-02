@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2024-07-03T01:24:09+03:00</updated>
+    <updated>2024-07-03T01:26:23+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -24,7 +24,7 @@
             <category term="Godot"/>
             <category term="Csharp"/>
 
-        <updated>2024-07-03T01:24:09+03:00</updated>
+        <updated>2024-07-03T01:26:23+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/19/Database.png" alt="Database" />
@@ -57,9 +57,14 @@
 <p>Just do it. You can change your setup later on your own if you’re not happy with it. Let’s first get things working.</p>
 <h1 id="dealing-with-nuget">Dealing with NuGet</h1>
 <p>The three packages you need to install from NuGet are:</p>
-<p><code>Microsoft.EntityFrameworkCore.Sqlite</code>
-<code>Microsoft.EntityFrameworkCore.Design</code>
-<code>Microsoft.EntityFrameworkCore.Tools</code></p>
+<ul>
+<li><p><code>Microsoft.EntityFrameworkCore.Sqlite</code></p>
+</li>
+<li><p><code>Microsoft.EntityFrameworkCore.Design</code></p>
+</li>
+<li><p><code>Microsoft.EntityFrameworkCore.Tools</code></p>
+</li>
+</ul>
 <p>You will need to add these to your <strong>Database</strong> project. You will likely not need them in your main project.</p>
 <h1 id="lets-add-some-classes">Let’s add some classes</h1>
 <p>We’re going to need some code to be able to do anything with the database.</p>
