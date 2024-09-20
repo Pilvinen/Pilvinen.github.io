@@ -3,7 +3,7 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2024-09-20T10:56:56+03:00</updated>
+    <updated>2024-09-20T11:28:02+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
@@ -21,7 +21,7 @@
             <category term="design"/>
             <category term="architecture"/>
 
-        <updated>2024-09-20T10:56:56+03:00</updated>
+        <updated>2024-09-20T11:28:02+03:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/20/SoftwareArchitecture.png" alt="Software Architecture" />
@@ -429,7 +429,7 @@ context.SaveChanges();               // Save changes to the database
 <h3 id="where-should-requests-originate">Where Should Requests Originate?</h3>
 <p>The request to give an item should indeed originate from the <strong>NPC</strong> (or more precisely, from an interaction between the NPC and the Player). However, the <strong>NPC</strong> itself doesn’t need to manage the whole process—its role can remain simple, while the higher-level game logic (likely in the <strong>GameController</strong>) handles the actual mechanics.</p>
 <h3 id="2-the-npc-as-a-dumb-object">2. <strong>The NPC as a “Dumb” Object</strong></h3>
-<p>You’re right that the NPC should be more of a “dumb” object. The NPC just holds some data and methods to initiate an action (like giving an item), but the <strong>NPC should not be responsible for complex game logic</strong> like inventory management or interacting directly with the database. This keeps the NPC clean and focused on what it represents in the game world.</p>
+<p>The NPC can be more of a “dumb” object. The NPC just holds some data and methods to initiate an action (like giving an item), but the <strong>NPC should not be responsible for complex game logic</strong> like inventory management or interacting directly with the database. This keeps the NPC clean and focused on what it represents in the game world.</p>
 <p>In other words, the NPC initiates the process by signaling its intent to give an item, but the <strong>GameController</strong> or some other game system handles the heavy lifting.</p>
 <p>Here’s a possible structure:</p>
 <h3 id="3-how-the-hierarchy-and-interaction-would-work">3. <strong>How the Hierarchy and Interaction Would Work</strong></h3>
