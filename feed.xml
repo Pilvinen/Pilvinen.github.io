@@ -3,12 +3,687 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2024-07-03T01:26:23+03:00</updated>
+    <updated>2024-09-20T10:56:56+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Game Structure and Software Architecture</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/game-structure-and-software-architecture/"/>
+        <id>https://pilvimaa.fi/game-structure-and-software-architecture/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/20/SoftwareArchitecture.png" medium="image" />
+            <category term="structure"/>
+            <category term="design"/>
+            <category term="architecture"/>
+
+        <updated>2024-09-20T10:56:56+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/20/SoftwareArchitecture.png" alt="Software Architecture" />
+                    This is a straightforward simple memo on what all game structure should be like, in the most general sense. It’s for me. It’s not for you. It hasn’t been checked&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <p><img src="https://pilvimaa.fi/media/posts/20/SoftwareArchitecture.png" class="type:primaryImage" alt="Software Architecture" /></p>
+                <p>This is a straightforward simple memo on what all game structure should be like, in the most general sense. It’s for me. It’s not for you. It hasn’t been checked very thoroughly and might contain errors, even big ones, especially the parts generated with the help of generative AI.</p>
+<h2 id="project-structure">Project Structure</h2>
+<h3 id="parent-to-child-dependencies">Parent-to-Child Dependencies</h3>
+<p>All the dependencies should be designed to be accessed from parent to child.
+By ensuring that parents handle dependencies, you avoid issues where children or siblings aren’t fully initialized.
+This also keeps objects modular, so each is only responsible for its own scope.
+Do not depend from child to parent. The parent isn’t loaded yet when the child is ready.
+Do not depend on siblings. They might or might not be there. Let the parent handle it.
+Things should be self contained. Objects should be responsible for simple things which the parent manages.</p>
+<h3 id="separation-of-logic-and-data">Separation of Logic and Data</h3>
+<p>Separate logic from data.
+It is always a good idea to split behavior from data models, ensuring a clean and maintainable codebase.</p>
+<h2 id="saving-state">Saving State</h2>
+<p>EF Core with SQLite should be used for object relational mapping. All state saving and loading should be handled by EF Core. Standard practices should be used for organizing the state objects.</p>
+<p>EF Core (Entity Framework Core) is an Object-Relational Mapper (ORM), which means it translates between your C# classes and database tables. It handles CRUD (Create, Read, Update, Delete) operations for you, but requires a few key elements:</p>
+<ul>
+<li><strong>DbContext:</strong> The class responsible for managing database connections and mapping entities (your C# objects) to tables in your database.</li>
+<li><strong>Entities:</strong> The C# classes that represent your database tables.</li>
+<li><strong>Migrations:</strong> EF Core’s way of managing changes to your database schema.</li>
+</ul>
+<h3 id="defining-your-dbcontext">Defining Your DbContext</h3>
+<p>The <code>DbContext</code> class is where you configure your connection to the database and define which entities will be tracked.</p>
+<p>Here’s a minimal example of a <code>DbContext</code>:</p>
+<pre><code class="language-cs">public class GameDbContext : DbContext {
+
+    // Define DbSet properties for each entity (table) in your database
+    public DbSet&lt;Player&gt; Players { get; set; }
+    public DbSet&lt;InventoryItem&gt; InventoryItems { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        // Configure EF Core to use SQLite
+        optionsBuilder.UseSqlite(&quot;Data Source=game.db&quot;);
+    }
+}
+</code></pre>
+<p>This <code>GameDbContext</code> class will automatically map your <code>Player</code> and <code>InventoryItem</code> entities to tables in an SQLite database (<code>game.db</code>).</p>
+<h3 id="defining-entities">Defining Entities</h3>
+<p>Entities are C# classes that represent rows in your database tables. Each property corresponds to a column in the table.</p>
+<p>For example, here’s a <code>Player</code> entity:</p>
+<pre><code class="language-cs">public class Player {
+    public int Id { get; set; }     // Primary key
+    public string Name { get; set; }
+    public int Level { get; set; }
+    public List&lt;InventoryItem&gt; Inventory { get; set; }  // Navigation property
+}
+</code></pre>
+<p>And the <code>InventoryItem</code>:</p>
+<pre><code class="language-cs">public class InventoryItem {
+    public int Id { get; set; }     // Primary key
+    public string ItemName { get; set; }
+    public int Quantity { get; set; }
+    public int PlayerId { get; set; }  // Foreign key to Player
+    public Player Player { get; set; } // Navigation property
+}
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>Each <code>Player</code> has a collection of <code>InventoryItems</code>.</li>
+<li>The <code>InventoryItem</code> table will have a foreign key (<code>PlayerId</code>) to the <code>Player</code> table.</li>
+</ul>
+<h3 id="basic-crud-operations">Basic CRUD Operations</h3>
+<p>Create</p>
+<pre><code class="language-cs">using (var context = new GameDbContext()) {
+    var player = new Player {
+        Name = &quot;Jack&quot;,
+        Level = 5
+    };
+
+    context.Players.Add(player);
+    context.SaveChanges();  // Persist changes to the database
+}
+</code></pre>
+<p>Read</p>
+<pre><code class="language-cs">using (var context = new GameDbContext()) {
+    var player = context.Players
+                         .Include(p =&gt; p.Inventory)  // Load related inventory items
+                         .FirstOrDefault(p =&gt; p.Name == &quot;Jack&quot;);
+
+    Console.WriteLine(player.Name + &quot; has &quot; + player.Inventory.Count + &quot; items.&quot;);
+}
+</code></pre>
+<p>Update</p>
+<pre><code class="language-cs">using (var context = new GameDbContext()) {
+    var player = context.Players.FirstOrDefault(p =&gt; p.Name == &quot;Jack&quot;);
+    if (player != null) {
+        player.Level += 1;
+        context.SaveChanges();  // Save the updated data
+    }
+}
+</code></pre>
+<p>Delete</p>
+<pre><code class="language-cs">using (var context = new GameDbContext()) {
+    var player = context.Players.FirstOrDefault(p =&gt; p.Name == &quot;Jack&quot;);
+    if (player != null) {
+        context.Players.Remove(player);
+        context.SaveChanges();
+    }
+}
+</code></pre>
+<h3 id="tips-for-effective-use">Tips for Effective Use</h3>
+<p><strong>Avoid Querying the DbContext Multiple Times:</strong> When you need related data, use <strong>eager loading</strong> (<code>.Include()</code>) or <strong>lazy loading</strong> so you don’t make multiple database round trips.</p>
+<p>Example of eager loading:</p>
+<pre><code class="language-cs">var playerWithInventory = context.Players.Include(p =&gt; p.Inventory).FirstOrDefault();
+</code></pre>
+<p><strong>Use Transactions for Batch Operations:</strong> If you are performing multiple updates, wrap them in a transaction for better performance and consistency.</p>
+<pre><code class="language-cs">using (var transaction = context.Database.BeginTransaction()) {
+    // Multiple operations here
+    transaction.Commit();
+}
+</code></pre>
+<p><strong>Split Read and Write Contexts:</strong> If your game has a lot of read-heavy operations, you can create separate contexts for reading and writing. This can reduce lock contention in some cases.</p>
+<h3 id="relationships-between--the-database-and-c-objects">Relationships Between  the Database and C# Objects</h3>
+<h4 id="key-parts">Key Parts:</h4>
+<ol>
+<li><p><strong><code>List&lt;InventoryItem&gt;</code> in the <code>Player</code> class</strong><br> This is a collection (or list) of items that a player owns. It’s purely a C# list inside the <code>Player</code> object. It represents all the items that the player has in their inventory.</p>
+</li>
+<li><p><strong><code>DbSet&lt;InventoryItem&gt;</code> in the <code>GameDbContext</code> class</strong><br> This is a way for Entity Framework (EF Core) to track all the inventory items in your game. It knows how to load items from the database, save them back to the database, and query them.</p>
+</li>
+</ol>
+<h4 id="relationship-between-them">Relationship Between Them:</h4>
+<ul>
+<li>The <strong><code>DbSet&lt;InventoryItem&gt;</code></strong> in <code>GameDbContext</code> manages <em>all</em> the <code>InventoryItem</code> objects stored in your database. Think of it like a “big box” where every inventory item in the entire game is kept.</li>
+<li>The <strong><code>List&lt;InventoryItem&gt;</code></strong> inside the <code>Player</code> class is more specific. It only holds the items that belong to that particular player. When you retrieve a player from the database, EF Core also helps fill in the <code>List&lt;InventoryItem&gt;</code> with just the items that belong to that player.</li>
+</ul>
+<h4 id="how-an-item-is-created-and-added">How an Item is Created and Added</h4>
+<ol>
+<li><strong>Creating a New Item:</strong> When you create an <code>InventoryItem</code>, you are making a new C# object in memory. For example:</li>
+</ol>
+<pre><code class="language-cs">var newItem = new InventoryItem {
+    ItemName = &quot;Sword&quot;,
+    Quantity = 1,
+    PlayerId = player.Id // Foreign key linking to the player
+};
+</code></pre>
+<ul>
+<li><p>This creates an object in memory but <strong>it’s not yet part of the database</strong>.</p>
+</li>
+<li><p><strong>Adding it to the Player’s Inventory:</strong> Next, you add it to the player’s inventory list:</p>
+</li>
+</ul>
+<pre><code class="language-cs">player.Inventory.Add(newItem);
+</code></pre>
+<ul>
+<li><p>Now the new <code>InventoryItem</code> is in the <code>Player</code>‘s list (<code>player.Inventory</code>), but it still <strong>doesn’t exist in the database</strong> yet.</p>
+</li>
+<li><p><strong>Adding the Item to the Database (Making it Permanent):</strong> To save the new item to the database, you have to tell EF Core to track it and save it. Here’s how:</p>
+</li>
+</ul>
+<pre><code class="language-cs">context.InventoryItems.Add(newItem); // Add the item to the DbSet
+context.SaveChanges();               // Save changes to the database
+</code></pre>
+<ul>
+<li><code>context.InventoryItems.Add(newItem)</code> tells EF Core to prepare this new item for being stored in the database.</li>
+<li><code>context.SaveChanges()</code> takes everything EF Core is tracking (including this new item) and writes it into the database.</li>
+</ul>
+<p>Now the item exists both in <strong>memory</strong> (in <code>player.Inventory</code>) and in the <strong>database</strong> (inside the <code>InventoryItems</code> table).</p>
+<h3 id="who-or-what-is-responsible-for-the-objects">Who or What is Responsible for the Objects?</h3>
+<ul>
+<li><strong>You (the Developer)</strong> create and manage the actual objects (<code>InventoryItem</code>, <code>Player</code>, etc.) in C# code.</li>
+<li><strong>EF Core</strong> manages the communication between your code (in memory) and the database (on disk). It knows how to save and load these objects.</li>
+</ul>
+<h4 id="what-is-the-real-object">What is the Real Object?</h4>
+<ul>
+<li>The <strong>real object</strong> is the one in memory. For example, <code>newItem</code> is the actual object you create.</li>
+<li>When you save it to the database, it becomes a row in the database, but when you load it back later, EF Core re-creates the object in memory.</li>
+</ul>
+<h4 id="are-there-temporary-objects">Are There Temporary Objects?</h4>
+<ul>
+<li>Yes, the <code>InventoryItem</code> you create in memory is a “temporary object” until you save it to the database using <code>context.SaveChanges()</code>.</li>
+<li>After saving, it becomes permanent in the database. EF Core keeps a reference to this same object in memory, so it doesn’t create multiple copies unnecessarily.</li>
+</ul>
+<h4 id="are-they-the-same-object-with-multiple-references">Are They the Same Object with Multiple References?</h4>
+<ul>
+<li>Yes. Once you add an item to both <code>player.Inventory</code> and <code>context.InventoryItems</code>, these are two references to the <strong>same object</strong>.<ul>
+<li><code>player.Inventory</code> holds a reference to the <code>InventoryItem</code> in the context of the player.</li>
+<li><code>context.InventoryItems</code> manages that same object but in the context of the database.</li>
+</ul>
+</li>
+</ul>
+<h4 id="how-do-you-use-all-of-this">How Do You Use All of This?</h4>
+<ol>
+<li><strong>Create the item:</strong><br> Create a new item in memory like this:</li>
+</ol>
+<pre><code class="language-cs">var newItem = new InventoryItem {
+    ItemName = &quot;Shield&quot;,
+    Quantity = 1,
+    PlayerId = player.Id
+};
+</code></pre>
+<p><strong>Add the item to the player:</strong><br>Add it to the player’s <code>Inventory</code> list:</p>
+<pre><code class="language-cs">player.Inventory.Add(newItem);
+</code></pre>
+<p><strong>Track the item in EF Core:</strong><br>Tell EF Core about this item by adding it to the <code>DbSet</code>:</p>
+<pre><code class="language-cs">context.SaveChanges();
+</code></pre>
+<p>Now, the item is:</p>
+<ul>
+<li>In the player’s inventory (<code>player.Inventory</code>).</li>
+<li>In the database, managed by EF Core (<code>context.InventoryItems</code>).</li>
+</ul>
+<h3 id="quick-summary">Quick Summary:</h3>
+<ul>
+<li><strong><code>List&lt;InventoryItem&gt;</code> in <code>Player</code>:</strong> Holds items only for that player in memory.</li>
+<li><strong><code>DbSet&lt;InventoryItem&gt;</code> in <code>GameDbContext</code>:</strong> Manages all inventory items in the game and connects them to the database.</li>
+<li><strong>Creating an item:</strong> You create the item in memory, add it to the player’s list, and then save it to the database with EF Core.</li>
+<li><strong>Real object:</strong> The item is real in memory, and EF Core makes sure the object gets saved and retrieved from the database properly. Multiple references to the same object point to the same instance.</li>
+</ul>
+<p>This approach helps ensure that your game objects exist in both memory and the database in a well-structured, efficient manner.</p>
+<h3 id="who-should-initialize-player-with-inventory-items">Who Should Initialize <code>Player</code> with Inventory Items?</h3>
+<p>Classes should not be responsible for initializing themselves with its data. That would violate the Single Responsibility Principle, where a class should only have one reason to change. The Player class, for example, should focus on modeling the player and its properties, not managing data access.</p>
+<p>The better option is to have a controller or manager responsible for fetching the <code>Player</code> and its associated data from the database. This manager could be something like a <code>PlayerService</code> or <code>GameDataLoader</code> and it would query the database, populate the <code>Player</code> object with the data, and return the fully initialized <code>Player</code> object.</p>
+<p>It might look something like:</p>
+<pre><code class="language-cs">public class PlayerService {
+    private readonly GameDbContext _context;
+
+    public PlayerService(GameDbContext context) {
+        _context = context;
+    }
+
+    public Player GetPlayerWithInventory(int playerId) {
+        return _context.Players
+                       .Include(p =&gt; p.Inventory)  // Eager load inventory items
+                       .FirstOrDefault(p =&gt; p.Id == playerId);
+    }
+}
+</code></pre>
+<p>This way the <code>Player</code> class stays clean and doesn’t know anything about the database.</p>
+<h3 id="multiple-operations-on-the-same-object">Multiple Operations on the Same Object</h3>
+<p>It can feel like there are two separate operations:</p>
+<ol>
+<li>Adding items to the <code>player.Inventory</code> list.</li>
+<li>Adding items to the <code>DbSet&lt;InventoryItem&gt;</code>.</li>
+</ol>
+<p>It can feel like you’re duplicating the same work by managing both the list and the database. Let’s clarify what’s going on and how to approach it.</p>
+<h3 id="are-there-really-two-sets-of-objects">Are There Really Two Sets of Objects?</h3>
+<p>Not exactly. When you create an <code>InventoryItem</code>, it exists as a single object in memory. When you add it to <code>player.Inventory</code> and later to <code>context.InventoryItems</code>, you’re just creating <strong>two references to the same object</strong>. EF Core tracks changes to the object via <code>context.InventoryItems</code>, but you’re free to access that object through <code>player.Inventory</code>.</p>
+<h3 id="is-it-normal">Is It Normal?</h3>
+<p>Yes, this pattern of managing both the collection (like <code>player.Inventory</code>) and saving to the database separately is pretty common in EF Core and ORMs in general. However, the redundancy you’re feeling can be reduced.</p>
+<h3 id="how-to-simplify">How to Simplify</h3>
+<p>Instead of managing both the player’s inventory list and the database context separately, let’s clean it up so that you only interact with the <code>Player</code> object and let EF Core handle saving both <code>Player</code> and <code>InventoryItem</code> in one go.</p>
+<ul>
+<li><strong>One Object Graph</strong>: You should treat the <code>Player</code> and its <code>Inventory</code> as a single “object graph.” When you save the <code>Player</code>, EF Core will automatically save all related <code>InventoryItem</code> objects.</li>
+</ul>
+<p>Here’s how you might do that:</p>
+<pre><code class="language-cs">using (var context = new GameDbContext()) {
+    // Create the player and the item
+    var player = new Player { Name = &quot;Jack&quot;, Level = 5 };
+    var newItem = new InventoryItem { ItemName = &quot;Sword&quot;, Quantity = 1 };
+
+    // Add the item to the player&#39;s inventory
+    player.Inventory.Add(newItem);
+
+    // Add the player (with inventory) to the context
+    context.Players.Add(player);
+
+    // Save everything at once
+    context.SaveChanges();  // Saves both Player and InventoryItem in one go
+}
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>You’re only managing the <code>Player</code> object.</li>
+<li>By adding the <code>InventoryItem</code> to the <code>player.Inventory</code>, EF Core will automatically track that item because it’s part of the <code>Player</code>’s “object graph.”</li>
+<li>When you call <code>context.SaveChanges()</code>, EF Core will save the <code>Player</code> and all related <code>InventoryItem</code> objects in one transaction.</li>
+</ul>
+<h3 id="is-it-code-smell">Is It Code Smell?</h3>
+<p>The approach where you’re managing <code>player.Inventory</code> and <code>context.InventoryItems</code> separately can feel like a code smell if you’re not leveraging EF Core’s ability to track relationships between entities. If you’re manually handling both, it feels like duplication and is error-prone.</p>
+<p>However, when you treat the <code>Player</code> and <code>InventoryItems</code> as part of a single object graph (as shown above), it becomes simpler and more natural. EF Core can track everything with just one call to <code>SaveChanges()</code>.</p>
+<h3 id="summary">Summary</h3>
+<ul>
+<li><strong>Who initializes the <code>Player</code>?</strong> A <code>PlayerService</code> (or similar) should be responsible for loading <code>Player</code> objects with their <code>InventoryItems</code> from the database.</li>
+<li><strong>Are two object sets necessary?</strong> No, ideally you treat <code>Player</code> and <code>InventoryItem</code> as a single object graph. Add items to <code>player.Inventory</code> and let EF Core handle the persistence for both in one operation.</li>
+<li><strong>Cleaner approach:</strong> Use EF Core’s relationship tracking to save both <code>Player</code> and <code>InventoryItem</code> with one <code>SaveChanges()</code> call, minimizing manual duplication of work.</li>
+</ul>
+<p>This approach should streamline your code and make it feel less “janky.”</p>
+<h3 id="performing-logic-without-becoming-tied-to-database-operations">Performing Logic Without Becoming Tied to Database Operations</h3>
+<p>Let’s explore how the <code>Receive(IItem givenItem, IItemGiver giver)</code> method would fit into this scheme.</p>
+<p>The <code>Receive</code> method allows the player to receive an item from another entity like an NPC. Here’s how we can integrate this with our previously discussed EF Core setup without causing duplication or breaking cohesion.</p>
+<h3 id="1-what-would-receive-do">1. <strong>What Would <code>Receive</code> Do?</strong></h3>
+<p>The <code>Receive</code> method in <code>Player</code> is responsible for:</p>
+<ul>
+<li>Adding the received item (<code>givenItem</code>) to the player’s inventory.</li>
+<li>Optionally tracking who gave the item (if needed for gameplay logic).</li>
+<li>Ensuring the item is properly saved to the database.</li>
+</ul>
+<p>The key here is that the method should manage the player’s inventory but let EF Core handle the database part. <code>Receive</code> can operate on the object graph (the player and its items) without worrying about how EF Core persists those changes.</p>
+<h3 id="2-adjusting-the-receive-method-to-work-with-ef-core">2. <strong>Adjusting the <code>Receive</code> Method to Work with EF Core</strong></h3>
+<p>Let’s start by looking at a potential implementation of the <code>Receive</code> method:</p>
+<pre><code class="language-cs">public class Player {
+
+    public List&lt;InventoryItem&gt; Inventory { get; private set; }
+
+    public void Receive(IItem givenItem, IItemGiver giver) {
+        // Assume givenItem is a valid InventoryItem object
+        InventoryItem item = (InventoryItem)givenItem;
+
+        // Add the item to the player&#39;s inventory
+        Inventory.Add(item);
+
+        // Optionally log the giver or update some logic based on the giver
+        Console.WriteLine($&quot;{giver.Name} gave you {item.ItemName}.&quot;);
+
+        // The item now exists in the player&#39;s inventory list
+        // Saving to the database happens outside of this method
+    }
+}
+</code></pre>
+<p>In this method:</p>
+<ul>
+<li><code>givenItem</code> is cast to <code>InventoryItem</code> and added to the player’s <code>Inventory</code> list.</li>
+<li>The method handles adding the item to the player’s memory representation of inventory but <strong>doesn’t directly deal with the database</strong>.</li>
+<li>Database operations (saving the item) happen outside this method.</li>
+</ul>
+<h3 id="3-who-manages-database-saving">3. <strong>Who Manages Database Saving?</strong></h3>
+<p>You want the <code>Receive</code> method to be simple and focus on the game logic, not database handling. Database saving should be handled at a higher level, probably by the <strong>game logic controller</strong> or <strong>service</strong>.</p>
+<p>For example, an NPC gives the player an item, and after the game logic is complete, the system saves the changes to the database.</p>
+<p>Here’s how that might look at the controller/service level:</p>
+<pre><code class="language-cs">public class GameController {
+    private readonly GameDbContext _context;
+
+    public GameController(GameDbContext context) {
+        _context = context;
+    }
+
+    public void GiveItemToPlayer(Player player, IItem givenItem, IItemGiver giver) {
+        // Player receives the item from the NPC
+        player.Receive(givenItem, giver);
+
+        // Track changes to the player&#39;s inventory in the database
+        _context.Players.Update(player);
+        
+        // Since the InventoryItem is part of the Player&#39;s object graph, EF Core will
+        // automatically track the new item and save it
+        _context.SaveChanges();
+    }
+}
+</code></pre>
+<p>Here:</p>
+<ul>
+<li><strong>The <code>Player</code> handles the game logic</strong>: The player gets the item from the NPC via <code>Receive(givenItem, giver)</code>.</li>
+<li><strong>The <code>GameController</code> handles the database logic</strong>: After the player has received the item, the controller updates the player’s state in the database by calling <code>Update(player)</code> and <code>SaveChanges()</code>.</li>
+</ul>
+<h3 id="4-why-does-this-make-sense">4. <strong>Why Does This Make Sense?</strong></h3>
+<ul>
+<li><strong>Separation of Concerns</strong>: The <code>Player</code> class focuses only on game logic (receiving items, managing its own state). It doesn’t deal with saving or database operations, which are handled at a higher level (in this case, the <code>GameController</code>).</li>
+<li><strong>Single Object Graph</strong>: The <code>Player</code> and its <code>InventoryItem</code> are part of a single object graph. When the <code>GameController</code> saves the <code>Player</code>, EF Core will automatically detect that a new <code>InventoryItem</code> was added to the player’s <code>Inventory</code> and will save both the <code>Player</code> and the new item in one operation.</li>
+<li><strong>No Duplication of Objects</strong>: You’re still only working with one set of objects in memory. There’s no separate management of the database objects and in-memory objects.</li>
+</ul>
+<h3 id="5-handling-the-giver-npc">5. <strong>Handling the Giver (NPC)</strong></h3>
+<p>If the giver (NPC) needs to be tracked (for example, if it’s important to know which NPC gave the item), you can log or store that information in the <code>Receive</code> method or another part of the <code>Player</code> class. Here’s an example:</p>
+<pre><code class="language-cs">public class Player {
+
+    public List&lt;InventoryItem&gt; Inventory { get; private set; }
+
+    public void Receive(IItem givenItem, IItemGiver giver) {
+        InventoryItem item = (InventoryItem)givenItem;
+
+        // Add to the player&#39;s inventory
+        Inventory.Add(item);
+
+        // Log or track the giver if needed
+        Console.WriteLine($&quot;{giver.Name} gave {item.ItemName}&quot;);
+
+        // Example: Track giver info in the item
+        item.GivenBy = giver.Name;
+
+        // Database saving is handled externally
+    }
+}
+</code></pre>
+<p>In this case, you might store the giver’s information inside the <code>InventoryItem</code> or just log it. This depends on your game’s needs.</p>
+<h3 id="does-this-fit-the-pattern"><strong>Does This Fit the Pattern?</strong></h3>
+<p>Absolutely. This design adheres to the principles we’ve discussed:</p>
+<ul>
+<li><strong>Parent-to-Child Dependency</strong>: The <code>Player</code> manages its own inventory (<code>InventoryItem</code> is part of the <code>Player</code> object graph).</li>
+<li><strong>Single Responsibility</strong>: The <code>Player</code> class focuses only on its own game logic (receiving items), while the <code>GameController</code> is responsible for coordinating between game logic and the database.</li>
+<li><strong>No Object Duplication</strong>: You only manage one set of objects in memory. EF Core tracks the changes and handles persistence in the background.</li>
+</ul>
+<h4 id="example-flow">Example Flow:</h4>
+<ol>
+<li>The NPC (giver) wants to give an item.</li>
+<li>The <code>GameController</code> calls <code>player.Receive(givenItem, giver)</code>.</li>
+<li>The <code>Player</code> receives the item and adds it to its <code>Inventory</code>.</li>
+<li>The <code>GameController</code> calls <code>SaveChanges()</code> to persist both the <code>Player</code> and the new <code>InventoryItem</code> to the database.</li>
+</ol>
+<h4 id="summary-1">Summary</h4>
+<ul>
+<li><strong><code>Player.Receive()</code></strong> manages the logic of receiving the item, while <strong>database operations</strong> are handled at a higher level (like a controller or manager).</li>
+<li><strong>EF Core automatically tracks</strong> changes to the <code>InventoryItem</code> through the <code>Player</code>’s object graph.</li>
+<li>You avoid duplication by keeping everything in one object graph and only persisting the whole player state when needed.</li>
+</ul>
+<p>This approach is clean, avoids code smells, and keeps your game logic and data access responsibilities well-separated.</p>
+<h2 id="managing-dependencies">Managing dependencies</h2>
+<p><code>[Export]</code> is the Godot way of doing dependency injection. Ideally the exported node would be a child node mapped to a parent controller, as explained in [[#Parent-to-Child Dependencies]] above.</p>
+<p>When a clear parent-child relationship cannot be used, like, for example in a situation where UI needs data to display different strategies can be applied.</p>
+<h3 id="where-should-requests-originate">Where Should Requests Originate?</h3>
+<p>The request to give an item should indeed originate from the <strong>NPC</strong> (or more precisely, from an interaction between the NPC and the Player). However, the <strong>NPC</strong> itself doesn’t need to manage the whole process—its role can remain simple, while the higher-level game logic (likely in the <strong>GameController</strong>) handles the actual mechanics.</p>
+<h3 id="2-the-npc-as-a-dumb-object">2. <strong>The NPC as a “Dumb” Object</strong></h3>
+<p>You’re right that the NPC should be more of a “dumb” object. The NPC just holds some data and methods to initiate an action (like giving an item), but the <strong>NPC should not be responsible for complex game logic</strong> like inventory management or interacting directly with the database. This keeps the NPC clean and focused on what it represents in the game world.</p>
+<p>In other words, the NPC initiates the process by signaling its intent to give an item, but the <strong>GameController</strong> or some other game system handles the heavy lifting.</p>
+<p>Here’s a possible structure:</p>
+<h3 id="3-how-the-hierarchy-and-interaction-would-work">3. <strong>How the Hierarchy and Interaction Would Work</strong></h3>
+<ol>
+<li><strong>NPC</strong>: The NPC triggers the action, such as giving an item, when it interacts with the player.</li>
+<li><strong>GameController</strong>: The <code>GameController</code> (or a similar system) manages what actually happens when the NPC gives the item to the player, including updating the game state, calling the player’s <code>Receive()</code> method, and saving the changes.</li>
+<li><strong>Player</strong>: The player receives the item, and the player’s inventory is updated. The player doesn’t handle persistence or interaction logic—that’s handled by the <code>GameController</code>.</li>
+</ol>
+<h3 id="4-example-flow-of-giving-an-item">4. <strong>Example Flow of Giving an Item</strong></h3>
+<h4 id="npc-class">NPC Class</h4>
+<p>The NPC is a simple entity. It has an item to give and can trigger the <code>GiveItemToPlayer()</code> method in the <code>GameController</code>.</p>
+<pre><code class="language-cs">public class NPC : IItemGiver {
+    public string Name { get; set; }
+    public InventoryItem ItemToGive { get; set; }
+
+    public void InteractWithPlayer(Player player, GameController controller) {
+        // The NPC asks the GameController to give the player an item
+        controller.GiveItemToPlayer(player, ItemToGive, this);
+    }
+}
+</code></pre>
+<p>In this case:</p>
+<ul>
+<li>The <strong>NPC</strong> has an <code>ItemToGive</code>, but it doesn’t handle the details of giving the item.</li>
+<li>When the player interacts with the NPC, the <strong>NPC triggers</strong> the interaction by calling the <code>GameController</code>.</li>
+</ul>
+<h4 id="gamecontroller-class">GameController Class</h4>
+<p>The <strong>GameController</strong> handles the actual transaction, manages the logic of giving the item, and persists the changes to the database.</p>
+<pre><code class="language-cs">public class GameController {
+    private readonly GameDbContext _context;
+
+    public GameController(GameDbContext context) {
+        _context = context;
+    }
+
+    public void GiveItemToPlayer(Player player, IItem givenItem, IItemGiver giver) {
+        // The player receives the item
+        player.Receive(givenItem, giver);
+
+        // Update the database to reflect the new item in the player&#39;s inventory
+        _context.Players.Update(player);
+        _context.SaveChanges();
+    }
+}
+</code></pre>
+<p>Here:</p>
+<ul>
+<li>The <strong>GameController</strong> coordinates the interaction between the <strong>NPC</strong> and the <strong>Player</strong>.</li>
+<li>It ensures that the item is added to the player’s inventory and saved in the database.</li>
+</ul>
+<h4 id="player-class">Player Class</h4>
+<p>The <strong>Player</strong> is responsible for adding the item to its inventory but doesn’t deal with persistence or interaction logic.</p>
+<pre><code class="language-cs">public class Player {
+    public List&lt;InventoryItem&gt; Inventory { get; private set; }
+
+    public void Receive(IItem givenItem, IItemGiver giver) {
+        InventoryItem item = (InventoryItem)givenItem;
+        Inventory.Add(item);
+        Console.WriteLine($&quot;{giver.Name} gave you a {item.ItemName}.&quot;);
+    }
+}
+</code></pre>
+<h3 id="hierarchy-and-parent-to-child-dependency"><strong>Hierarchy and Parent-to-Child Dependency</strong></h3>
+<p>To maintain the <strong>parent-to-child dependency</strong>, the <strong>NPC</strong> doesn’t need to directly know about the <strong>GameController</strong> or even the <strong>Player</strong> in a deep sense. It just triggers an action (like <code>InteractWithPlayer</code>) and passes in the necessary data.</p>
+<p>The <strong>GameController</strong> acts as the “parent” managing the flow between the NPC and the Player. It orchestrates the logic from a higher level, ensuring that the NPC, Player, and database all interact correctly without causing any child-to-parent dependencies or complex cross-object interactions.</p>
+<p>In this setup:</p>
+<ul>
+<li><strong>NPC → GameController → Player</strong> is the flow of control.</li>
+<li>The <strong>NPC</strong> triggers the event, but it’s the <strong>GameController</strong> that manages the relationship between NPCs, Players, and the database.</li>
+</ul>
+<p>This avoids any circular dependencies, keeps the NPC simple (it doesn’t manage the database or game state directly), and maintains a clear, hierarchical flow of control.</p>
+<h3 id="6-why-this-structure-makes-sense">6. <strong>Why This Structure Makes Sense</strong></h3>
+<ul>
+<li><strong>Separation of Concerns</strong>: The <strong>NPC</strong> only knows about the fact that it wants to give an item. It doesn’t care about how the item is added to the player’s inventory or saved to the database.</li>
+<li><strong>Centralized Game Logic</strong>: The <strong>GameController</strong> coordinates the overall interaction and handles the persistence. This prevents messy dependencies between unrelated objects and keeps the architecture clean.</li>
+<li><strong>Single Source of Truth</strong>: There’s no risk of having multiple versions of the same data floating around. The <strong>Player</strong> manages the inventory, and EF Core handles the persistence as one unified object graph.</li>
+</ul>
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li><strong>The NPC</strong> initiates the action to give an item but doesn’t handle the complex logic. It triggers the interaction by calling the <code>GameController</code>.</li>
+<li><strong>The GameController</strong> orchestrates the interaction, calling the player’s <code>Receive()</code> method and saving the changes to the database.</li>
+<li><strong>The Player</strong> receives the item, but doesn’t manage the persistence or higher-level game logic.</li>
+<li>This structure avoids child-to-parent dependencies and keeps the <strong>NPC</strong> and <strong>Player</strong> focused on their respective responsibilities, while the <strong>GameController</strong> handles game logic and database interaction.</li>
+</ul>
+<p>This way, everything stays clean, focused, and manageable, adhering to solid architectural principles.</p>
+<h3 id="what-about-returning-state">What About Returning State?</h3>
+<p>you sometimes need to get state back from child objects. However, how you handle that state depends on how tightly you want to couple your objects and what kind of architecture you’re following. There are two key approaches you can consider:</p>
+<ol>
+<li><strong>Fetching State When Necessary</strong>: This is the classic way where you allow some controlled flow of information back up the hierarchy.</li>
+<li><strong>Designing Around the Principle of Always Valid State</strong>: This approach reduces the need to query state and focuses on ensuring that the system is always in a valid state by design.</li>
+</ol>
+<p>Let’s explore both.</p>
+<h4 id="fetching-state-back-from-child-objects"><strong>Fetching State Back from Child Objects</strong></h4>
+<p>In many cases, it’s reasonable for a parent (like the <code>GameController</code>) to query child objects (like the <code>Player</code> or <code>NPC</code>) for their state. This is especially true when decisions need to be made based on real-time data (e.g., checking the player’s health, inventory capacity, etc.).</p>
+<h4 id="example-checking-the-players-health">Example: Checking the Player’s Health</h4>
+<p>Imagine you need to check the player’s health to decide if they can continue in combat or if they need healing:</p>
+<pre><code class="language-cs">public class GameController {
+
+    public void CheckPlayerHealth(Player player) {
+        if (player.Health &lt; 20) {
+            Console.WriteLine(&quot;Player needs healing!&quot;);
+        } else {
+            Console.WriteLine(&quot;Player is healthy.&quot;);
+        }
+    }
+}
+
+public class Player {
+    public int Health { get; private set; }
+
+    public Player(int health) {
+        Health = health;
+    }
+}
+</code></pre>
+<p>Here:</p>
+<ul>
+<li>The <strong>GameController</strong> is querying the <strong>Player</strong> for its current health.</li>
+<li>The flow remains parent-to-child (the <code>GameController</code> calls methods on <code>Player</code>), but it’s getting information back for decision-making.</li>
+</ul>
+<p><strong>This approach is sensible when:</strong></p>
+<ul>
+<li>You need real-time, up-to-date information from child objects.</li>
+<li>The parent object (e.g., <code>GameController</code>) needs to make decisions based on child state.</li>
+</ul>
+<h3 id="2-designing-for-always-valid-state">2. <strong>Designing for Always Valid State</strong></h3>
+<p>Another approach is to minimize or eliminate the need for fetching state by designing your objects to always maintain a valid state. In this approach, each object is responsible for managing its state and ensuring that it is always “correct” from the perspective of the game logic. This aligns with the <strong>tell, don’t ask</strong> principle, where instead of querying state, you tell the object to act and trust that it will maintain its own state properly.</p>
+<h4 id="example-players-health-in-an-always-valid-system">Example: Player’s Health in an “Always Valid” System</h4>
+<p>Instead of checking the player’s health manually, you could have the <strong>Player</strong> class manage its own health logic:</p>
+<pre><code class="language-cs">public class Player {
+    public int Health { get; private set; }
+
+    public Player(int health) {
+        Health = health;
+    }
+
+    public void TakeDamage(int damage) {
+        Health -= damage;
+
+        // Automatically handle death
+        if (Health &lt;= 0) {
+            HandleDeath();
+        }
+    }
+
+    private void HandleDeath() {
+        Console.WriteLine(&quot;Player has died.&quot;);
+        // Additional logic for death could go here
+    }
+}
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The <strong>Player</strong> object itself manages its state (health), and you don’t need to query it in the <code>GameController</code> to check if it needs healing or if it’s dead.</li>
+<li>The <strong>Player</strong> ensures that its own health logic is valid at all times. If health reaches 0, it automatically handles death internally.</li>
+</ul>
+<p><strong>This approach is sensible when:</strong></p>
+<ul>
+<li>You want to decentralize state management and avoid state queries.</li>
+<li>You prefer each object to be self-sufficient in managing its own state, reducing external checks.</li>
+</ul>
+<h3 id="when-to-fetch-state-vs-when-to-rely-on-always-valid-state">When to Fetch State vs. When to Rely on “Always Valid State”</h3>
+<h4 id="fetching-state"><strong>Fetching State</strong></h4>
+<p>This approach works best when you have:</p>
+<ul>
+<li>Complex decision-making that requires real-time information from child objects.</li>
+<li>Systems where the parent (controller) needs to make decisions based on child state.</li>
+</ul>
+<p>You should use this approach if:</p>
+<ul>
+<li>You need to query conditions like the player’s inventory, health, or quest status to make game-wide decisions.</li>
+<li>The flow of data needs to be flexible and responsive.</li>
+</ul>
+<h4 id="designing-for-always-valid-state"><strong>Designing for Always Valid State</strong></h4>
+<p>This approach reduces complexity by making each object responsible for its own state, making the system less dependent on constant state checks.</p>
+<p>You should use this approach if:</p>
+<ul>
+<li>You want to reduce the need for querying state and want each object to maintain itself.</li>
+<li>You prefer objects that react to commands and automatically handle their own logic, ensuring that no external checks are needed.</li>
+</ul>
+<h3 id="hybrid-approach-valid-state--occasional-queries">Hybrid Approach: Valid State + Occasional Queries</h3>
+<p>In practice, most games use a combination of both approaches.</p>
+<ul>
+<li><strong>“Always Valid State”</strong>: For simpler systems like inventory management, health, or abilities, where the player and other entities handle their own state and transitions.</li>
+<li><strong>Fetching State</strong>: For higher-level game systems or controllers that need to coordinate multiple entities or query complex data (like checking for quest completion or making decisions based on several objects’ states).</li>
+</ul>
+<p>For example, the <code>GameController</code> might periodically <strong>query</strong> the player’s health and inventory, but <strong>rely</strong> on the player itself to always keep its inventory and health in a valid state.</p>
+<h3 id="example-of-combining-both-approaches">Example of Combining Both Approaches</h3>
+<pre><code class="language-cs">public class GameController {
+
+    public void UpdateGameState(Player player) {
+        // Query player state when needed
+        if (player.Health &lt; 20) {
+            Console.WriteLine(&quot;Warning: Player health is low.&quot;);
+        }
+
+        // Assume player always maintains a valid inventory
+        player.ReceiveNewItem(new InventoryItem(&quot;Health Potion&quot;));
+    }
+}
+
+public class Player {
+    public int Health { get; private set; }
+    public List&lt;InventoryItem&gt; Inventory { get; private set; }
+
+    public Player(int health) {
+        Health = health;
+        Inventory = new List&lt;InventoryItem&gt;();
+    }
+
+    // Player manages its own health and reacts accordingly
+    public void TakeDamage(int damage) {
+        Health -= damage;
+        if (Health &lt;= 0) HandleDeath();
+    }
+
+    // Always valid inventory management
+    public void ReceiveNewItem(InventoryItem item) {
+        Inventory.Add(item);
+        Console.WriteLine($&quot;Received {item.ItemName}.&quot;);
+    }
+
+    private void HandleDeath() {
+        Console.WriteLine(&quot;Player has died.&quot;);
+    }
+}
+</code></pre>
+<p>In this hybrid example:</p>
+<ul>
+<li>The <strong>GameController</strong> queries the player’s health when needed.</li>
+<li>The <strong>Player</strong> manages its inventory and health internally, always ensuring valid state without needing to be micromanaged by the <code>GameController</code>.</li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<ul>
+<li><strong>Fetching state</strong> is necessary when the controller needs real-time information to make decisions, and it’s totally acceptable in many cases.</li>
+<li><strong>Always valid state</strong> design reduces the need for querying and ensures objects maintain themselves in a valid state, which simplifies logic and reduces dependencies.</li>
+<li><strong>Hybrid approaches</strong> are often best in games, where certain systems (like health, inventory, or quests) manage themselves, while others (like high-level game logic) still require state checks.</li>
+</ul>
+<p>In short, aim for valid state whenever possible, but don’t be afraid to query state when needed for complex game logic. Both patterns can work together effectively depending on the situation.</p>
+<h2 id="c-events-and-signals-for-decoupling">C# Events and Signals for Decoupling</h2>
+<p>Use the event system to create loosely coupled communication mechanism between nodes. This allows nodes that don’t have a direct relationship to communicate without being tightly bound.
+The UI can emit an event when it needs data, and any node (or manager) can listen to those signals and provide the needed data.</p>
+<h2 id="using-godot-resources-to-share-data">Using Godot Resources to Share Data</h2>
+<p>Godot <code>Resource</code> can be used to share data between various objects as long as you are aware of the limitations - only one party should ever be responsible for changing the data, while several can read it at the same time. A shared <code>Resource</code> gives instantaneous access to the data across multiple objects. You will also have to be careful and deploy a default strategy in case the data is not available at any given time.</p>
+<h2 id="service-locator--manager-pattern">Service Locator / Manager Pattern</h2>
+<p>Can be used to create a centralized manager or service locator to handle instances of shared dependencies like data required by UI. This pattern helps when the relationships is not clear or direct.
+For example, you can have a <code>GameManager</code> or <code>DataManager</code> node responsible for holding game state, UI data, or other global information.
+You’d reference this node using Godot’s <code>GetTree().Root</code> or a singleton (Autoload) which would allow child nodes, such as your UI elements, to fetch the necessary data without needing a direct parent-child relationship.</p>
+<h2 id="godot-singleton-autoload">Godot Singleton Autoload</h2>
+<p>For truly global data (such as player stats, global settings, etc.) consider using an <code>Autoload</code>. This allows any node to access global state without needing a direct reference. This should be used sparingly to avoid overloading the global namespace with too many dependencies.</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>How to setup SQLite database with EF Core and Godot</title>
         <author>
@@ -1042,123 +1717,6 @@ public abstract class Mover {
 <h2 id="more-information">More information</h2>
 <p>Check out the GodotXUnit Github page: 
 <a href="https://github.com/fledware/GodotXUnit">https://github.com/fledware/GodotXUnit</a></p>
-
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Axis Aligned Bounding Boxes and Intersections</title>
-        <author>
-            <name>Pilvinen</name>
-        </author>
-        <link href="https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/"/>
-        <id>https://pilvimaa.fi/axis-aligned-bounding-boxes-and-intersections/</id>
-        <media:content url="https://pilvimaa.fi/media/posts/10/AABB.jpg" medium="image" />
-            <category term="Math"/>
-            <category term="C#"/>
-            <category term="AABB"/>
-
-        <updated>2022-07-16T01:47:10+03:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" alt="" />
-                    Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <p><img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" class="type:primaryImage" alt="" /></p>
-                <p>Let’s do a quick overview of AABBs and intersections.</p>
-<p>Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.</p>
-<p>In one dimension it is a <code>Segment</code> or <code>AxisAlignedBounds1D</code>:</p>
-<pre><code class="language-cs">struct Segment {
-    public float min;
-    public float max;
-}
-</code></pre>
-<p>Let’s calculate an intersection for two segments.</p>
-<pre><code class="language-cs">Segment Intersect(Segment a, Segment b) =&gt;
-    new Segment {
-        Min = Math.Max(a.Min, b.Min),
-        Max = Math.Min(a.Max, b.Max)
-    };
-</code></pre>
-<p>In two dimensions it is a <code>Rectangle</code> or <code>AxisAlignedBounds2D</code>:</p>
-<pre><code class="language-cs">struct Rectangle {
-    Segment boundsX;
-    Segment boundsY;
-}
-</code></pre>
-<p>Let’s calculate an intersection for two rectangles.</p>
-<pre><code class="language-cs">Rectangle Intersect(Rectangle a, Rectangle b) =&gt;
-    new Rectangle {
-        X = Segment.Intersect(a.X, b.X),
-        Y = Segment.Intersect(a.Y, b.Y)
-    };
-</code></pre>
-<p>In three dimensions it is <code>AABB</code> (Axis Aligned Bounding Box) or <code>AxisAlignedBounds3D</code>:</p>
-<pre><code class="language-cs">struct AABB {
-    public Segment boundsX;
-    public Segment boundsY;
-    public Segment boundsZ;
-}
-</code></pre>
-<p>Let’s calculate an intersection for two AABBs.</p>
-<pre><code class="language-cs">AABB Intersect(AABB a, AABB b) =&gt;
-    new AABB {
-        X = Segment.Intersect(a.X, b.X),
-        Y = Segment.Intersect(a.Y, b.Y),
-        Z = Segment.Intersect(a.Z, b.Z),
-    };
-</code></pre>
-<p>Let’s do it slightly differently for fun.</p>
-<p>Testing intersection via bounds in 1D:</p>
-<pre><code class="language-cs">struct Bounds{
-    public float Min;
-    public float Max;
-    
-    public Bounds Intersection(Bounds other) =&gt;
-        new Bounds {
-            Min = Math.Max(this.Min, other.Min),
-            Max = Math.Min(this.Max, other.Max)
-        };
-        
-    public bool Intersects(Bounds other) {
-        var i = this.Intersection(other);
-        return i.Min &lt; i.Max;
-    }
-}
-</code></pre>
-<p>Testing intersections via bounds in 2D:</p>
-<pre><code class="language-cs">struct Bounds2D {
-    public Bounds BoundsX;
-    public Bounds BoundsY;
-    public Bounds2D Intersection(Bounds2D other) =&gt;
-        new Bounds2D {
-            BoundsX = this.XBounds.Intersection(other.BoundsX),
-            BoundsY = this.YBounds.Intersection(other.BoundsY);
-        };
-    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid;
-    public bool Intersects(Bounds2D other) =&gt;
-        this.Intersection(other).IsValid;
-}
-</code></pre>
-<p>Testing intersections via bounds in 3D:</p>
-<pre><code class="language-cs">struct Bounds3D {
-    public Bounds BoundsX;
-    public Bounds BoundsY;
-    public Bounds BoundsZ;
-    public Bounds3D Intersection(Bounds3D other) =&gt;
-        new Bounds3D {
-            BoundsX = this.BoundsX.Intersection(other.BoundsX),
-            BoundsY = this.BoundsY.Intersection(other.BoundsY);
-            BoundsZ = this.BoundsZ.Intersection(other.BoundsZ);
-        };
-    public bool IsValid =&gt; BoundsX.IsValid &amp;&amp; BoundsY.IsValid &amp;&amp; BoundsZ.IsValid;
-    public bool Intersects(Bounds3D other) =&gt;
-        this.Intersection(other).IsValid;
-}
-</code></pre>
 
             ]]>
         </content>
