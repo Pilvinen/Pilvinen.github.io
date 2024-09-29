@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en-us"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Localizing Godot&#x27;s default Splash Screen - Csharp and Game Development Notes</title><meta name="description" content="Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="stylesheet" href="https://pilvimaa.fi/media/plugins/syntaxHighlighter/prism-black.css"><script type="text/javascript" async src="https://www.googletagmanager.com/gtag/js?id=G-NT7DGE75CF"></script><script type="text/javascript">window.dataLayer = window.dataLayer || [];
+				  function gtag(){dataLayer.push(arguments);}
+				  gtag('js', new Date());
+				  gtag('config', 'G-NT7DGE75CF' , { 'anonymize_ip': true });</script><link rel="canonical" href="https://pilvimaa.fi/localizing-godots-default-splash-screen/"><link rel="alternate" type="application/atom+xml" href="https://pilvimaa.fi/feed.xml"><link rel="alternate" type="application/json" href="https://pilvimaa.fi/feed.json"><link rel="shortcut icon" href="https://pilvimaa.fi/media/website/favicon.ico" type="image/x-icon"><link rel="stylesheet" href="https://pilvimaa.fi/assets/css/style.css?v=923666099a7fa66b9200889f7a7c7e96"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://pilvimaa.fi/localizing-godots-default-splash-screen/"},"headline":"Localizing Godot's default Splash Screen","datePublished":"2024-09-29T15:51","dateModified":"2024-09-29T15:51","image":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png","height":1080,"width":1920},"description":"Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but&hellip;","author":{"@type":"Person","name":"Pilvinen","url":"https://pilvimaa.fi/authors/pilvinen/"},"publisher":{"@type":"Organization","name":"Pilvinen","logo":{"@type":"ImageObject","url":"https://pilvimaa.fi/media/website/Hedgehog.png","height":397,"width":640}}}</script><noscript><style>img[loading] {
+                    opacity: 1;
+                }</style></noscript><script async src="https://www.googletagmanager.com/gtag/js?id=G-NT7DGE75CF"></script><script>window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NT7DGE75CF');</script></head><body class="post-template"><header class="top js-header"><a class="logo" href="https://pilvimaa.fi/"><img src="https://pilvimaa.fi/media/website/Hedgehog.png" alt="Csharp and Game Development Notes" width="640" height="397"></a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://www.starandserpent.com" title="Star and Serpent" target="_blank">Star and Serpent</a></li><li><a href="https://www.starandserpent.com/blog/" title="S.&#x27;.S.&#x27;. blog" target="_blank">S.&#x27;.S.&#x27;. Blog</a></li><li><a href="https://github.com/starandserpent" title="S.&#x27;.S.&#x27;. Github" target="_blank">S.&#x27;.S.&#x27;. Github</a></li><li><a href="https://github.com/Pilvinen" title="Personal Github" target="_blank">Personal Github</a></li></ul></nav></header><main class="post"><article class="content"><div class="hero"><header class="hero__content"><div class="wrapper"><h1>Localizing Godot&#x27;s default Splash Screen</h1><div class="feed__meta content__meta"><img src="https://pilvimaa.fi/media/website/Pilvinen-As_Space_Techno_Wizard.png" loading="eager" height="1024" width="1024" class="feed__author-thumb" alt="Pilvinen"> <a href="https://pilvimaa.fi/authors/pilvinen/" class="feed__author">Pilvinen</a> <time datetime="2024-09-29T15:51" class="feed__date">September 29, 2024</time></div></div></header><figure class="hero__image"><div class="hero__image-wrapper"><img src="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" srcset="https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-xs.webp 640w, https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-sm.webp 768w, https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-md.webp 1024w, https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-lg.webp 1366w, https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-xl.webp 1600w, https://pilvimaa.fi/media/posts/21/responsive/ProphetOfTheLonelyStar_fi-2xl.webp 1920w" sizes="88vw" loading="eager" height="1080" width="1920" alt=""></div></figure></div><div class="entry-wrapper content__entry"><p>Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but oh no, of course it isn’t supported.</p><p>Furthermore, because all the user space code loads only after the splash screen has already been shown, it complicates things.</p><p>And to make the matters even worse, of course any runtime changes to <code>ProjectSettings</code> are not persistent, so you can’t just set a new path for the boot splash when the locale changes.</p><p>However, there is a way.</p><h2 id="project-settings">Project Settings</h2><p>In the Godot Editor under <code>Project Settings &gt; General &gt; Application &gt; Boot Splash</code></p><ol><li>Set <code>Show Image</code> to <code>true</code>.</li><li>Set <code>Image</code> to your default image.</li></ol><p>Under <code>Project Settings &gt; General &gt; Application &gt; Config</code> set <code>Project Settings Override</code> to <code>override.cfg</code>.</p><h2 id="writing-to-overridecfg">Writing to override.cfg</h2><p>When your locale changes, call:</p><pre><code class="language-cs">// Set the splash image to graphics localized to Finnish.
+ProjectSettings.SetSetting(&quot;application/boot_splash/image&quot;, &quot;user://path/to/my/localized/splash_fi.png&quot;);
+
+// Save the changed setting to override.cfg.
+ProjectSettings.SaveCustom(&quot;override.cfg&quot;);
+</code></pre><p>This special <code>override.cfg</code> file will be created in the folder where your game’s executable resides. It will be loaded via the project settings as defined above.</p><h2 id="setting-the--splashes-in-user">Setting the splashes in user://</h2><p>Trying to use the splashes from <code>res://</code> resulted in an utter failure for me. The solution was copying the images to <code>user://</code>. Of course you can’t just copy them, that would be too simple. But we can write the image files.</p><p>You can do this how ever you like, here’s what I did:</p><pre><code class="language-cs">private static void TryToCopySplashImagesToUserFolder() {  
+  
+    // Copy the splash screen images to the user folder if they don&#39;t exist there.  
+    string splashScreenFolderPath = Paths.GetSplashScreenFolderPath();  
+    string splashScreenFolderFullPathFi = Path.Combine(splashScreenFolderPath, &quot;ProphetOfTheLonelyStar_fi.png&quot;);  
+    string splashScreenFolderFullPathEn = Path.Combine(splashScreenFolderPath, &quot;ProphetOfTheLonelyStar_en.png&quot;);  
+  
+    // Check if the folder exists.  
+    if (!Directory.Exists(splashScreenFolderPath)) {  
+       Directory.CreateDirectory(splashScreenFolderPath);  
+    }  
+  
+    // Write splash screens to user folder.  
+  
+    // English splash screen.    if (!File.Exists(splashScreenFolderFullPathEn)) {  
+       string fileNameEn = &quot;ProphetOfTheLonelyStar_en.png&quot;;  
+       string imageFilePathEn = $&quot;res://Textures/SplashScreen/{fileNameEn}&quot;;  
+       string writeFilePathEn = Path.Combine(Paths.GetSplashScreenFolderPath(), fileNameEn);  
+       Texture2D imageEn = GD.Load&lt;Texture2D&gt;(imageFilePathEn);  
+       if (!File.Exists(writeFilePathEn)) {  
+          // Write the imageEn to the destination file.  
+          try {  
+             imageEn.GetImage().SavePng(writeFilePathEn);  
+          } catch (Exception e) {  
+             Console.WriteLine($&quot;Splash screen image file could not be written: {writeFilePathEn}&quot;);  
+             Console.WriteLine(e);  
+          }  
+       }  
+    }  
+  
+    // Finnish splash screen.  
+    if (!File.Exists(splashScreenFolderFullPathFi)) {  
+       string fileNameFi = &quot;ProphetOfTheLonelyStar_fi.png&quot;;  
+       string imageFilePathFi = $&quot;res://Textures/SplashScreen/{fileNameFi}&quot;;  
+       string writeFilePathFi = Path.Combine(Paths.GetSplashScreenFolderPath(), fileNameFi);  
+       Texture2D imageFi = GD.Load&lt;Texture2D&gt;(imageFilePathFi);  
+       if (!File.Exists(writeFilePathFi)) {  
+          // Write the imageFi to the destination file.  
+          try {  
+             imageFi.GetImage().SavePng(writeFilePathFi);  
+          } catch (Exception e) {  
+             Console.WriteLine($&quot;Splash screen image file could not be written: {writeFilePathFi}&quot;);  
+             Console.WriteLine(e);  
+          }  
+       }  
+    }  
+}
+</code></pre><p>These were the main points. Fill in the blanks for your own project and you should be good to go.</p></div><footer class="content__footer"><div class="entry-wrapper"><p class="content__updated">This article was updated on September 29, 2024</p><div class="content__actions"></div><div class="content__bio bio"><img src="https://pilvimaa.fi/media/website/Pilvinen-As_Space_Techno_Wizard.png" loading="lazy" height="1024" width="1024" class="bio__avatar" alt="Pilvinen"><div><h3 class="h4 bio__name"><a href="https://pilvimaa.fi/authors/pilvinen/" rel="author">Pilvinen</a></h3><div class="bio__desc">Star and Serpent indie game studio founder, team leader, programmer wannabe, and game designer. Human friendly. Likes to talk. Interested in math, sciences, logic, languages, literature, medieval history, programming, philosophy, and games.</div></div></div></div><nav class="content__nav"><div class="wrapper"><div class="content__nav-inner"><div class="content__nav-prev"><a href="https://pilvimaa.fi/game-structure-and-software-architecture/" class="content__nav-link" rel="prev"><figure class="content__nav-image"><img src="https://pilvimaa.fi/media/posts/20/responsive/SoftwareArchitecture-xs.webp" class="lazyload" loading="lazy" alt="Software Architecture" height="1024" width="1024"></figure><div><span>Previous</span> Game Structure and Software Architecture</div></a></div></div></div></nav></footer></article></main><footer class="footer"><div class="wrapper"><div class="footer__copyright"><p><a href="https://www.starandserpent.com" target="_blank" rel="noopener noreferrer">https://www.starandserpent.com</a></p></div><button onclick="backToTopFunction()" id="backToTop" class="footer__bttop" aria-label="Back to top" title="Back to top"><svg width="20" height="20"><use xlink:href="https://pilvimaa.fi/assets/svg/svg-map.svg#toparrow"/></svg></button></div></footer><script defer="defer" src="https://pilvimaa.fi/assets/js/scripts.min.js?v=ffcbea6c02c8178d10092962b235a5b0"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script><script defer="defer" src="https://pilvimaa.fi/media/plugins/syntaxHighlighter/prism.js"></script><script defer="defer" src="https://pilvimaa.fi/media/plugins/syntaxHighlighter/prism-line-numbers.min.js"></script><script defer="defer" src="https://pilvimaa.fi/media/plugins/syntaxHighlighter/clipboard.min.js"></script><script defer="defer" src="https://pilvimaa.fi/media/plugins/syntaxHighlighter/prism-copy-to-clipboard.min.js"></script></body></html>

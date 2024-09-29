@@ -3,12 +3,96 @@
     <title>Csharp and Game Development Notes</title>
     <link href="https://pilvimaa.fi/feed.xml" rel="self" />
     <link href="https://pilvimaa.fi" />
-    <updated>2024-09-20T11:28:02+03:00</updated>
+    <updated>2024-09-29T15:51:50+03:00</updated>
     <author>
         <name>Pilvinen</name>
     </author>
     <id>https://pilvimaa.fi</id>
 
+    <entry>
+        <title>Localizing Godot&#x27;s default Splash Screen</title>
+        <author>
+            <name>Pilvinen</name>
+        </author>
+        <link href="https://pilvimaa.fi/localizing-godots-default-splash-screen/"/>
+        <id>https://pilvimaa.fi/localizing-godots-default-splash-screen/</id>
+        <media:content url="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" medium="image" />
+
+        <updated>2024-09-29T15:51:50+03:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" alt="" />
+                    Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <p><img src="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" class="type:primaryImage" alt="" /></p>
+                <p>Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but oh no, of course it isn’t supported.</p><p>Furthermore, because all the user space code loads only after the splash screen has already been shown, it complicates things.</p><p>And to make the matters even worse, of course any runtime changes to <code>ProjectSettings</code> are not persistent, so you can’t just set a new path for the boot splash when the locale changes.</p><p>However, there is a way.</p><h2 id="project-settings">Project Settings</h2>
+<p>In the Godot Editor under <code>Project Settings &gt; General &gt; Application &gt; Boot Splash</code></p><ol>
+<li>Set <code>Show Image</code> to <code>true</code>.</li>
+<li>Set <code>Image</code> to your default image.</li>
+</ol>
+<p>Under <code>Project Settings &gt; General &gt; Application &gt; Config</code> set <code>Project Settings Override</code> to <code>override.cfg</code>.</p><h2 id="writing-to-overridecfg">Writing to override.cfg</h2>
+<p>When your locale changes, call:</p><pre><code class="language-cs">// Set the splash image to graphics localized to Finnish.
+ProjectSettings.SetSetting(&quot;application/boot_splash/image&quot;, &quot;user://path/to/my/localized/splash_fi.png&quot;);
+
+// Save the changed setting to override.cfg.
+ProjectSettings.SaveCustom(&quot;override.cfg&quot;);
+</code></pre>
+<p>This special <code>override.cfg</code> file will be created in the folder where your game’s executable resides. It will be loaded via the project settings as defined above.</p><h2 id="setting-the--splashes-in-user">Setting the  splashes in user://</h2>
+<p>Trying to use the splashes from <code>res://</code> resulted in an utter failure for me. The solution was copying the images to <code>user://</code>. Of course you can’t just copy them, that would be too simple. But we can write the image files.</p><p>You can do this how ever you like, here’s what I did:</p><pre><code class="language-cs">private static void TryToCopySplashImagesToUserFolder() {  
+  
+    // Copy the splash screen images to the user folder if they don&#39;t exist there.  
+    string splashScreenFolderPath = Paths.GetSplashScreenFolderPath();  
+    string splashScreenFolderFullPathFi = Path.Combine(splashScreenFolderPath, &quot;ProphetOfTheLonelyStar_fi.png&quot;);  
+    string splashScreenFolderFullPathEn = Path.Combine(splashScreenFolderPath, &quot;ProphetOfTheLonelyStar_en.png&quot;);  
+  
+    // Check if the folder exists.  
+    if (!Directory.Exists(splashScreenFolderPath)) {  
+       Directory.CreateDirectory(splashScreenFolderPath);  
+    }  
+  
+    // Write splash screens to user folder.  
+  
+    // English splash screen.    if (!File.Exists(splashScreenFolderFullPathEn)) {  
+       string fileNameEn = &quot;ProphetOfTheLonelyStar_en.png&quot;;  
+       string imageFilePathEn = $&quot;res://Textures/SplashScreen/{fileNameEn}&quot;;  
+       string writeFilePathEn = Path.Combine(Paths.GetSplashScreenFolderPath(), fileNameEn);  
+       Texture2D imageEn = GD.Load&lt;Texture2D&gt;(imageFilePathEn);  
+       if (!File.Exists(writeFilePathEn)) {  
+          // Write the imageEn to the destination file.  
+          try {  
+             imageEn.GetImage().SavePng(writeFilePathEn);  
+          } catch (Exception e) {  
+             Console.WriteLine($&quot;Splash screen image file could not be written: {writeFilePathEn}&quot;);  
+             Console.WriteLine(e);  
+          }  
+       }  
+    }  
+  
+    // Finnish splash screen.  
+    if (!File.Exists(splashScreenFolderFullPathFi)) {  
+       string fileNameFi = &quot;ProphetOfTheLonelyStar_fi.png&quot;;  
+       string imageFilePathFi = $&quot;res://Textures/SplashScreen/{fileNameFi}&quot;;  
+       string writeFilePathFi = Path.Combine(Paths.GetSplashScreenFolderPath(), fileNameFi);  
+       Texture2D imageFi = GD.Load&lt;Texture2D&gt;(imageFilePathFi);  
+       if (!File.Exists(writeFilePathFi)) {  
+          // Write the imageFi to the destination file.  
+          try {  
+             imageFi.GetImage().SavePng(writeFilePathFi);  
+          } catch (Exception e) {  
+             Console.WriteLine($&quot;Splash screen image file could not be written: {writeFilePathFi}&quot;);  
+             Console.WriteLine(e);  
+          }  
+       }  
+    }  
+}
+</code></pre>
+<p>These were the main points. Fill in the blanks for your own project and you should be good to go.</p>
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Game Structure and Software Architecture</title>
         <author>
