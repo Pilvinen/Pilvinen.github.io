@@ -19,7 +19,7 @@
         <media:content url="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" medium="image" />
 
         <updated>2024-09-29T15:51:50+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/21/ProphetOfTheLonelyStar_fi.png" alt="" />
                     Getting Godot’s default static splash screen localized is a nightmare. One might assume it’s as easy as 1, 2, ,3, just set a remap for it and you’re done, but&hellip;
@@ -106,7 +106,7 @@ ProjectSettings.SaveCustom(&quot;override.cfg&quot;);
             <category term="architecture"/>
 
         <updated>2024-09-20T10:56:56+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/20/SoftwareArchitecture.png" alt="Software Architecture" />
                     This is a straightforward simple memo on what all game structure should be like, in the most general sense. It’s for me. It’s not for you. It hasn’t been checked&hellip;
@@ -687,7 +687,7 @@ You’d reference this node using Godot’s <code>GetTree().Root</code> or a sin
             <category term="Csharp"/>
 
         <updated>2024-07-03T01:24:09+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/19/Database.png" alt="Database" />
                     EF Core is a popular high level object relational mapper (ORM) which can have various databases at the backend. As a database noobie, I recently had a bit of a&hellip;
@@ -968,7 +968,7 @@ public partial class Main : Node3D {
             <category term="Godot"/>
 
         <updated>2024-02-09T11:06:05+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/18/bullet_hell.png" alt="" />
                     In Godot if you have a bullet parented to your player, obviously the bullets will move when the player moves. So you need a node outside of your player hierarchy&hellip;
@@ -1004,7 +1004,7 @@ public partial class Main : Node3D {
         <media:content url="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" medium="image" />
 
         <updated>2023-11-23T18:33:04+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/17/nothing_to_return-2.png" alt="" />
                     Not finding your data that you are trying to fetch via Guid Id can be handled elegantly either as a case of domain error or just as a regular case&hellip;
@@ -1151,7 +1151,7 @@ public class DomainError {
             <category term="Godot"/>
 
         <updated>2023-11-01T21:09:44+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/16/GodotMouseInput.jpeg" alt="" />
                     Godot mouse input handling is a source of lot of confusion. The basic idea is that Mouse Filter set to Ignore ignores the element. Stop processes the received event and&hellip;
@@ -1207,7 +1207,7 @@ public class DomainError {
             <category term="C#"/>
 
         <updated>2023-10-16T18:47:16+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/15/csharp_vs_gdscript_godot.png" alt="Confusing schematics" />
                     Godot is a powerful and versatile game engine that supports two scripting languages: GDScript and C#. Both languages have their own advantages and disadvantages, so it’s important to choose the&hellip;
@@ -1253,7 +1253,7 @@ public class DomainError {
             <category term="C#"/>
 
         <updated>2023-06-14T02:08:31+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/14/computer_mice_double_click.png" alt="Two mice using a computer mouse" />
                     Clicks for Node2D based nodes can easily be detected by using CollisionObject2D‘s input_event signal. To capture the mouse clicks we can add an Area2D node and a CollisionShape2D or CollisionPolygon2D&hellip;
@@ -1338,7 +1338,7 @@ public class DomainError {
             <category term="C#"/>
 
         <updated>2022-07-29T16:15:52+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/13/Spaghetti.jpg" alt="" />
                     Implicit and explicit conversion operators allow you to ingegrate your custom types seamlessly with other types by doing implicit or explicit conversions from one type to another. public void SetPositionFromVector3(Vector3&hellip;
@@ -1395,7 +1395,7 @@ public class DomainError {
             <category term="C#"/>
 
         <updated>2022-07-24T14:32:10+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/12/Bugs.jpg" alt="" />
                     When you use unit tests you have to intentionally write code that is testable. What about private methods? How do you test those? And no, you should NOT change the&hellip;
@@ -1464,7 +1464,7 @@ public abstract class Mover {
             <category term="C#"/>
 
         <updated>2022-07-18T17:54:14+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/11/Test.jpg" alt="" />
                     Installation from Github These instructions will explain how to get GodotXUnit integrated to your project and working with Rider. [XunitTestCaseDiscoverer(&quot;GodotXUnitApi.Internal.GodotFactDiscoverer&quot;, &quot;GodotXUnitApi&quot;)] And replace the GodotXUnitApi with your project’s assembly name,&hellip;
@@ -1527,7 +1527,7 @@ public abstract class Mover {
             <category term="AABB"/>
 
         <updated>2022-07-16T01:15:43+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/10/AABB.jpg" alt="" />
                     Let’s do a quick overview of AABBs and intersections. Axis Aligned Bounding Box is a set of three segments (or 6 numbers). AABBs can be used for fast overlapping tests.
@@ -1632,7 +1632,7 @@ public abstract class Mover {
             <category term="C#"/>
 
         <updated>2022-07-14T20:56:37+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/9/Dice.jpg" alt="" />
                     Sometimes you need pseudo-random numbers which are not dependent on time and which are always reliably identical and given in the same order when ever you re-start the application or&hellip;
@@ -1678,7 +1678,7 @@ internal class SeededRandomExample {
             <category term="C#"/>
 
         <updated>2022-07-13T16:37:45+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/8/MultiMeshBlocks.png" alt="" />
                     This article tries to bridge the gaps and ambiguities in the official Godot documentation for SetAsBulkArray(). We don’t go over everything. But armed with this information you should be able&hellip;
@@ -1870,7 +1870,7 @@ float red = random.Next(0, 256);
             <category term="C#"/>
 
         <updated>2022-07-11T14:45:47+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/7/Binary.png" alt="" />
                     Here we call the constructor of the base class A and pass the id as a parameter to initialize _id in the constructor of A class. By doing this way&hellip;
@@ -1927,7 +1927,7 @@ internal class B : A {
             <category term="Math"/>
 
         <updated>2021-08-27T12:13:21+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/6/TriangleRuler.png" alt="360 degrees in a circle" />
                     I'm going to talk a little bit about vectors from my own and from game development perspective. It's by no means complete or definitive description of what vectors are or&hellip;
@@ -2049,7 +2049,7 @@ internal class B : A {
             <category term="DOD"/>
 
         <updated>2021-07-16T01:20:06+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/5/circles-1428521_1920.jpg" alt="" />
                     A few notes on Data Oriented Design. - Study the data access patterns to determine where performance bottlenecks are. - Group things together that are used together. - Avoid creating&hellip;
@@ -2084,7 +2084,7 @@ internal class B : A {
             <category term="Functional Programming"/>
 
         <updated>2021-05-23T15:58:49+03:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/4/work-731198_1920.jpg" alt="" />
                     These are my study notes on a controversial video published on YouTube in 2016 by Brian Will called "Object-Oriented Programming is Bad". The video addresses many of the concerns I've&hellip;
@@ -2119,7 +2119,7 @@ internal class B : A {
             <category term="Math"/>
 
         <updated>2021-01-07T20:33:13+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/3/Radians.png" alt="Radians and other units" />
                     I was thinking about radians today and how they are annoying and unintuitive to deal with. After thinking about it for a while I realized that when you look at&hellip;
@@ -2167,7 +2167,7 @@ internal class B : A {
             <category term="Binary"/>
 
         <updated>2020-10-28T23:12:01+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/2/Binary-1920x1280.jpg" alt="Binary" />
                     Let's take a look at how binary addition can be done by using bitwise operations. Why would we want to do this? Simply because we can. And also because it's&hellip;
@@ -2272,7 +2272,7 @@ b = (byte) (carryBits &lt;&lt; 1);</code></pre>
             <category term="Arrays"/>
 
         <updated>2020-10-28T16:42:04+02:00</updated>
-            <summary>
+            <summary type="html">
                 <![CDATA[
                         <img src="https://pilvimaa.fi/media/posts/1/Array_flattening.png" alt="Array flattening" />
                     One dimensional arrays, or flat arrays as they are sometimes called, have desirable properties. They are fast. They are simple to access and to iterate through. They can easily be assigned&hellip;
